@@ -1,1 +1,6 @@
 *.o
+.vscode
+.vscode/launch.json
+.vscode/settings.json
+src/main
+.vscode/tasks.json
