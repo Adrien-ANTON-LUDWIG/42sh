@@ -1,0 +1,7 @@
+name: This is a test
+command: ./main
+stdin: |
+  Hello World!
+stdout: |
+  Hello World!
+returncode: 0

@@ -4,3 +4,6 @@
 .vscode/settings.json
 src/main
 .vscode/tasks.json
+venv
+__pycache__
+build
