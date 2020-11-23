@@ -1,0 +1,11 @@
+stages:
+    - build
+build:
+    stage: build
+    tags:
+        - default
+    script:
+        - mkdir build && cd build
+        - cmake ..
+        - make
+        - test -f main
