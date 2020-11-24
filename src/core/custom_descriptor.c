@@ -1,8 +1,6 @@
 #include "custom_descriptor.h"
 
 #include <err.h>
-#include <stddef.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -74,23 +72,18 @@ void custom_fclose(struct custom_FILE *f)
  * @param s buffer
  * @param size amount of bytes to read
  * @param f
- * @return int amount of data read
+ * @return char* pointer to s
  */
-int custom_fgets(char *s, int size, struct custom_FILE *f)
+char *custom_fgets(char *s, size_t size, struct custom_FILE *f)
 {
     if (f->fd == CUSTOM_FD)
+        return fgets(s, size, f->file);
+    for (size_t i = 0; i < size && i + f->index < f->len; i++)
     {
-        if (f->index == f->len)
-            return EOF;
-        strncpy(s, f->str + f->index, size);
-        if (f->index + size >= f->len)
-        {
-            int count = f->len - f->index;
-            f->index = f->len;
-            return count;
-        }
-        f->index += size;
-        return size;
+        s[i] = f->str[f->index];
+        f->index++;
+        if (s[i] == '\n' || s[i] == 0)
+            return s;
     }
-    return fgets(s, size, f->file);
+    return s;
 }

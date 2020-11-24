@@ -1,6 +1,9 @@
 #ifndef CUSTOM_DESCRIPTOR_H
 #define CUSTOM_DESCRIPTOR_H
 
+#include <stddef.h>
+#include <stdio.h>
+
 #define CUSTOM_FD -5
 /**
  * 42sh can be called with the -c option,
@@ -22,9 +25,14 @@ struct custom_FILE
 {
     int fd;
     FILE *file;
-    int index;
+    size_t index;
     char *str;
     size_t len;
 };
+
+struct custom_FILE *custom_fopen(char *path);
+struct custom_FILE *createfrom_string(char *str);
+void custom_fclose(struct custom_FILE *f);
+char *custom_fgets(char *s, size_t size, struct custom_FILE *f);
 
 #endif
