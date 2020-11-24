@@ -9,4 +9,4 @@ set(HEADERS
 )
 
 add_compile_options(-g -Wall -Wextra -pedantic -Werror -std=c99)
-add_executable(main ${SRCS} ${HEADERS})
+add_executable(42sh ${SRCS} ${HEADERS})
