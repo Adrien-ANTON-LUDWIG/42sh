@@ -1,5 +1,6 @@
 stages:
     - build
+    - test
 build:
     stage: build
     tags:
@@ -7,4 +8,10 @@ build:
     script:
         - mkdir build && cd build
         - cmake .. && make
-        - ./42sh
+        - file -f ./42sh
+test:
+    stage: test
+    tags:
+        - docker
+    script:
+        - echo "There is nothing to test..."
