@@ -1,9 +1,9 @@
 #ifndef STRUCTURES_H
 #define STRUCTURES_H
 
-struct arguments
+struct major
 {
     int options;
 };
 
-#endif
+#endif /* STRUCTURES_H */
