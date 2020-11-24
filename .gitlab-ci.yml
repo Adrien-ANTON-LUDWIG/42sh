@@ -7,4 +7,4 @@ build:
     script:
         - mkdir build && cd build
         - cmake .. && make
-        - file -f 42sh
+        - ./42sh
