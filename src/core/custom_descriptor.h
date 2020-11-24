@@ -33,6 +33,6 @@ struct custom_FILE
 struct custom_FILE *custom_fopen(char *path);
 struct custom_FILE *createfrom_string(char *str);
 void custom_fclose(struct custom_FILE *f);
-char *custom_fgets(char *s, int size, struct custom_FILE *f);
+char *custom_fgets(char *s, size_t size, struct custom_FILE *f);
 
 #endif

@@ -77,7 +77,7 @@ void custom_fclose(struct custom_FILE *f)
 char *custom_fgets(char *s, size_t size, struct custom_FILE *f)
 {
     if (f->fd == CUSTOM_FD)
-        return fgets(s, size, f->fd);
+        return fgets(s, size, f->file);
     for (size_t i = 0; i < size && i + f->index < f->len; i++)
     {
         s[i] = f->str[f->index];
