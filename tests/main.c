@@ -1,24 +1,25 @@
 #define _GNU_SOURCE
+#include "core/custom_descriptor.h"
 #include <criterion/criterion.h>
 #include <stdlib.h>
 #include <string.h>
 
 
-TestSuite(minimake, .timeout = 15);
+TestSuite(42sh, .timeout = 15);
 
-Test(minimake, is_command_valid)
+Test(42sh, custom_descriptor)
+{
+    custom
+}
+
+Test(42sh, custom_descriptor)
 {
 
 }
 
-Test(minimake, is_command_invalid)
+Test(42sh, custom_descriptor)
 {
-
-}
-
-Test(minimake, expand_command)
-{
-
+    
 }
 
 int main(int argc, char **argv)
