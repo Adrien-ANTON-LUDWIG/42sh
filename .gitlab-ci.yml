@@ -3,6 +3,6 @@ stages:
 build:
     stage: build
     tags:
-        - default
+        - docker
     script:
         - echo "bien joué"
