@@ -1,8 +1,17 @@
 stages:
     - build
+    - test
 build:
     stage: build
     tags:
-        - default
+        - docker
     script:
-        - echo "bien joué"
+        - mkdir build && cd build
+        - cmake .. && make
+        - file -f ./42sh
+test:
+    stage: test
+    tags:
+        - docker
+    script:
+        - echo "There is nothing to test..."
