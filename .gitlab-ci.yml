@@ -5,4 +5,6 @@ build:
     tags:
         - docker
     script:
-        - echo "bien joué"
+        - mkdir build && cd build
+        - cmake .. && make
+        - file -f 42sh
