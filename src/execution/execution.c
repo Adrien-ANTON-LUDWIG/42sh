@@ -9,7 +9,7 @@
 
 char **token_list_to_char_array(struct list *l)
 {
-    char **tab = malloc(l->size);
+    char **tab = malloc(sizeof(char **) * l->size);
 
     struct list_item *cpy = l->head;
     for (size_t i = 0; cpy && i < l->size; i++)
