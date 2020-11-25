@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 #include "lexer.h"
-#include "list.h"
+#include "my_utils.h"
 
 char **token_list_to_char_array(struct list *l)
 {
