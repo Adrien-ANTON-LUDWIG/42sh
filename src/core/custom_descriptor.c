@@ -90,3 +90,25 @@ char *custom_fgets(char *s, size_t size, struct custom_FILE *f)
     }
     return s;
 }
+/**
+ * @brief Takes a custom file and returns a single
+ * string whith all its data.
+ *
+ * @param f custom_FILE
+ * @return char*
+ */
+char *custom_getfile(struct custom_FILE *f)
+{
+    if (f->fd == CUSTOM_FD)
+        return strdup(f->str);
+    int size = fseek(f->file, 0, SEEK_END);
+    size = ftell(f->file);
+    fseek(f->file, 0, SEEK_SET);
+
+    char *getfile = malloc(size);
+
+    if (fread(getfile, sizeof(char), size, f->file) == 0)
+        errx(2, "Custom getfile: could not open file\n");
+
+    return getfile;
+}

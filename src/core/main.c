@@ -16,7 +16,7 @@ int main(int argc, char **argv)
     {
         if (strcmp(argv[i], "-c") == 0)
         {
-            char *args = make_command(argc, argv);
+            char *args = merge_arguments(argc - i - 1, argv + i + 1);
             printf("%s\n", args);
             free(args);
             return 0;
