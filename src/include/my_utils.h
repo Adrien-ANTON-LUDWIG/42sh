@@ -29,4 +29,8 @@ struct list_item
     char *data;
 };
 
+struct list *list_append(struct major *mj, struct list *list, char *str);
+void list_free(struct list *l);
+struct list *list_init(struct major *mj);
+
 #endif /* UTILS_H */

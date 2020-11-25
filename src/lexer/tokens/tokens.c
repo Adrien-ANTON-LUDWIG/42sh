@@ -9,8 +9,19 @@ struct token *token_init(struct major *major)
     if (!new)
         my_err(1, major, "token_init: malloc failed");
 
-    new->tk = 0;
-    new->data.op = 0;
+    new->word = 0;
+    new->data = NULL;
 
     return new;
+}
+
+int token_get(char *s)
+{
+    char **tokens_strings = TOKENS_STRINGS;
+
+    for (size_t i = 0; i < WORD_COMMAND; i++)
+        if (!strcmp(s, tokens_strings[i]))
+            return i;
+
+    return WORD_COMMAND;
 }
