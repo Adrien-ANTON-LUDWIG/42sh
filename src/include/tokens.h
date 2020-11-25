@@ -1,7 +1,7 @@
 #ifndef TOKENS_H
 #define TOKENS_H
 
-#include "../../utils/my_utils.h"
+#include "my_utils.h"
 
 enum tokens
 {
