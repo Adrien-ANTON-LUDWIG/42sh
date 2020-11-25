@@ -1,7 +1,5 @@
 name: This is a test
-command: ./main
-stdin: |
-  Hello World!
+command: ../build/42sh -c Salut comment ça va les mecs ?
 stdout: |
-  Hello World!
+  "Salut comment ça va les mecs ?"
 returncode: 0

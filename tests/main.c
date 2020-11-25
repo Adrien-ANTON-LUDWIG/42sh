@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "argument_handler.h"
 #include "custom_descriptor.h"
 
 TestSuite(_42sh, .timeout = 15);
@@ -23,6 +24,29 @@ Test(_42sh, custom_descriptor1)
     cr_assert_null(newbuffer);
     free(savedbuffer);
     custom_fclose(f);
+}
+
+Test(_42sh, merge_commands)
+{
+    char *argv[] = { "Salut", "comment", "ça", "va" };
+    char *merged = merge_arguments(4, argv);
+    cr_assert_eq(strcmp("Salut comment ça va", merged), 0);
+    free(merged);
+}
+
+Test(_42sh, merge_commands_first_empty)
+{
+    char *argv[] = { "", "Salut" };
+    char *merged = merge_arguments(2, argv);
+    cr_assert_eq(strcmp("Salut", merged), 0);
+    free(merged);
+}
+
+Test(_42sh, merge_commands_empty)
+{
+    char *argv[] = { NULL };
+    char *merged = merge_arguments(0, argv);
+    cr_assert_null(merged);
 }
 
 int main(int argc, char **argv)
