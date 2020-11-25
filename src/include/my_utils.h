@@ -4,7 +4,7 @@
 #include <err.h>
 #include <stdlib.h>
 
-#include "../structures.h"
+#include "structures.h"
 
 /* MAJOR */
 void major_init(void);

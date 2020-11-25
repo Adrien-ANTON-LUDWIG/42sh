@@ -2,6 +2,14 @@
 
 #include "lexer.h"
 
+/**
+ * @brief Initialises an instance of struct token_list, used by the lexer to
+ * create a double linked list of tokens.
+ *
+ * @param mj Main structure of our 42sh project.
+ * @param tk struct token already initialised and completed
+ * @return struct token_list*
+ */
 static struct token_list *token_list_init(struct major *mj, struct token *tk)
 {
     struct token_list *new = malloc(sizeof(struct token_list));
