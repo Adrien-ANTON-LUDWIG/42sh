@@ -1,3 +1,4 @@
+#include <err.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,15 +19,14 @@ int main(int argc, char **argv)
             char *args = make_command(argc, argv);
             printf("%s\n", args);
             free(args);
+            return 0;
         }
         else if (strcmp(argv[i], "-O") == 0)
-        {
             return 0;
-        }
         else if (strcmp(argv[i], "+O") == 0)
-        {
             return 0;
-        }
+        else
+            errx(1, "Wait, that's illegal !");
     }
     return 0;
 }

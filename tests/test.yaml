@@ -2,5 +2,4 @@ name: This is a test
 command: ../build/42sh -c Salut comment ça va les mecs ?
 stdout: |
   "Salut comment ça va les mecs ?"
-
 returncode: 0
