@@ -1,25 +1,28 @@
 #define _GNU_SOURCE
-#include "core/custom_descriptor.h"
 #include <criterion/criterion.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "custom_descriptor.h"
 
-TestSuite(42sh, .timeout = 15);
+TestSuite(_42sh, .timeout = 15);
 
-Test(42sh, custom_descriptor)
+Test(_42sh, custom_descriptor1)
 {
-    custom
-}
-
-Test(42sh, custom_descriptor)
-{
-
-}
-
-Test(42sh, custom_descriptor)
-{
-    
+    struct custom_FILE *f =
+        createfrom_string("Salut!\nJe suis un test\nEt je te veux du mal");
+    char *buffer = malloc(128 * sizeof(char));
+    char *savedbuffer = buffer;
+    buffer = custom_fgets(buffer, 128, f);
+    cr_assert_eq(strcmp(buffer, "Salut!\n"), 0);
+    buffer = custom_fgets(buffer, 128, f);
+    cr_assert_eq(strcmp(buffer, "Je suis un test\n"), 0);
+    buffer = custom_fgets(buffer, 128, f);
+    cr_assert_eq(strcmp(buffer, "Et je te veux du mal"), 0);
+    char *newbuffer = custom_fgets(buffer, 128, f);
+    cr_assert_null(newbuffer);
+    free(savedbuffer);
+    custom_fclose(f);
 }
 
 int main(int argc, char **argv)
