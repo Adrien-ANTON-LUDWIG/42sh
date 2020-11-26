@@ -16,6 +16,14 @@ void print_token(struct token *tk)
             li = li->next;
         }
     }
+    else if (tk->word == WORD_REDIR)
+    {
+        printf("\n\tstdin: %s\n", tk->redirection->std_in);
+        printf("\tstdout: %s\tappend_mode: %d\n", tk->redirection->std_out,
+                tk->redirection->append_mode);
+        printf("\tstderr: %s\n", tk->redirection->std_err);
+    }
+    
     printf("\n");
 }
 

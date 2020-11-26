@@ -8,6 +8,14 @@
         "if", "then", "fi"                                                     \
     }
 
+#define TOKENS_STRINGS_REDIR                                                   \
+    {                                                                          \
+        ">", ">>"                                                              \
+    }
+
+#define REDIR_APPEND 1
+#define REDIR_TRUNK 0
+
 /*
 enum tokens
 {
@@ -54,6 +62,7 @@ enum words
     WORD_IF,
     WORD_THEN,
     WORD_FI,
+    WORD_REDIR,
     WORD_COMMAND,
     WORD_EOF,
     WORD_AND
@@ -63,6 +72,15 @@ struct token
 {
     enum words word;
     struct list *data;
+    struct redir *redirection;
+};
+
+struct redir // 2> filename
+{
+    char *std_in; // defaut = NULL
+    char *std_out; // defaut = NULL
+    char *std_err; // defaut = filename
+    int append_mode;
 };
 
 /*

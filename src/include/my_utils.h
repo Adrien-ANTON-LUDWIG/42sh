@@ -9,7 +9,7 @@
 #include "structures.h"
 
 /* MAJOR */
-void major_init(void);
+struct major *major_init(void);
 void major_free(struct major *mj);
 
 /* MY_ERR */

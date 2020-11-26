@@ -9,17 +9,10 @@
 #include "custom_descriptor.h"
 #include "execution.h"
 #include "lexer.h"
-#include "my_utils.h"
-#include "parser.h"
-#include "structures.h"
-#include "tokens.h"
+#include "printer.h"
 
 int main(int argc, char **argv)
 {
-    struct lexer *lex =
-        lexer_build(NULL, "if echo test; then echo tata; fi; echo cool");
-    struct ast *ast = parser(NULL, lex);
-    ast_printer(ast);
     if (argc < 2)
         return 0;
 
@@ -27,8 +20,14 @@ int main(int argc, char **argv)
     {
         if (strcmp(argv[i], "-c") == 0)
         {
-            char *args = merge_arguments(argc - i - 1, argv + i + 1);
-            printf("%s\n", args);
+            if (i + 1 == argc)
+                errx(2, "-c: option requires an argument");
+
+            struct major *mj = major_init();
+            int from = get_index_command_string(i + 1, argc, argv);
+            char *args = merge_arguments(argc - from, argv + from);
+            struct lexer *lexer = lexer_build(mj, args);
+            lexer_printer(lexer);
             free(args);
             return 0;
         }
@@ -37,7 +36,7 @@ int main(int argc, char **argv)
         else if (strcmp(argv[i], "+O") == 0)
             return 0;
         else
-            errx(1, "Wait, that's illegal !");
+            errx(1, "Wait, that's illegal!");
     }
     return 0;
 }

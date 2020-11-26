@@ -48,6 +48,7 @@ Test(_42sh, merge_commands_first_empty)
 
 Test(_42sh, merge_commands_empty)
 {
+    printf("merge_commands_empty\n");
     char *argv[] = { NULL };
     char *merged = merge_arguments(0, argv);
     cr_assert_null(merged);
@@ -55,6 +56,7 @@ Test(_42sh, merge_commands_empty)
 
 Test(_42sh, lexer_one_simple_line)
 {
+    printf("lexer_one_simple_line\n");
     struct lexer *lex = lexer_build(NULL, "echo test");
 
     cr_assert_not_null(lex, "NULL");
@@ -72,6 +74,7 @@ Test(_42sh, lexer_one_simple_line)
 
 Test(_42sh, lexer_one_line_if)
 {
+    printf("lexer_one_line_if\n");
     struct lexer *lex = lexer_build(NULL, "if echo test; then echo toto; fi");
 
     cr_assert_not_null(lex, "NULL");
@@ -93,6 +96,42 @@ Test(_42sh, lexer_one_line_if)
     cr_assert_eq(lex->head->next->next->next->next->tk->word, WORD_FI,
                  "Not WORD_FI");
     cr_assert_eq(lex->tail->tk->word, WORD_EOF, "No WORD_EOF");
+
+    lexer_printer(lex);
+
+    lexer_free(lex);
+}
+
+Test(_42sh, lexer_simple_redir_append)
+{
+    printf("lexer_simple_redir_append\n");
+    struct lexer *lex = lexer_build(NULL, "echo test >> file");
+    lexer_printer(lex);
+    lexer_free(lex);
+}
+
+Test(_42sh, lexer_simple_redir)
+{
+    printf("lexer_simple_redir\n");
+    struct lexer *lex = lexer_build(NULL, "echo test > file");
+/*
+    cr_assert_not_null(lex, "NULL");
+    cr_assert_eq(lex->head->tk->word, WORD_COMMAND, "Not WORD_COMMAND");
+
+    cr_assert_eq(strcmp(lex->head->tk->data->head->data, "echo"), 0,
+                 "First string not 'echo'");
+    cr_assert_eq(strcmp(lex->head->tk->data->head->next->data, "test"), 0,
+                 "Second string not 'test'");
+
+    cr_assert_eq(strcmp(lex->head->tk->data->head->next->data, ">"), 0,
+                 "Third string not '>'");
+    cr_assert_eq(lex->head->tk->next->next->word, WORD_REDIR, "Not WORD_REDIR");
+    
+    cr_assert_eq(
+        strcmp(lex->head->tk->data->head->next->redirecton->std_out, "file"), 0,
+        "Wrong file");
+
+    cr_assert_eq(lex->tail->tk->word, WORD_EOF, "No WORD_EOF");*/
 
     lexer_printer(lex);
 
