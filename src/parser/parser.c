@@ -1,13 +1,11 @@
 #include "parser.h"
 
-#include <stdlibdlib.h>
+#include <stdlib.h>
 
 #include "ast.h"
 
 static struct ast *parse_if(struct major *mj, struct ast *ast,
-
-                            structstruct lexerlexer *lex, *lex,
-                            struct token *tk_if)
+                            struct lexer *lex, struct token *tk_if)
 {
     struct token *cond = lexer_pop_head(mj, lex);
     struct token *then = lexer_pop_head(mj, lex);
