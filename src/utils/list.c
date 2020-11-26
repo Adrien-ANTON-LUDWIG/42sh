@@ -29,6 +29,9 @@ struct list *list_init(struct major *mj)
 
 void list_free(struct list *l)
 {
+    if (!l)
+        return;
+
     struct list_item *item = l->head;
     while (item)
     {

@@ -64,7 +64,8 @@ enum words
     WORD_FI,
     WORD_REDIR,
     WORD_COMMAND,
-    WORD_EOF
+    WORD_EOF,
+    WORD_AND
 };
 
 struct token
@@ -103,5 +104,6 @@ struct token
 struct token *token_init(struct major *major);
 int token_get(char *s);
 char *token2string(struct token *tk);
+void token_free(struct token *tk);
 
 #endif /* TOKENS_H */

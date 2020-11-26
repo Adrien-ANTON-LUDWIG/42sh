@@ -16,6 +16,8 @@ set(SRCS
     src/utils/my_err.c
     src/lexer/printer.c
     src/lexer/tokens/redirection.c
+    src/parser/parser.c
+    src/parser/ast.c
 )
 
 set (TESTSRC
@@ -30,6 +32,8 @@ set (TESTSRC
     src/utils/my_err.c
     src/lexer/printer.c
     src/lexer/tokens/redirection.c
+    src/parser/parser.c
+    src/parser/ast.c
 )
 
 set(HEADERS
@@ -43,6 +47,8 @@ set(HEADERS
     src/include/tokens.h
     src/include/printer.h
     src/include/redirection.h
+    src/include/parser.h
+    src/include/ast.h
 )
 
 add_compile_options(-g -Wall -Wextra -pedantic -Werror -std=c99 -lcriterion)

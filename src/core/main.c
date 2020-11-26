@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include "argument_handler.h"
+#include "ast.h"
 #include "custom_descriptor.h"
 #include "execution.h"
 #include "lexer.h"
