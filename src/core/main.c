@@ -35,7 +35,7 @@ int main(int argc, char **argv)
         else if (strcmp(argv[i], "+O") == 0)
             return 0;
         else
-            errx(1, "Wait, that's illegal !");
+            errx(1, "Wait, that's illegal!");
     }
     return 0;
 }

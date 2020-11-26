@@ -1,7 +1,10 @@
 #include "lexer.h"
 
 #include <ctype.h>
+#include <stdio.h>
 #include <string.h>
+
+#include "redirection.h"
 
 #define BASIC_SEPARATOR "\r\v\n\t "
 #define COMMAND_SEPARTOR ";\n\t"
@@ -48,7 +51,7 @@ static void _lexer_build(struct major *mj, struct lexer *lex, char *s)
         if (is_command)
         {
             list_append(mj, tk->data, word);
-            if (*s == ';' || *s == '\n')
+            if (*s == ';' || *s == '\n' || *s == '>')
             {
                 is_command = 0;
             }
@@ -58,7 +61,13 @@ static void _lexer_build(struct major *mj, struct lexer *lex, char *s)
             tk = token_init(mj);
             int token = token_get(word);
             tk->word = token;
-            if (token == WORD_COMMAND)
+            if (token == WORD_REDIR)
+            {
+                tk->redirection = init_redirection(mj);
+                char *file = get_word(&s);
+                set_redirection(mj, tk->redirection, word, file);
+            }
+            else if (token == WORD_COMMAND)
             {
                 is_command = 1;
                 struct list *tmp = list_append(mj, tk->data, word);

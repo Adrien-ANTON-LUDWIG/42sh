@@ -5,7 +5,8 @@
 
 #define TOKENS_TO_STRING                                                       \
     {                                                                          \
-        "WORD_IF", "WORD_THEN", "WORD_FI", "WORD_COMMAND", "WORD_EOF"          \
+        "WORD_IF", "WORD_THEN", "WORD_FI", "WORD_REDIR", "WORD_COMMAND",       \
+            "WORD_EOF"                                                         \
     }
 
 struct token *token_init(struct major *major)
@@ -17,6 +18,7 @@ struct token *token_init(struct major *major)
 
     new->word = 0;
     new->data = NULL;
+    new->redirection = 0;
 
     return new;
 }
@@ -25,9 +27,14 @@ int token_get(char *s)
 {
     char *tokens_strings[] = TOKENS_STRINGS;
 
-    for (size_t i = 0; i < WORD_COMMAND; i++)
+    for (size_t i = 0; i < WORD_REDIR; i++)
         if (!strcmp(s, tokens_strings[i]))
             return i;
+
+    char *tokens_strings_redir[] = TOKENS_STRINGS_REDIR;
+    for (size_t i = 0; i < 2; i++)
+        if (!strcmp(s, tokens_strings_redir[i]))
+            return WORD_REDIR;
 
     return WORD_COMMAND;
 }
