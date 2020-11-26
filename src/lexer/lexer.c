@@ -1,6 +1,7 @@
 #include "lexer.h"
 
 #include <ctype.h>
+#include <string.h>
 
 #define BASIC_SEPARATOR "\r\v\n\t "
 #define COMMAND_SEPARTOR ";\n\t"
@@ -12,7 +13,7 @@ int my_is_space(int c)
 
 int is_word(int c)
 {
-    return c != '\0' && !my_isspace(c) && c != ';' && c != '\n' && c != '\r';
+    return c != '\0' && !my_is_space(c) && c != ';' && c != '\n' && c != '\r';
 }
 
 void skip_class(int (*classifier)(int), char **cursor)
@@ -60,8 +61,11 @@ static void _lexer_build(struct major *mj, struct lexer *lex, char *s)
             if (token == WORD_COMMAND)
             {
                 is_command = 1;
-                list_append(mj, tk->data, word);
+                struct list *tmp = list_append(mj, tk->data, word);
+                tk->data = tmp;
             }
+
+            lexer_append(mj, lex, tk);
         }
         if (*s == ';' || *s == '\n')
             s++;

@@ -1,6 +1,8 @@
 #ifndef LEXER_H
 #define LEXER_H
 
+#define _POSIX_C_SOURCE 200809L
+
 #include <stddef.h>
 #include <string.h>
 
@@ -24,5 +26,7 @@ struct lexer *lexer_init(struct major *mj);
 void lexer_append(struct major *mj, struct lexer *lex, struct token *tk);
 struct token *lexer_pop_head(struct major *mj, struct lexer *lex);
 void lexer_free(struct lexer *lex);
+
+struct lexer *lexer_build(struct major *mj, char *s);
 
 #endif /* LEXER_H */
