@@ -3,9 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "my_utils.h"
+
 #define TOKENS_TO_STRING                                                       \
     {                                                                          \
-        "WORD_IF", "WORD_THEN", "WORD_FI", "WORD_COMMAND", "WORD_EOF"          \
+        "WORD_IF", "WORD_THEN", "WORD_FI", "WORD_COMMAND", "WORD_EOF",         \
+            "WORD_AND"                                                         \
     }
 
 struct token *token_init(struct major *major)
@@ -36,4 +39,13 @@ char *token2string(struct token *tk)
 {
     char *tokens_strings[] = TOKENS_TO_STRING;
     return tokens_strings[tk->word];
+}
+
+void token_free(struct token *tk)
+{
+    if (!tk)
+        return;
+
+    list_free(tk->data);
+    free(tk);
 }

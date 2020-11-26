@@ -5,11 +5,21 @@
 #include <unistd.h>
 
 #include "argument_handler.h"
+#include "ast.h"
 #include "custom_descriptor.h"
 #include "execution.h"
+#include "lexer.h"
+#include "my_utils.h"
+#include "parser.h"
+#include "structures.h"
+#include "tokens.h"
 
 int main(int argc, char **argv)
 {
+    struct lexer *lex =
+        lexer_build(NULL, "if echo test; then echo tata; fi; echo cool");
+    struct ast *ast = parser(NULL, lex);
+    ast_printer(ast);
     if (argc < 2)
         return 0;
 

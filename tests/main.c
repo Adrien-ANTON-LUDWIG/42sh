@@ -4,8 +4,10 @@
 #include <string.h>
 
 #include "argument_handler.h"
+#include "ast.h"
 #include "custom_descriptor.h"
 #include "lexer.h"
+#include "parser.h"
 #include "printer.h"
 
 TestSuite(_42sh, .timeout = 15);
@@ -95,6 +97,29 @@ Test(_42sh, lexer_one_line_if)
     lexer_printer(lex);
 
     lexer_free(lex);
+}
+
+Test(_42sh, parser_simple_if)
+{
+    struct lexer *lex = lexer_build(NULL, "if echo test; then echo toto; fi");
+    struct ast *ast = parser(NULL, lex);
+    cr_assert_eq(strcmp(ast->left->data->data->head->data, "echo"), 0);
+    cr_assert_eq(strcmp(ast->left->data->data->tail->data, "test"), 0);
+    cr_assert_eq(strcmp(ast->right->data->data->head->data, "echo"), 0);
+    cr_assert_eq(strcmp(ast->right->data->data->tail->data, "toto"), 0);
+}
+
+Test(_42sh, parser_less_simple_if_but_still_kinda_simple)
+{
+    struct lexer *lex =
+        lexer_build(NULL, "if echo test\n then echo tata\n fi\n echo cool");
+    struct ast *ast = parser(NULL, lex);
+    cr_assert_eq(strcmp(ast->left->left->data->data->head->data, "echo"), 0);
+    cr_assert_eq(strcmp(ast->left->left->data->data->tail->data, "test"), 0);
+    cr_assert_eq(strcmp(ast->left->right->data->data->head->data, "echo"), 0);
+    cr_assert_eq(strcmp(ast->left->right->data->data->tail->data, "tata"), 0);
+    cr_assert_eq(ast->data->word, WORD_AND);
+    cr_assert_eq(strcmp(ast->right->data->data->tail->data, "cool"), 0);
 }
 
 int main(int argc, char **argv)

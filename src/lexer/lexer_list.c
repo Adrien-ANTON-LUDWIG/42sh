@@ -86,7 +86,7 @@ struct token *lexer_pop_head(struct major *mj, struct lexer *lex)
 
 static void token_list_free(struct token_list *tk_list)
 {
-    free(tk_list->tk);
+    token_free(tk_list->tk);
     free(tk_list);
 }
 
