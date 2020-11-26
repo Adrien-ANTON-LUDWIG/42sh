@@ -8,12 +8,26 @@ set(SRCS
     src/core/custom_descriptor.c
     src/core/argument_handler.c
     src/execution/execution.c
+    src/lexer/lexer_list.c
+    src/lexer/lexer.c
+    src/lexer/tokens/tokens.c
+    src/utils/list.c
+    src/utils/major.c
+    src/utils/my_err.c
+    src/lexer/printer.c
 )
 
 set (TESTSRC
     src/core/custom_descriptor.c
     src/core/argument_handler.c
     src/execution/execution.c
+    src/lexer/lexer_list.c
+    src/lexer/lexer.c
+    src/lexer/tokens/tokens.c
+    src/utils/list.c
+    src/utils/major.c
+    src/utils/my_err.c
+    src/lexer/printer.c
 )
 
 set(HEADERS
@@ -25,6 +39,7 @@ set(HEADERS
     src/include/execution.h
     src/include/structures.h
     src/include/tokens.h
+    src/include/printer.h
 )
 
 add_compile_options(-g -Wall -Wextra -pedantic -Werror -std=c99 -lcriterion)
