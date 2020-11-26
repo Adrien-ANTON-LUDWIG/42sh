@@ -1,5 +1,25 @@
+#include <err.h>
 #include <stdlib.h>
 #include <string.h>
+
+/**
+ * @brief Get the index of the first non command string
+ *
+ * @param index the index after "-c"
+ * @param argc
+ * @param argv
+ * @return int
+ */
+int get_index_command_string(int index, int argc, char *argv[])
+{
+    while (index < argc && argv[index][0] == '-')
+    {
+        if (strlen(argv[index]) >= 2 && argv[index][1] == '-')
+            errx(2, "--: invalid option");
+        index++;
+    }
+    return index;
+}
 
 /**
  * @brief Merges argv into a single string

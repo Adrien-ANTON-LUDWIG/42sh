@@ -7,6 +7,8 @@
 #include "argument_handler.h"
 #include "custom_descriptor.h"
 #include "execution.h"
+#include "lexer.h"
+#include "printer.h"
 
 int main(int argc, char **argv)
 {
@@ -17,8 +19,14 @@ int main(int argc, char **argv)
     {
         if (strcmp(argv[i], "-c") == 0)
         {
-            char *args = merge_arguments(argc - i - 1, argv + i + 1);
-            printf("%s\n", args);
+            if (i + 1 == argc)
+                errx(2, "-c: option requires an argument");
+
+            struct major *mj = major_init();
+            int from = get_index_command_string(i + 1, argc, argv);
+            char *args = merge_arguments(argc - from, argv + from);
+            struct lexer *lexer = lexer_build(mj, args);
+            lexer_printer(lexer);
             free(args);
             return 0;
         }
