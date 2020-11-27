@@ -5,15 +5,6 @@
 #include "ast.h"
 #include "my_xmalloc.h"
 
-static struct ast *create_ast(struct major *mj, struct token *tk)
-{
-    if (!tk)
-        return NULL;
-    struct ast *ast = my_xcalloc(mj, 1, sizeof(struct ast));
-    ast->data = tk;
-    return ast;
-}
-
 struct ast *add_single_command(struct major *mj, struct ast *ast,
                                struct token *tk)
 {
