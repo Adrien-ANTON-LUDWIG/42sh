@@ -1,5 +1,10 @@
 #include "my_utils.h"
 
+/**
+ * @brief Initializes major
+ *
+ * @return struct major*
+ */
 struct major *major_init(void)
 {
     struct major *new = malloc(sizeof(struct major));
@@ -9,6 +14,11 @@ struct major *major_init(void)
     return new;
 }
 
+/**
+ * @brief Frees struct major
+ *
+ * @param mj
+ */
 void major_free(struct major *mj)
 {
     free(mj);

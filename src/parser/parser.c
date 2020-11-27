@@ -3,8 +3,18 @@
 #include <stdlib.h>
 
 #include "ast.h"
+#include "exec_ast.h"
 #include "my_xmalloc.h"
 
+/**
+ * @brief Adds a AND command with the ast as its left son and tk as its right
+ * son
+ *
+ * @param mj major structure
+ * @param ast an ast
+ * @param tk
+ * @return struct ast* The newly built ast
+ */
 struct ast *add_single_command(struct major *mj, struct ast *ast,
                                struct token *tk)
 {
@@ -21,6 +31,15 @@ struct ast *add_single_command(struct major *mj, struct ast *ast,
     return newast;
 }
 
+/**
+ * @brief Handles the parsing of an "if" condition
+ *
+ * @param mj major structure
+ * @param lex the lexer
+ * @param ast
+ * @param tk
+ * @return struct ast*
+ */
 static struct ast *parser_if(struct major *mj, struct lexer *lex,
                              struct ast *ast, struct token *tk)
 {
@@ -49,6 +68,15 @@ static struct ast *parser_if(struct major *mj, struct lexer *lex,
     return ast;
 }
 
+/**
+ * @brief Decides which function to call depending on the kind of token
+ *
+ * @param mj
+ * @param ast
+ * @param lex
+ * @param tk
+ * @return struct ast*
+ */
 struct ast *take_action(struct major *mj, struct ast *ast, struct lexer *lex,
                         struct token *tk)
 {
@@ -61,6 +89,13 @@ struct ast *take_action(struct major *mj, struct ast *ast, struct lexer *lex,
     return ast;
 }
 
+/**
+ * @brief Parses and executes
+ *
+ * @param mj
+ * @param lex
+ * @return struct ast*
+ */
 struct ast *parser(struct major *mj, struct lexer *lex)
 {
     struct token *tk = NULL;
@@ -68,6 +103,9 @@ struct ast *parser(struct major *mj, struct lexer *lex)
     while ((tk = lexer_pop_head(mj, lex))->word != WORD_EOF)
     {
         ast = take_action(mj, ast, lex, tk);
+        exec_ast(mj, ast);
+        ast_free(ast);
+        ast = NULL;
     }
     return ast;
 }

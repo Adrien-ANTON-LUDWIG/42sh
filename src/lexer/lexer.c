@@ -9,22 +9,46 @@
 #define BASIC_SEPARATOR "\r\v\n\t "
 #define COMMAND_SEPARTOR ";\n\t"
 
+/**
+ * @brief Returns 1 if a given char is a space or equivalent. Else return 0.
+ *
+ * @param c
+ * @return int
+ */
 int my_is_space(int c)
 {
     return c == ' ' || c == '\t' || c == '\v';
 }
 
+/**
+ * @brief Returns 1 if a given char is not a space of separator. Else return 0;
+ *
+ * @param c
+ * @return int
+ */
 int is_word(int c)
 {
     return c != '\0' && !my_is_space(c) && c != ';' && c != '\n' && c != '\r';
 }
 
+/**
+ * @brief
+ *
+ * @param classifier
+ * @param cursor
+ */
 void skip_class(int (*classifier)(int), char **cursor)
 {
     while (classifier(**cursor))
         (*cursor)++;
 }
 
+/**
+ * @brief Get the word object
+ *
+ * @param s
+ * @return char*
+ */
 static char *get_word(char **s)
 {
     skip_class(my_is_space, s);

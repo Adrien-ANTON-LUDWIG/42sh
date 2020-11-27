@@ -24,6 +24,13 @@ static struct token_list *token_list_init(struct major *mj, struct token *tk)
     return new;
 }
 
+/**
+ * @brief Inits a new struct lexer which contains the head and tail of a
+ * token_list double linked list. Inits head and tail to NULL;
+ *
+ * @param mj struct to handle errors
+ * @return struct lexer*
+ */
 struct lexer *lexer_init(struct major *mj)
 {
     struct lexer *new = malloc(sizeof(struct lexer));
@@ -37,6 +44,14 @@ struct lexer *lexer_init(struct major *mj)
     return new;
 }
 
+/**
+ * @brief Takes a token and inits a struct token_list in order to append if to
+ * the double linked list lexer (in tail)
+ *
+ * @param mj struct to handle errors
+ * @param lex double linked list
+ * @param tk token to add
+ */
 void lexer_append(struct major *mj, struct lexer *lex, struct token *tk)
 {
     if (!lex || !tk)
@@ -57,6 +72,13 @@ void lexer_append(struct major *mj, struct lexer *lex, struct token *tk)
     }
 }
 
+/**
+ * @brief Pops head and returns the token extracted from the poped head.
+ *
+ * @param mj struct to handle errors
+ * @param lex
+ * @return struct token*
+ */
 struct token *lexer_pop_head(struct major *mj, struct lexer *lex)
 {
     if (!lex)
@@ -84,12 +106,22 @@ struct token *lexer_pop_head(struct major *mj, struct lexer *lex)
     return tk;
 }
 
+/**
+ * @brief Frees a token_list struct
+ *
+ * @param tk_list
+ */
 static void token_list_free(struct token_list *tk_list)
 {
     token_free(tk_list->tk);
     free(tk_list);
 }
 
+/**
+ * @brief Frees a lexer struct
+ *
+ * @param lex
+ */
 void lexer_free(struct lexer *lex)
 {
     if (!lex)

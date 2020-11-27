@@ -7,6 +7,13 @@
 #include "structures.h"
 #include "tokens.h"
 
+/**
+ * @brief Creates a new ast and puts tk as it's data
+ *
+ * @param mj
+ * @param tk
+ * @return struct ast*
+ */
 struct ast *create_ast(struct major *mj, struct token *tk)
 {
     if (!tk)
@@ -16,6 +23,11 @@ struct ast *create_ast(struct major *mj, struct token *tk)
     return ast;
 }
 
+/**
+ * @brief Print the ast's infix traversal
+ *
+ * @param ast
+ */
 void ast_printer(struct ast *ast)
 {
     if (!ast)
@@ -25,6 +37,11 @@ void ast_printer(struct ast *ast)
     ast_printer(ast->right);
 }
 
+/**
+ * @brief Frees the ast
+ *
+ * @param ast
+ */
 void ast_free(struct ast *ast)
 {
     if (!ast)
