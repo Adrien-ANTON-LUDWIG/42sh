@@ -1,0 +1,94 @@
+name: empty_string
+command: ../build/lexer_test -c ""
+stdout: |
+  WORD_EOF
+returncode: 0
+---
+name: easy_command
+command: ../build/lexer_test -c "echo simple"
+stdout: |
+  WORD_COMMAND echo simple
+  WORD_EOF
+returncode: 0
+---
+name: normal_command
+command: ../build/lexer_test -c "echo toto tata"
+stdout: |
+  WORD_COMMAND echo toto tata
+  WORD_EOF
+returncode: 0
+---
+name: two_commands_;
+command: ../build/lexer_test -c "echo foo; echo bar"
+stdout: |
+  WORD_COMMAND echo foo
+  WORD_COMMAND echo bar
+  WORD_EOF
+returncode: 0
+---
+#name: two_commands_newline
+#command: ../build/lexer_test -c "echo foo echo bar"
+#stdout: |
+#  WORD_COMMAND echo foo
+#  WORD_COMMAND echo bar
+#  WORD_EOF
+#returncode: 0
+#---
+name: simple_if
+command: ../build/lexer_test -c "if echo foo; then echo bar; fi"
+stdout: |
+  WORD_IF
+  WORD_COMMAND echo foo
+  WORD_THEN
+  WORD_COMMAND echo bar
+  WORD_FI
+  WORD_EOF
+returncode: 0
+---
+name: redir_stdout_trunc
+command: ../build/lexer_test -c "echo foo > file"
+stdout: |
+  WORD_COMMAND echo foo
+  WORD_REDIR 1> file
+  WORD_EOF
+returncode: 0
+---
+name: redir_stdout_append
+command: ../build/lexer_test -c "echo foo >> file"
+stdout: |
+  WORD_COMMAND echo foo
+  WORD_REDIR 1>> file
+  WORD_EOF
+returncode: 0
+---
+name: redir_stderr_trunc
+command: ../build/lexer_test -c "echo foo 2> file"
+stdout: |
+  WORD_COMMAND echo foo
+  WORD_REDIR 2> file
+  WORD_EOF
+returncode: 0
+---
+name: redir_stderr_append
+command: ../build/lexer_test -c "echo foo 2>> file"
+stdout: |
+  WORD_COMMAND echo foo
+  WORD_REDIR 2>> file
+  WORD_EOF
+returncode: 0
+---
+name: redir_stdout_append_stderr_trunc
+command: ../build/lexer_test -c "echo foo 1>> out 2> err"
+stdout: |
+  WORD_COMMAND echo foo
+  WORD_REDIR 1>> out 2> err
+  WORD_EOF
+returncode: 0
+---
+name: redir_stdin
+command: ../build/lexer_test -c "cat < file"
+stdout: |
+  WORD_COMMAND cat
+  WORD_REDIR < file
+  WORD_EOF
+returncode: 0

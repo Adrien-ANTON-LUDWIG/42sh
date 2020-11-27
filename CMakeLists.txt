@@ -3,6 +3,7 @@ project(42sh)
 
 include_directories("${CMAKE_SOURCE_DIR}/src/include" "${CMAKE_SOURCE_DIR}/src/tokens_exec")
 
+
 set(SRCS
     src/core/main.c
     src/core/custom_descriptor.c
@@ -67,4 +68,5 @@ add_compile_options(-g -Wall -Wextra -pedantic -Werror -std=c99 -lcriterion)
 add_executable(42sh ${SRCS} ${HEADERS})
 
 add_executable(testsuite ${TESTSRC} ${HEADERS} tests/main.c)
+add_executable(lexer_test ${TESTSRC} tests/lexer_tests/lexer_test.c ${HEADERS})
 target_link_libraries(testsuite PUBLIC criterion)

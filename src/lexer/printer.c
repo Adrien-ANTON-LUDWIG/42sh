@@ -3,6 +3,20 @@
 #include "lexer.h"
 #include "tokens.h"
 
+static void print_token_redir(struct token *tk)
+{
+    if (tk->redirection->std_in)
+        printf(" < %s", tk->redirection->std_in);
+    if (tk->redirection->std_out)
+        printf(" 1%s %s",
+               tk->redirection->std_out_append_mode == REDIR_TRUNK ? ">" : ">>",
+               tk->redirection->std_out);
+    if (tk->redirection->std_err)
+        printf(" 2%s %s",
+               tk->redirection->std_err_append_mode == REDIR_TRUNK ? ">" : ">>",
+               tk->redirection->std_err);
+}
+
 void print_token(struct token *tk)
 {
     printf("%s", token2string(tk));
@@ -18,10 +32,7 @@ void print_token(struct token *tk)
     }
     else if (tk->word == WORD_REDIR)
     {
-        printf("\n\tstdin: %s\n", tk->redirection->std_in);
-        printf("\tstdout: %s\tappend_mode: %d\n", tk->redirection->std_out,
-               tk->redirection->append_mode);
-        printf("\tstderr: %s\n", tk->redirection->std_err);
+        print_token_redir(tk);
     }
 
     printf("\n");
@@ -43,5 +54,4 @@ void lexer_printer(struct lexer *lex)
         print_token(tk);
         tmp = tmp->next;
     }
-    printf("---\n");
 }
