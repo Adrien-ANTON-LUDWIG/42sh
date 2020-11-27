@@ -33,15 +33,12 @@ static struct ast *parser_if(struct major *mj, struct lexer *lex,
     struct token *then = lexer_pop_head(mj, lex);
     struct token *expr = NULL;
     struct ast *newast = create_ast(mj, tk);
+    newast->left = take_action(mj, newast->left, lex, cond);
     while ((expr = lexer_pop_head(mj, lex))->word != WORD_FI)
     {
         if (expr->word == WORD_EOF)
             my_err(1, mj, "parser_if: unexpected EOF");
-        newast->left = create_ast(mj, cond);
-        if (expr->word != WORD_COMMAND)
-            newast->right = take_action(mj, newast->right, lex, expr);
-        else
-            newast->right = create_ast(mj, expr);
+        newast->right = take_action(mj, newast->right, lex, expr);
     }
     if (then->word != WORD_THEN)
         my_err(1, mj, "parser_if: syntax error");
