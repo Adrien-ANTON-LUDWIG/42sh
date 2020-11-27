@@ -89,6 +89,13 @@ struct ast *take_action(struct major *mj, struct ast *ast, struct lexer *lex,
     return ast;
 }
 
+/**
+ * @brief Parses and executes
+ *
+ * @param mj
+ * @param lex
+ * @return struct ast*
+ */
 struct ast *parser(struct major *mj, struct lexer *lex)
 {
     struct token *tk = NULL;

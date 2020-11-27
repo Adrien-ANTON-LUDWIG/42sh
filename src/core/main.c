@@ -12,6 +12,13 @@
 #include "parser.h"
 #include "printer.h"
 
+/**
+ * @brief It's the main function :)
+ *
+ * @param argc
+ * @param argv
+ * @return int
+ */
 int main(int argc, char **argv)
 {
     if (argc < 2)
