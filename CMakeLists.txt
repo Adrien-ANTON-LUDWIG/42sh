@@ -18,6 +18,7 @@ set(SRCS
     src/lexer/tokens/redirection.c
     src/parser/parser.c
     src/parser/ast.c
+    src/utils/my_xmalloc.c
 )
 
 set (TESTSRC
@@ -34,6 +35,7 @@ set (TESTSRC
     src/lexer/tokens/redirection.c
     src/parser/parser.c
     src/parser/ast.c
+    src/utils/my_xmalloc.c
 )
 
 set(HEADERS
@@ -49,6 +51,7 @@ set(HEADERS
     src/include/redirection.h
     src/include/parser.h
     src/include/ast.h
+    src/include/my_xmalloc.h
 )
 
 add_compile_options(-g -Wall -Wextra -pedantic -Werror -std=c99 -lcriterion)

@@ -13,5 +13,7 @@ struct ast
 };
 
 struct ast *parser(struct major *mj, struct lexer *lex);
+struct ast *take_action(struct major *mj, struct ast *ast, struct lexer *lex,
+                        struct token *tk);
 
 #endif /* PARSER_H */
