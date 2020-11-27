@@ -12,7 +12,8 @@ struct redir *init_redirection(struct major *mj)
     if (!new_redir)
         my_err(1, mj, "init_redirection: bad malloc");
 
-    new_redir->append_mode = 0;
+    new_redir->std_out_append_mode = 0;
+    new_redir->std_err_append_mode = 0;
     new_redir->std_err = NULL;
     new_redir->std_in = NULL;
     new_redir->std_out = NULL;
@@ -29,11 +30,11 @@ void set_redirection(struct major *mj, struct redir *redirection, char *word,
     if (!strcmp(">", word))
     {
         redirection->std_out = file;
-        redirection->append_mode = REDIR_TRUNK;
+        redirection->std_out_append_mode = REDIR_TRUNK;
     }
     else if (!strcmp(">>", word))
     {
         redirection->std_out = file;
-        redirection->append_mode = REDIR_APPEND;
+        redirection->std_out_append_mode = REDIR_APPEND;
     }
 }
