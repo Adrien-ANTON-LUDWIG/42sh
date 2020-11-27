@@ -9,6 +9,7 @@
 #include "custom_descriptor.h"
 #include "execution.h"
 #include "lexer.h"
+#include "parser.h"
 #include "printer.h"
 
 int main(int argc, char **argv)
@@ -27,7 +28,8 @@ int main(int argc, char **argv)
             int from = get_index_command_string(i + 1, argc, argv);
             char *args = merge_arguments(argc - from, argv + from);
             struct lexer *lexer = lexer_build(mj, args);
-            lexer_printer(lexer);
+            // lexer_printer(lexer);
+            parser(mj, lexer);
             free(args);
             return 0;
         }

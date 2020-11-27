@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 project(42sh)
 
-include_directories("${CMAKE_SOURCE_DIR}/src/include")
+include_directories("${CMAKE_SOURCE_DIR}/src/include" "${CMAKE_SOURCE_DIR}/src/tokens_exec")
 
 set(SRCS
     src/core/main.c
@@ -19,6 +19,9 @@ set(SRCS
     src/parser/parser.c
     src/parser/ast.c
     src/utils/my_xmalloc.c
+    src/execution/exec_ast.c
+    src/tokens_exec/command_execution.c
+    src/tokens_exec/if_execution.c
 )
 
 set (TESTSRC
@@ -36,6 +39,9 @@ set (TESTSRC
     src/parser/parser.c
     src/parser/ast.c
     src/utils/my_xmalloc.c
+    src/execution/exec_ast.c
+    src/tokens_exec/command_execution.c
+    src/tokens_exec/if_execution.c
 )
 
 set(HEADERS
@@ -52,6 +58,9 @@ set(HEADERS
     src/include/parser.h
     src/include/ast.h
     src/include/my_xmalloc.h
+    src/include/exec_ast.h
+    src/tokens_exec/command_execution.h
+    src/tokens_exec/if_execution.h
 )
 
 add_compile_options(-g -Wall -Wextra -pedantic -Werror -std=c99 -lcriterion)
