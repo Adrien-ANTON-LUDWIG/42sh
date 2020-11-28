@@ -2,14 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-/**
- * @brief Get the index of the first non command string
- *
- * @param index the index after "-c"
- * @param argc
- * @param argv
- * @return int
- */
 int get_index_command_string(int index, int argc, char *argv[])
 {
     while (index < argc && argv[index][0] == '-')
@@ -21,13 +13,6 @@ int get_index_command_string(int index, int argc, char *argv[])
     return index;
 }
 
-/**
- * @brief Merges argv into a single string
- *
- * @param argc
- * @param argv
- * @return char*
- */
 char *merge_arguments(int argc, char **argv)
 {
     if (argc <= 0)

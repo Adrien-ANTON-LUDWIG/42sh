@@ -9,12 +9,6 @@
 #define BASIC_SEPARATOR "\r\v\n\t "
 #define COMMAND_SEPARTOR ";\n\t"
 
-/**
- * @brief Returns 1 if a given char is a space or equivalent. Else return 0.
- *
- * @param c
- * @return int
- */
 int my_is_space(int c)
 {
     return c == ' ' || c == '\t' || c == '\v';

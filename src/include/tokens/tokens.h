@@ -34,18 +34,44 @@ struct token
     struct redir *redirection;
 };
 
-struct redir // 2> filename
+struct redir
 {
-    char *std_in; // defaut = NULL
-    char *std_out; // defaut = NULL
-    char *std_err; // defaut = filename
+    char *std_in;
+    char *std_out;
+    char *std_err;
     int std_out_append_mode;
     int std_err_append_mode;
 };
 
+/**
+ * @brief Inits a struct token.
+ *
+ * @param major
+ * @return struct token*
+ */
 struct token *token_init(struct major *major);
+
+/**
+ * @brief Gets the WORD_TYPE (enum words) of a char*
+ *
+ * @param s
+ * @return int
+ */
 int token_get(char *s);
+
+/**
+ * @brief Converts a the field word of a token into a string
+ *
+ * @param tk
+ * @return char*
+ */
 char *token2string(struct token *tk);
+
+/**
+ * @brief Frees a token struct.
+ *
+ * @param tk Token to free
+ */
 void token_free(struct token *tk);
 
 #endif /* TOKENS_H */

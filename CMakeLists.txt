@@ -1,72 +1,43 @@
 cmake_minimum_required(VERSION 3.0)
 project(42sh)
 
-include_directories("${CMAKE_SOURCE_DIR}/src/include" "${CMAKE_SOURCE_DIR}/src/tokens_exec")
+include_directories("src/include/core"
+                    "src/include/execution"
+                    "src/include/lexer"
+                    "src/include/parser"
+                    "src/include/tokens"
+                    "src/include/tokens/lexing"
+                    "src/include/"
+                    "src/include/tokens/execution"
+                    "src/include/tests"
+                    "src/include/utils")
 
-
-set(SRCS
-    src/core/main.c
+set (SRC
     src/core/custom_descriptor.c
     src/core/argument_handler.c
     src/execution/execution.c
+    src/execution/exec_ast.c
     src/lexer/lexer_list.c
     src/lexer/lexer.c
-    src/lexer/tokens/tokens.c
+    src/parser/ast.c
+    src/parser/parser.c
+    src/tokens/execution/command_execution.c
+    src/tokens/execution/if_execution.c
+    src/tokens/lexing/redirection.c
+    src/tokens/tokens.c
     src/utils/list.c
     src/utils/major.c
     src/utils/my_err.c
-    src/lexer/printer.c
-    src/lexer/tokens/redirection.c
-    src/parser/parser.c
-    src/parser/ast.c
     src/utils/my_xmalloc.c
-    src/execution/exec_ast.c
-    src/tokens_exec/command_execution.c
-    src/tokens_exec/if_execution.c
+    tests/printer.c
 )
 
-set (TESTSRC
-    src/core/custom_descriptor.c
-    src/core/argument_handler.c
-    src/execution/execution.c
-    src/lexer/lexer_list.c
-    src/lexer/lexer.c
-    src/lexer/tokens/tokens.c
-    src/utils/list.c
-    src/utils/major.c
-    src/utils/my_err.c
-    src/lexer/printer.c
-    src/lexer/tokens/redirection.c
-    src/parser/parser.c
-    src/parser/ast.c
-    src/utils/my_xmalloc.c
-    src/execution/exec_ast.c
-    src/tokens_exec/command_execution.c
-    src/tokens_exec/if_execution.c
-)
-
-set(HEADERS
-    src/include/custom_descriptor.h
-    src/include/argument_handler.h
-    src/include/lexer.h
-    src/include/my_utils.h
-    src/include/parser.h
-    src/include/execution.h
-    src/include/structures.h
-    src/include/tokens.h
-    src/include/printer.h
-    src/include/redirection.h
-    src/include/parser.h
-    src/include/ast.h
-    src/include/my_xmalloc.h
-    src/include/exec_ast.h
-    src/tokens_exec/command_execution.h
-    src/tokens_exec/if_execution.h
-)
+file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/include/*.h")
 
 add_compile_options(-g -Wall -Wextra -pedantic -Werror -std=c99 -lcriterion)
-add_executable(42sh ${SRCS} ${HEADERS})
 
-add_executable(testsuite ${TESTSRC} ${HEADERS} tests/main.c)
-add_executable(lexer_test ${TESTSRC} tests/lexer_tests/lexer_test.c ${HEADERS})
+add_executable(42sh ${SRC} ${HEADERS} src/main.c)
+add_executable(testsuite ${SRC} ${HEADERS} tests/main.c)
+add_executable(lexer_test ${SRC} tests/lexer_tests/lexer_test.c ${HEADERS})
+
 target_link_libraries(testsuite PUBLIC criterion)

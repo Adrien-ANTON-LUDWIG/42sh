@@ -30,9 +30,47 @@ struct custom_FILE
     size_t len;
 };
 
+/**
+ * @brief Simulates a FILE structure if path is NULL
+ *
+ * @param path Can be NULL
+ * @return struct custom_FILE*
+ */
 struct custom_FILE *custom_fopen(const char *path);
+
+/**
+ * @brief Creates a custom_FILE structure from a string
+ *
+ * @param str
+ * @return struct custom_FILE*
+ */
 struct custom_FILE *createfrom_string(char *str);
+
+/**
+ * @brief If the custom_FILE is linked to a FILE structure
+ * the FILE is closed
+ * Frees the allocated custom_FILE
+ *
+ * @param f
+ */
 void custom_fclose(struct custom_FILE *f);
+
+/**
+ * @brief Same as fgets but works with strings
+ *
+ * @param s buffer
+ * @param size amount of bytes to read
+ * @param f
+ * @return char* pointer to s
+ */
 char *custom_fgets(char *s, size_t size, struct custom_FILE *f);
 
+/**
+ * @brief Takes a custom file and returns a single
+ * string whith all its data.
+ *
+ * @param f custom_FILE
+ * @return char*
+ */
+char *custom_getfile(struct custom_FILE *f);
 #endif
