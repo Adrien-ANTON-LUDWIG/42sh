@@ -61,6 +61,8 @@ static struct ast *parser_if(struct major *mj, struct lexer *lex,
     }
     if (then->word != WORD_THEN)
         my_err(1, mj, "parser_if: syntax error");
+    token_free(then);
+    token_free(expr);
     if (ast)
         ast->right = newast;
     else
@@ -84,6 +86,8 @@ struct ast *take_action(struct major *mj, struct ast *ast, struct lexer *lex,
         ast = parser_if(mj, lex, ast, tk);
     else if (tk->word == WORD_COMMAND)
         ast = add_single_command(mj, ast, tk);
+    else if (tk->word == WORD_REDIR)
+        token_free(tk);
     else
         my_err(1, mj, "parser: syntax error");
     return ast;
@@ -107,5 +111,6 @@ struct ast *parser(struct major *mj, struct lexer *lex)
         ast_free(ast);
         ast = NULL;
     }
+    token_free(tk);
     return ast;
 }

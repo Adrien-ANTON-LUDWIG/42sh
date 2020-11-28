@@ -37,6 +37,8 @@ int main(int argc, char **argv)
             struct lexer *lexer = lexer_build(mj, args);
             parser(mj, lexer);
             free(args);
+            lexer_free(lexer);
+            major_free(mj);
             return 0;
         }
         else if (strcmp(argv[i], "-O") == 0)

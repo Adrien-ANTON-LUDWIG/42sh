@@ -61,11 +61,13 @@ static char *get_word(char **s)
 static void _lexer_build(struct major *mj, struct lexer *lex, char *s)
 {
     int is_command = 0;
-    struct token *tk;
+    struct token *tk = NULL;
     while (*s)
     {
-        char *word = get_word(&s);
+        if (*s == ';')
+            my_err(1, mj, "-c: erreur de syntaxe près du symbole inattendu ;");
 
+        char *word = get_word(&s);
         if (is_command)
         {
             list_append(mj, tk->data, word);
@@ -87,9 +89,14 @@ static void _lexer_build(struct major *mj, struct lexer *lex, char *s)
             }
             else if (token == WORD_COMMAND)
             {
-                is_command = 1;
+                if (*s != ';')
+                    is_command = 1;
                 struct list *tmp = list_append(mj, tk->data, word);
                 tk->data = tmp;
+            }
+            else
+            {
+                free(word);
             }
 
             lexer_append(mj, lex, tk);

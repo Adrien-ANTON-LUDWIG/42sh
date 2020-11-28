@@ -37,4 +37,17 @@ void set_redirection(struct major *mj, struct redir *redirection, char *word,
         redirection->std_out = file;
         redirection->std_out_append_mode = REDIR_APPEND;
     }
+
+    free(word);
+}
+
+void free_redirection(struct redir *redir)
+{
+    if (!redir)
+        return;
+
+    free(redir->std_in);
+    free(redir->std_out);
+    free(redir->std_err);
+    free(redir);
 }

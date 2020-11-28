@@ -32,6 +32,6 @@ int run_command(char **args)
     waitpid(pid, &rvalue, 0);
     rvalue = WEXITSTATUS(rvalue);
     if (rvalue == 127)
-        fprintf(stderr, "Command not found: %s", args[0]);
+        fprintf(stderr, "Command not found: %s\n", args[0]);
     return rvalue;
 }
