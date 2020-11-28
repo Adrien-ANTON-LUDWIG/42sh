@@ -13,5 +13,7 @@ test:
     tags:
         - docker
     script:
-        - echo "There is nothing to test..."
+        - mkdir build && cd build
+        - cmake .. && make
+        - make check
         - find . -name '*.c' | xargs wc -l
