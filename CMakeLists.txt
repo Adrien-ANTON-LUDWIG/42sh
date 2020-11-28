@@ -21,6 +21,7 @@ set (SRC
     src/lexer/lexer.c
     src/parser/ast.c
     src/parser/parser.c
+    src/parser/parser_if.c
     src/tokens/execution/command_execution.c
     src/tokens/execution/if_execution.c
     src/tokens/lexing/redirection.c

@@ -5,7 +5,7 @@
 
 #define TOKENS_STRINGS                                                         \
     {                                                                          \
-        "if", "then", "fi"                                                     \
+        "if", "then", "elif", "else", "fi"                                     \
     }
 
 #define TOKENS_STRINGS_REDIR                                                   \
@@ -20,6 +20,8 @@ enum words
 {
     WORD_IF,
     WORD_THEN,
+    WORD_ELIF,
+    WORD_ELSE,
     WORD_FI,
     WORD_REDIR,
     WORD_COMMAND,

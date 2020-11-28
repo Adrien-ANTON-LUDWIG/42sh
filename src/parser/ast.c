@@ -1,3 +1,5 @@
+#include "ast.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -16,8 +18,6 @@
  */
 struct ast *create_ast(struct major *mj, struct token *tk)
 {
-    if (!tk)
-        return NULL;
     struct ast *ast = my_xcalloc(mj, 1, sizeof(struct ast));
     ast->data = tk;
     return ast;
@@ -34,6 +34,7 @@ void ast_printer(struct ast *ast)
         return;
     ast_printer(ast->left);
     print_token(ast->data);
+    ast_printer(ast->middle);
     ast_printer(ast->right);
 }
 
@@ -48,6 +49,7 @@ void ast_free(struct ast *ast)
         return;
     token_free(ast->data);
     ast_free(ast->left);
+    ast_free(ast->middle);
     ast_free(ast->right);
     free(ast);
 }
