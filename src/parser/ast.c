@@ -49,4 +49,5 @@ void ast_free(struct ast *ast)
     token_free(ast->data);
     ast_free(ast->left);
     ast_free(ast->right);
+    free(ast);
 }

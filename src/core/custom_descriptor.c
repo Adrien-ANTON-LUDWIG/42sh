@@ -6,12 +6,8 @@
 #include <string.h>
 #include <unistd.h>
 
-/**
- * @brief Simulates a FILE structure if path is NULL
- *
- * @param path Can be NULL
- * @return struct custom_FILE*
- */
+#include "my_xmalloc.h"
+
 struct custom_FILE *custom_fopen(const char *path)
 {
     struct custom_FILE *f = malloc(sizeof(struct custom_FILE));
@@ -36,12 +32,6 @@ struct custom_FILE *custom_fopen(const char *path)
     return f;
 }
 
-/**
- * @brief Creates a custom_FILE structure from a string
- *
- * @param str
- * @return struct custom_FILE*
- */
 struct custom_FILE *createfrom_string(char *str)
 {
     struct custom_FILE *f = custom_fopen(NULL);
@@ -51,13 +41,6 @@ struct custom_FILE *createfrom_string(char *str)
     return f;
 }
 
-/**
- * @brief If the custom_FILE is linked to a FILE structure
- * the FILE is closed
- * Frees the allocated custom_FILE
- *
- * @param f
- */
 void custom_fclose(struct custom_FILE *f)
 {
     if (f->fd == CUSTOM_FD)
@@ -67,14 +50,6 @@ void custom_fclose(struct custom_FILE *f)
     free(f);
 }
 
-/**
- * @brief Same as fgets but works with strings
- *
- * @param s buffer
- * @param size amount of bytes to read
- * @param f
- * @return char* pointer to s
- */
 char *custom_fgets(char *s, size_t size, struct custom_FILE *f)
 {
     if (f->fd != CUSTOM_FD)
@@ -90,13 +65,7 @@ char *custom_fgets(char *s, size_t size, struct custom_FILE *f)
     }
     return s;
 }
-/**
- * @brief Takes a custom file and returns a single
- * string whith all its data.
- *
- * @param f custom_FILE
- * @return char*
- */
+
 char *custom_getfile(struct custom_FILE *f)
 {
     if (f->fd == CUSTOM_FD)
@@ -105,10 +74,12 @@ char *custom_getfile(struct custom_FILE *f)
     size = ftell(f->file);
     fseek(f->file, 0, SEEK_SET);
 
-    char *getfile = malloc(size);
+    char *getfile = my_xmalloc(NULL, size + 1);
 
     if (fread(getfile, sizeof(char), size, f->file) == 0)
         errx(2, "Custom getfile: could not open file\n");
+
+    getfile[size] = '\0';
 
     return getfile;
 }

@@ -7,3 +7,5 @@ src/main
 venv
 __pycache__
 build
+html
+latex

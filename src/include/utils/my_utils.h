@@ -9,10 +9,30 @@
 #include "structures.h"
 
 /* MAJOR */
+
+/**
+ * @brief Initializes major
+ *
+ * @return struct major*
+ */
 struct major *major_init(void);
+
+/**
+ * @brief Frees struct major
+ *
+ * @param mj
+ */
 void major_free(struct major *mj);
 
 /* MY_ERR */
+
+/**
+ * @brief Frees major and crashes
+ *
+ * @param err_code
+ * @param mj
+ * @param message
+ */
 void my_err(int err_code, struct major *mj, char *message);
 
 /* LIST */

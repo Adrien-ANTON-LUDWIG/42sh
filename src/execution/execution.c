@@ -7,12 +7,6 @@
 #include "lexer.h"
 #include "my_utils.h"
 
-/**
- * @brief Converts the command from struct list to a char **
- *
- * @param l
- * @return char**
- */
 char **token_list_to_char_array(struct list *l)
 {
     char **tab = malloc(sizeof(char **) * l->size);
@@ -26,12 +20,6 @@ char **token_list_to_char_array(struct list *l)
     return tab;
 }
 
-/**
- * @brief Executes a command
- *
- * @param args
- * @return int
- */
 int run_command(char **args)
 {
     int pid = fork();
@@ -44,6 +32,6 @@ int run_command(char **args)
     waitpid(pid, &rvalue, 0);
     rvalue = WEXITSTATUS(rvalue);
     if (rvalue == 127)
-        fprintf(stderr, "Command not found: %s", args[0]);
+        fprintf(stderr, "Command not found: %s\n", args[0]);
     return rvalue;
 }

@@ -27,7 +27,7 @@ struct ast *add_single_command(struct major *mj, struct ast *ast,
     and->word = WORD_AND;
     struct ast *newast = create_ast(mj, and);
     newast->left = ast;
-    newast->right = create_ast(mj, tk);
+    newast->right = NULL;
     return newast;
 }
 
@@ -45,7 +45,7 @@ static struct ast *parser_if(struct major *mj, struct lexer *lex,
 {
     if (ast && ast->data->word == WORD_COMMAND)
     {
-        struct ast *newast = add_single_command(mj, ast, ast->data);
+        struct ast *newast = add_single_command(mj, ast, NULL);
         ast = newast;
     }
     struct token *cond = lexer_pop_head(mj, lex);
@@ -61,6 +61,8 @@ static struct ast *parser_if(struct major *mj, struct lexer *lex,
     }
     if (then->word != WORD_THEN)
         my_err(1, mj, "parser_if: syntax error");
+    token_free(then);
+    token_free(expr);
     if (ast)
         ast->right = newast;
     else
@@ -84,6 +86,8 @@ struct ast *take_action(struct major *mj, struct ast *ast, struct lexer *lex,
         ast = parser_if(mj, lex, ast, tk);
     else if (tk->word == WORD_COMMAND)
         ast = add_single_command(mj, ast, tk);
+    else if (tk->word == WORD_REDIR)
+        token_free(tk);
     else
         my_err(1, mj, "parser: syntax error");
     return ast;
@@ -104,8 +108,10 @@ struct ast *parser(struct major *mj, struct lexer *lex)
     {
         ast = take_action(mj, ast, lex, tk);
         exec_ast(mj, ast);
+        ast_printer(ast);
         ast_free(ast);
         ast = NULL;
     }
+    token_free(tk);
     return ast;
 }

@@ -4,6 +4,8 @@
 #include <string.h>
 
 #include "my_utils.h"
+#include "my_xmalloc.h"
+#include "redirection.h"
 
 #define TOKENS_TO_STRING                                                       \
     {                                                                          \
@@ -11,12 +13,9 @@
             "WORD_EOF", "WORD_AND"                                             \
     }
 
-struct token *token_init(struct major *major)
+struct token *token_init(struct major *mj)
 {
-    struct token *new = malloc(sizeof(struct token));
-
-    if (!new)
-        my_err(1, major, "token_init: malloc failed");
+    struct token *new = my_xmalloc(mj, sizeof(struct token));
 
     new->word = 0;
     new->data = NULL;
@@ -53,5 +52,6 @@ void token_free(struct token *tk)
         return;
 
     list_free(tk->data);
+    free_redirection(tk->redirection);
     free(tk);
 }
