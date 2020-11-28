@@ -27,7 +27,7 @@ struct ast *add_single_command(struct major *mj, struct ast *ast,
     and->word = WORD_AND;
     struct ast *newast = create_ast(mj, and);
     newast->left = ast;
-    newast->right = create_ast(mj, tk);
+    newast->right = NULL;
     return newast;
 }
 
@@ -45,7 +45,7 @@ static struct ast *parser_if(struct major *mj, struct lexer *lex,
 {
     if (ast && ast->data->word == WORD_COMMAND)
     {
-        struct ast *newast = add_single_command(mj, ast, ast->data);
+        struct ast *newast = add_single_command(mj, ast, NULL);
         ast = newast;
     }
     struct token *cond = lexer_pop_head(mj, lex);
@@ -108,6 +108,7 @@ struct ast *parser(struct major *mj, struct lexer *lex)
     {
         ast = take_action(mj, ast, lex, tk);
         exec_ast(mj, ast);
+        ast_printer(ast);
         ast_free(ast);
         ast = NULL;
     }

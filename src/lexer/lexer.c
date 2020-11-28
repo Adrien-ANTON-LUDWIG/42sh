@@ -101,7 +101,9 @@ static void _lexer_build(struct major *mj, struct lexer *lex, char *s)
 
             lexer_append(mj, lex, tk);
         }
-        if (*s == ';' || *s == '\n')
+        if (*s == ';')
+            s++;
+        while (*s == '\n')
             s++;
     }
 }

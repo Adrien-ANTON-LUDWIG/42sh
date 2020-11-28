@@ -42,11 +42,22 @@ int main(int argc, char **argv)
             return 0;
         }
         else if (strcmp(argv[i], "-O") == 0)
-            return 0;
+            continue;
         else if (strcmp(argv[i], "+O") == 0)
-            return 0;
+            continue;
         else
-            errx(1, "Wait, that's illegal!");
+        {
+            struct custom_FILE *file = custom_fopen(argv[i]);
+
+            struct major *mj = major_init();
+            char *content = custom_getfile(file);
+            struct lexer *lexer = lexer_build(mj, content);
+            parser(mj, lexer);
+            custom_fclose(file);
+            free(content);
+            lexer_free(lexer);
+            major_free(mj);
+        }
     }
     return 0;
 }

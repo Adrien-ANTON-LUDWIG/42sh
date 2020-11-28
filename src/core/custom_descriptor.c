@@ -6,6 +6,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "my_xmalloc.h"
+
 struct custom_FILE *custom_fopen(const char *path)
 {
     struct custom_FILE *f = malloc(sizeof(struct custom_FILE));
@@ -72,10 +74,12 @@ char *custom_getfile(struct custom_FILE *f)
     size = ftell(f->file);
     fseek(f->file, 0, SEEK_SET);
 
-    char *getfile = malloc(size);
+    char *getfile = my_xmalloc(NULL, size + 1);
 
     if (fread(getfile, sizeof(char), size, f->file) == 0)
         errx(2, "Custom getfile: could not open file\n");
+
+    getfile[size] = '\0';
 
     return getfile;
 }
