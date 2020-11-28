@@ -45,4 +45,4 @@ add_executable(testsuite ${SRC} ${HEADERS} tests/main.c)
 add_executable(lexer_test ${SRC} tests/lexer_tests/lexer_test.c ${HEADERS})
 target_link_libraries(testsuite PUBLIC criterion)
 
-#add_custom_target(check ./testsuite)
+add_custom_target(check ./testsuite --verbose)
