@@ -5,8 +5,8 @@
 src/main
 .vscode/tasks.json
 venv
-__pycache__
 build
+__pycache__
 html
 latex
 tests/script.sh

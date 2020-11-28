@@ -41,11 +41,8 @@ add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99 -lcriterion)
 
 add_executable(42sh ${SRC} ${HEADERS} src/main.c)
 
-#add_library(asan "-fasnitize=address")
-#target_link_libraries(42h PUBLIC asan)
-#add_executable(testsuite ${SRC} ${HEADERS} tests/main.c)
-#add_executable(lexer_test ${SRC} tests/lexer_tests/lexer_test.c ${HEADERS})
-
-#target_link_libraries(testsuite PUBLIC criterion)
+add_executable(testsuite ${SRC} ${HEADERS} tests/main.c)
+add_executable(lexer_test ${SRC} tests/lexer_tests/lexer_test.c ${HEADERS})
+target_link_libraries(testsuite PUBLIC criterion)
 
 #add_custom_target(check ./testsuite)

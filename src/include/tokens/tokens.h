@@ -54,6 +54,15 @@ struct redir
 struct token *token_init(struct major *major);
 
 /**
+ * @brief Create a deepcopy of the given src token.
+ *
+ * @param mj
+ * @param src
+ * @return struct token*
+ */
+struct token *token_cpy(struct major *mj, struct token *src);
+
+/**
  * @brief Gets the WORD_TYPE (enum words) of a char*
  *
  * @param s

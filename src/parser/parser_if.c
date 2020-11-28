@@ -77,7 +77,8 @@ struct ast *parser_if(struct major *mj, struct lexer *lex, struct ast *ast,
 
     if (expr->word == WORD_ELSE)
         parser_else(mj, lex, newast);
-
+    if (expr->word == WORD_ELIF)
+        newast->middle = parser_if(mj, lex, newast->middle, token_cpy(mj, tk));
     token_free(expr);
     if (ast)
         ast->right = newast;
