@@ -1,0 +1,12 @@
+*.o
+.vscode
+.vscode/launch.json
+.vscode/settings.json
+src/main
+.vscode/tasks.json
+venv
+build
+__pycache__
+html
+latex
+tests/script.sh
