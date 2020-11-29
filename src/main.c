@@ -19,7 +19,7 @@
  * @param argv
  * @return int
  */
-int main(int argc, char **argv)
+/*int main(int argc, char **argv)
 {
     if (argc < 2)
         return 0;
@@ -31,13 +31,15 @@ int main(int argc, char **argv)
             if (i + 1 == argc)
                 errx(2, "-c: option requires an argument");
 
+            // To check and correct
             struct major *mj = major_init();
             int from = get_index_command_string(i + 1, argc, argv);
             char *args = merge_arguments(argc - from, argv + from);
-            struct lexer *lexer = lexer_build(mj, args);
-            parser(mj, lexer);
+            mj->file = createfrom_string(args);
+            // struct lexer *lexer = lexer_build(mj, args);
+            // parser(mj, lexer);
             free(args);
-            lexer_free(lexer);
+            // lexer_free(lexer);
             major_free(mj);
             return 0;
         }
@@ -50,14 +52,19 @@ int main(int argc, char **argv)
             struct custom_FILE *file = custom_fopen(argv[i]);
 
             struct major *mj = major_init();
-            char *content = custom_getfile(file);
-            struct lexer *lexer = lexer_build(mj, content);
-            parser(mj, lexer);
+            mj->file = file;
+
+            // To check and correct
+
+            parser(mj);
             custom_fclose(file);
-            free(content);
-            lexer_free(lexer);
             major_free(mj);
         }
     }
+    return 0;
+}*/
+
+int main(void)
+{
     return 0;
 }
