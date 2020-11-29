@@ -61,7 +61,13 @@ char *get_word(struct major *mj)
     char *start = mj->file->str + mj->file->lexer_index;
     skip_class(is_word, mj);
 
+    printf("start: %s\n", start);
+
     char *end = mj->file->str + mj->file->lexer_index;
+    printf("end: %s\n", end);
+
+    if (end == start)
+        return NULL;
 
     size_t len = end - start;
     char *word = strndup(start, len);

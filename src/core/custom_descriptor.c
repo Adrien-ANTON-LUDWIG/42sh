@@ -77,7 +77,6 @@ char *custom_fgets(char *s, size_t size, struct custom_FILE *f)
 
 void get_new_string(struct major *mj)
 {
-    printf("get_new_string\n");
     if (!mj || mj->file->fd == CUSTOM_FD)
         return;
 

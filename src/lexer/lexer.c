@@ -69,6 +69,9 @@ static struct token *get_token(struct major *mj)
     struct token *tk = token_init(mj);
     tk->word = WORD_EOF;
 
+    if (mj->file->fd == CUSTOM_FD && mj->file->lexer_index >= mj->file->len - 1)
+        return tk;
+
     char *word = get_word(mj);
     if (!word)
         return tk;
@@ -97,18 +100,19 @@ struct token *lexer_build(struct major *mj)
     struct custom_FILE *file = mj->file;
 
     if (!file)
-        return NULL; // Ou juste init_lexer() avec EOF a la fin
+        return NULL;
 
     int from_file = file->fd != CUSTOM_FD;
     char *s = NULL;
 
-    if (from_file && (!file->str || file->lexer_index >= file->len))
+    if (from_file && (!file->str || file->lexer_index >= file->len - 1))
     {
         if (!file->str)
             file->str = my_xmalloc(mj, SIZE_TO_GET);
 
         file->str = custom_fgets(file->str, SIZE_TO_GET, file);
         file->len = strlen(file->str);
+        file->lexer_index = 0;
     }
     else if (!from_file)
     {

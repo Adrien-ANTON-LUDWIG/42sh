@@ -35,11 +35,11 @@ set (SRC
     tests/printer.c
 )
 
-set(CMAKE_LINKER_FLAGS_DEBUG "-g -fsanitize=address")
+set(CMAKE_LINKER_FLAGS_DEBUG "-fsanitize=address")
 
 file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/include/*.h")
 
-add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99 -lcriterion -g)
+add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99 -lcriterion)
 
 add_executable(42sh ${SRC} ${HEADERS} src/main.c)
 
