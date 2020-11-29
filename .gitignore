@@ -7,6 +7,4 @@ src/main
 venv
 build
 __pycache__
-html
-latex
 tests/script.sh
