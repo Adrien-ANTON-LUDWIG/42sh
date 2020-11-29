@@ -37,7 +37,7 @@ void shopt_options(int *i, char **argv)
  * @param argv
  * @return int
  */
-/*int main(int argc, char **argv)
+int main(int argc, char **argv)
 {
     if (argc < 2)
         return 0;
@@ -46,7 +46,6 @@ void shopt_options(int *i, char **argv)
     shopt_options(&i, argv);
 
     struct major *mj = major_init();
-    struct lexer *lexer = NULL;
     int from = get_index_command_string(i, argc, argv);
 
     if (strcmp(argv[i], "-c") == 0)
@@ -55,27 +54,17 @@ void shopt_options(int *i, char **argv)
             errx(2, "-c: option requires an argument");
 
         char *args = merge_arguments(argc - from, argv + from);
-        lexer = lexer_build(mj, args);
-        parser(mj, lexer);
+        mj->file = createfrom_string(args);
+        parser(mj);
         free(args);
     }
     else
     {
         struct custom_FILE *file = custom_fopen(argv[from]);
-
-        char *content = custom_getfile(file);
-        lexer = lexer_build(mj, content);
-        parser(mj, lexer);
-        custom_fclose(file);
-        free(content);
+        mj->file = file;
+        parser(mj);
     }
-    lexer_free(lexer);
     major_free(mj);
 
-    return 0;
-}*/
-
-int main(void)
-{
     return 0;
 }
