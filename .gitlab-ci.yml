@@ -1,0 +1,16 @@
+stages:
+    - build
+    - test
+build:
+    stage: build
+    tags:
+        - docker
+    script:
+        - mkdir build && cd build
+        - cmake .. && make
+test:
+    stage: test
+    tags:
+        - docker
+    script:
+        - find . -name '*.c' | xargs wc -l
