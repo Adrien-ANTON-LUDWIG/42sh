@@ -150,7 +150,7 @@ Test(_42sh, merge_commands_empty)
     cr_assert_null(merged);
     free(merged);
 }
-
+/*
 Test(_42sh, parser_simple_if)
 {
     struct lexer *lex = lexer_build(NULL, "if echo test; then echo toto; fi");
@@ -162,7 +162,7 @@ Test(_42sh, parser_simple_if)
     lexer_free(lex);
     ast_free(ast);
 }
-
+*/
 int main(int argc, char **argv)
 {
     struct criterion_test_set *tests = criterion_initialize();

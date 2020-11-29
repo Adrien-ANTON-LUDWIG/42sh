@@ -15,6 +15,10 @@ int is_redirection(struct major *mj)
     char *str[] = TOKENS_STRINGS_REDIR;
 
     char *s = get_word(mj);
+
+    if (!s)
+        return 0;
+
     for (int i = 0; i < 2; i++)
     {
         if (strcmp(s, str[i]) == 0)
