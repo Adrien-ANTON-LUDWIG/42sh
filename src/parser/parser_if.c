@@ -24,19 +24,18 @@ static int should_loop(enum words w)
  * @brief Handles the parsing of an "else" condition
  *
  * @param mj major structure
- * @param lex the lexer
  * @param ast
  * @return struct ast*
  */
-static void parser_else(struct major *mj, struct lexer *lex, struct ast *ast)
+static void parser_else(struct major *mj, struct ast *ast)
 {
     struct token *expr = NULL;
 
-    while ((expr = lexer_pop_head(mj, lex))->word != WORD_FI)
+    while ((expr = lexer_build(mj))->word != WORD_FI)
     {
         if (expr->word == WORD_EOF)
             my_err(1, mj, "parser_if: unexpected EOF");
-        ast->middle = take_action(mj, NULL, lex, expr);
+        ast->middle = take_action(mj, NULL, expr);
     }
 
     token_free(expr);
@@ -46,29 +45,27 @@ static void parser_else(struct major *mj, struct lexer *lex, struct ast *ast)
  * @brief Handles the parsing of an "if" condition
  *
  * @param mj major structure
- * @param lex the lexer
  * @param ast
  * @param tk
  * @return struct ast*
  */
-struct ast *parser_if(struct major *mj, struct lexer *lex, struct ast *ast,
-                      struct token *tk)
+struct ast *parser_if(struct major *mj, struct ast *ast, struct token *tk)
 {
     if (ast && ast->data->word == WORD_COMMAND)
     {
         struct ast *newast = add_single_command(mj, ast, NULL);
         ast = newast;
     }
-    struct token *cond = lexer_pop_head(mj, lex);
-    struct token *then = lexer_pop_head(mj, lex);
+    struct token *cond = lexer_build(mj);
+    struct token *then = lexer_build(mj);
     struct token *expr = NULL;
     struct ast *newast = create_ast(mj, tk);
-    newast->left = take_action(mj, newast->left, lex, cond);
-    while (should_loop((expr = lexer_pop_head(mj, lex))->word))
+    newast->left = take_action(mj, newast->left, cond);
+    while (should_loop((expr = lexer_build(mj))->word))
     {
         if (expr->word == WORD_EOF)
             my_err(1, mj, "parser_if: unexpected EOF");
-        newast->right = take_action(mj, newast->right, lex, expr);
+        newast->right = take_action(mj, newast->right, expr);
     }
     if (then->word != WORD_THEN)
         my_err(1, mj, "parser_if: syntax error");
@@ -76,9 +73,9 @@ struct ast *parser_if(struct major *mj, struct lexer *lex, struct ast *ast,
     token_free(then);
 
     if (expr->word == WORD_ELSE)
-        parser_else(mj, lex, newast);
+        parser_else(mj, newast);
     if (expr->word == WORD_ELIF)
-        newast->middle = parser_if(mj, lex, newast->middle, token_cpy(mj, tk));
+        newast->middle = parser_if(mj, newast->middle, token_cpy(mj, tk));
     token_free(expr);
     if (ast)
         ast->right = newast;
