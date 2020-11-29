@@ -1,5 +1,5 @@
+#include "custom_descriptor.h"
 #include "my_utils.h"
-
 /**
  * @brief Initializes major
  *
@@ -11,6 +11,7 @@ struct major *major_init(void)
     if (!new)
         errx(1, "major init: could not malloc struct major\n");
     new->options = 0;
+    new->file = NULL;
     return new;
 }
 
@@ -21,5 +22,6 @@ struct major *major_init(void)
  */
 void major_free(struct major *mj)
 {
+    custom_fclose(mj->file);
     free(mj);
 }

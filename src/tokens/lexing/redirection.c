@@ -1,10 +1,31 @@
 #include "redirection.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "custom_descriptor.h"
+#include "lexer_utils.h"
+#include "structures.h"
 #include "tokens.h"
 
+int is_redirection(struct major *mj)
+{
+    size_t temp = mj->file->lexer_index;
+    char *str[] = TOKENS_STRINGS_REDIR;
+
+    char *s = get_word(mj);
+    for (int i = 0; i < 2; i++)
+    {
+        if (strcmp(s, str[i]) == 0)
+        {
+            mj->file->lexer_index = temp;
+            return 1;
+        }
+    }
+    mj->file->lexer_index = temp;
+    return 0;
+}
 struct redir *init_redirection(struct major *mj)
 {
     struct redir *new_redir = malloc(sizeof(struct redir));

@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <stdio.h>
 
+#include "structures.h"
+
 #define CUSTOM_FD -5
 /**
  * 42sh can be called with the -c option,
@@ -26,6 +28,7 @@ struct custom_FILE
     int fd;
     FILE *file;
     size_t index;
+    size_t lexer_index;
     char *str;
     size_t len;
 };
@@ -72,5 +75,7 @@ char *custom_fgets(char *s, size_t size, struct custom_FILE *f);
  * @param f custom_FILE
  * @return char*
  */
-char *custom_getfile(struct custom_FILE *f);
+// char *custom_getfile(struct custom_FILE *f);
+
+void get_new_string(struct major *mj);
 #endif

@@ -6,6 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "lexer.h"
 #include "my_xmalloc.h"
 
 struct custom_FILE *custom_fopen(const char *path)
@@ -13,6 +14,8 @@ struct custom_FILE *custom_fopen(const char *path)
     struct custom_FILE *f = malloc(sizeof(struct custom_FILE));
     if (!f) // The program should not have allocated anything at that point
         errx(2, "Could not allocate memory !");
+
+    f->lexer_index = 0;
     if (!path)
     {
         f->fd = CUSTOM_FD;
@@ -66,6 +69,18 @@ char *custom_fgets(char *s, size_t size, struct custom_FILE *f)
     return s;
 }
 
+void get_new_string(struct major *mj)
+{
+    printf("get_new_string\n");
+    if (!mj || mj->file->fd == CUSTOM_FD)
+        return;
+
+    mj->file->str = custom_fgets(mj->file->str, SIZE_TO_GET, mj->file);
+    mj->file->lexer_index = 0;
+    mj->file->len = strlen(mj->file->str);
+}
+
+/*
 char *custom_getfile(struct custom_FILE *f)
 {
     if (f->fd == CUSTOM_FD)
@@ -83,3 +98,4 @@ char *custom_getfile(struct custom_FILE *f)
 
     return getfile;
 }
+*/

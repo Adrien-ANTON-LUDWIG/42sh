@@ -11,6 +11,101 @@
 #include "printer.h"
 
 TestSuite(_42sh, .timeout = 15);
+// LEXER
+Test(_42SH, simple_lex_if)
+{
+    char *s = "if";
+    struct major *mj = major_init();
+    mj->file = createfrom_string(s);
+    struct token *tk = lexer_build(mj);
+    cr_assert_eq(strcmp("WORD_IF", token2string(tk)), 0);
+    major_free(mj);
+}
+
+Test(_42SH, simple_lex_then)
+{
+    char *s = "then";
+    struct major *mj = major_init();
+    mj->file = createfrom_string(s);
+    struct token *tk = lexer_build(mj);
+    cr_assert_eq(strcmp("WORD_THEN", token2string(tk)), 0);
+    major_free(mj);
+}
+
+Test(_42SH, simple_lex_else)
+{
+    char *s = "else";
+    struct major *mj = major_init();
+    mj->file = createfrom_string(s);
+    struct token *tk = lexer_build(mj);
+    cr_assert_eq(strcmp("WORD_ELSE", token2string(tk)), 0);
+    major_free(mj);
+}
+
+Test(_42SH, simple_lex_fi)
+{
+    char *s = "fi";
+    struct major *mj = major_init();
+    mj->file = createfrom_string(s);
+    struct token *tk = lexer_build(mj);
+    cr_assert_eq(strcmp("WORD_FI", token2string(tk)), 0);
+    major_free(mj);
+}
+
+Test(_42SH, empty_string_lexer)
+{
+    char *s = "";
+    struct major *mj = major_init();
+    mj->file = createfrom_string(s);
+    struct token *tk = lexer_build(mj);
+    cr_assert_eq(strcmp("WORD_EOF", token2string(tk)), 0);
+    major_free(mj);
+}
+
+Test(_42SH, hard_lex_if)
+{
+    char *s = "echo first; if echo toto; then echo tata; fi; echo end";
+    struct major *mj = major_init();
+    mj->file = createfrom_string(s);
+
+    struct token *tk = lexer_build(mj);
+    cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+
+    tk = lexer_build(mj);
+    cr_assert_eq(strcmp("WORD_IF", token2string(tk)), 0);
+
+    tk = lexer_build(mj);
+    cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+
+    tk = lexer_build(mj);
+    cr_assert_eq(strcmp("WORD_THEN", token2string(tk)), 0);
+
+    tk = lexer_build(mj);
+    cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+
+    tk = lexer_build(mj);
+    cr_assert_eq(strcmp("WORD_FI", token2string(tk)), 0);
+
+    tk = lexer_build(mj);
+    cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+
+    major_free(mj);
+}
+
+Test(_42SH, simple_redir_lex)
+{
+    char *s = "echo toto > file";
+    struct major *mj = major_init();
+    mj->file = createfrom_string(s);
+
+    struct token *tk = lexer_build(mj);
+    cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+
+    tk = lexer_build(mj);
+    cr_assert_eq(strcmp("WORD_REDIR", token2string(tk)), 0);
+
+    major_free(mj);
+}
 
 Test(_42sh, custom_descriptor1)
 {
@@ -48,117 +143,9 @@ Test(_42sh, merge_commands_first_empty)
 
 Test(_42sh, merge_commands_empty)
 {
-    printf("merge_commands_empty\n");
     char *argv[] = { NULL };
     char *merged = merge_arguments(0, argv);
     cr_assert_null(merged);
-}
-
-Test(_42sh, lexer_one_simple_line)
-{
-    printf("lexer_one_simple_line\n");
-    struct lexer *lex = lexer_build(NULL, "echo test");
-
-    cr_assert_not_null(lex, "NULL");
-    cr_assert_eq(lex->head->tk->word, WORD_COMMAND, "Not WORD_COMMAND");
-    cr_assert_eq(strcmp(lex->head->tk->data->head->data, "echo"), 0,
-                 "First string not 'echo'");
-    cr_assert_eq(strcmp(lex->head->tk->data->head->next->data, "test"), 0,
-                 "Second string not 'test'");
-    cr_assert_eq(lex->tail->tk->word, WORD_EOF, "No WORD_EOF");
-
-    lexer_printer(lex);
-
-    lexer_free(lex);
-}
-
-Test(_42sh, lexer_one_line_if)
-{
-    printf("lexer_one_line_if\n");
-    struct lexer *lex = lexer_build(NULL, "if echo test; then echo toto; fi");
-
-    cr_assert_not_null(lex, "NULL");
-    cr_assert_eq(lex->head->tk->word, WORD_IF, "Not WORD_IF");
-    cr_assert_eq(lex->head->next->tk->word, WORD_COMMAND, "Not WORD_COMMAND_1");
-    cr_assert_eq(strcmp(lex->head->next->tk->data->head->data, "echo"), 0,
-                 "Not echo 1");
-    cr_assert_eq(strcmp(lex->head->next->tk->data->head->next->data, "test"), 0,
-                 "Not test");
-    cr_assert_eq(lex->head->next->next->tk->word, WORD_THEN, "Not WORD_THEN");
-    cr_assert_eq(lex->head->next->next->next->tk->word, WORD_COMMAND,
-                 "Not WORD_COMMAND_2");
-    cr_assert_eq(
-        strcmp(lex->head->next->next->next->tk->data->head->data, "echo"), 0,
-        "Not echo 1");
-    cr_assert_eq(
-        strcmp(lex->head->next->next->next->tk->data->head->next->data, "toto"),
-        0, "Not toto");
-    cr_assert_eq(lex->head->next->next->next->next->tk->word, WORD_FI,
-                 "Not WORD_FI");
-    cr_assert_eq(lex->tail->tk->word, WORD_EOF, "No WORD_EOF");
-
-    lexer_printer(lex);
-
-    lexer_free(lex);
-}
-
-Test(_42sh, lexer_simple_redir_append)
-{
-    printf("lexer_simple_redir_append\n");
-    struct lexer *lex = lexer_build(NULL, "echo test >> file");
-    lexer_printer(lex);
-    lexer_free(lex);
-}
-
-Test(_42sh, lexer_simple_redir)
-{
-    printf("lexer_simple_redir\n");
-    struct lexer *lex = lexer_build(NULL, "echo test > file");
-/*
-    cr_assert_not_null(lex, "NULL");
-    cr_assert_eq(lex->head->tk->word, WORD_COMMAND, "Not WORD_COMMAND");
-
-    cr_assert_eq(strcmp(lex->head->tk->data->head->data, "echo"), 0,
-                 "First string not 'echo'");
-    cr_assert_eq(strcmp(lex->head->tk->data->head->next->data, "test"), 0,
-                 "Second string not 'test'");
-
-    cr_assert_eq(strcmp(lex->head->tk->data->head->next->data, ">"), 0,
-                 "Third string not '>'");
-    cr_assert_eq(lex->head->tk->next->next->word, WORD_REDIR, "Not WORD_REDIR");
-    
-    cr_assert_eq(
-        strcmp(lex->head->tk->data->head->next->redirecton->std_out, "file"), 0,
-        "Wrong file");
-
-    cr_assert_eq(lex->tail->tk->word, WORD_EOF, "No WORD_EOF");*/
-
-    lexer_printer(lex);
-
-    lexer_free(lex);
-}
-
-Test(_42sh, parser_simple_if)
-{
-    struct lexer *lex = lexer_build(NULL, "if echo test; then echo toto; fi");
-    struct ast *ast = parser(NULL, lex);
-    cr_assert_eq(strcmp(ast->left->data->data->head->data, "echo"), 0);
-    cr_assert_eq(strcmp(ast->left->data->data->tail->data, "test"), 0);
-    cr_assert_eq(strcmp(ast->right->data->data->head->data, "echo"), 0);
-    cr_assert_eq(strcmp(ast->right->data->data->tail->data, "toto"), 0);
-}
-
-Test(_42sh, parser_less_simple_if_but_still_kinda_simple)
-{
-    struct lexer *lex =
-        lexer_build(NULL, "if echo test\n then echo tata\n fi\n echo cool");
-    struct ast *ast = parser(NULL, lex);
-    cr_assert_eq(strcmp(ast->left->left->data->data->head->data, "echo"), 0);
-    cr_assert_eq(strcmp(ast->left->left->data->data->tail->data, "test"), 0);
-    cr_assert_eq(strcmp(ast->left->right->data->data->head->data, "echo"), 0);
-    cr_assert_eq(strcmp(ast->left->right->data->data->tail->data, "tata"), 0);
-    cr_assert_eq(ast->data->word, WORD_AND);
-    cr_assert_eq(strcmp(ast->right->data->data->tail->data, "cool"), 0);
 }
 
 int main(int argc, char **argv)

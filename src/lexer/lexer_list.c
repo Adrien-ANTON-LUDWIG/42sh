@@ -45,8 +45,8 @@ struct lexer *lexer_init(struct major *mj)
 }
 
 /**
- * @brief Takes a token and inits a struct token_list in order to append if to
- * the double linked list lexer (in tail)
+ * @brief Takes a token and inits a struct token_list in order to
+ * append if to the double linked list lexer (in tail)
  *
  * @param mj struct to handle errors
  * @param lex double linked list
