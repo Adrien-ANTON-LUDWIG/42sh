@@ -5,15 +5,12 @@
 #include "structures.h"
 #include "tokens.h"
 
-struct ast
-{
-    struct ast *left;
-    struct ast *right;
-    struct token *data;
-};
-
 struct ast *parser(struct major *mj, struct lexer *lex);
 struct ast *take_action(struct major *mj, struct ast *ast, struct lexer *lex,
                         struct token *tk);
+struct ast *parser_if(struct major *mj, struct lexer *lex, struct ast *ast,
+                      struct token *tk);
+struct ast *add_single_command(struct major *mj, struct ast *ast,
+                               struct token *tk);
 
 #endif /* PARSER_H */

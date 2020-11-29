@@ -59,13 +59,19 @@ char *custom_fgets(char *s, size_t size, struct custom_FILE *f)
         return fgets(s, size, f->file);
     if (f->index >= f->len)
         return NULL;
-    for (size_t i = 0; i < size && f->index < f->len; i++)
+    size_t i = 0;
+    for (i = 0; i < size && f->index < f->len; i++)
     {
         s[i] = f->str[f->index];
-        f->index++;
-        if (f->str[f->index - 1] == '\n' || f->str[f->index - 1] == 0)
+        if (f->str[f->index] == '\n' || f->str[f->index] == 0)
+        {
+            f->index += 1;
+            s[i + 1] = 0;
             return s;
+        }
+        f->index += 1;
     }
+    s[i] = 0;
     return s;
 }
 
@@ -94,7 +100,7 @@ char *custom_getfile(struct custom_FILE *f)
     if (fread(getfile, sizeof(char), size, f->file) == 0)
         errx(2, "Custom getfile: could not open file\n");
 
-    getfile[size] = '\0';
+    getfile[size] = 0;
 
     return getfile;
 }

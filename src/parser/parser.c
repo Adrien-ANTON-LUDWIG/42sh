@@ -32,45 +32,6 @@ struct ast *add_single_command(struct major *mj, struct ast *ast,
 }
 
 /**
- * @brief Handles the parsing of an "if" condition
- *
- * @param mj major structure
- * @param lex the lexer
- * @param ast
- * @param tk
- * @return struct ast*
- */
-static struct ast *parser_if(struct major *mj, struct lexer *lex,
-                             struct ast *ast, struct token *tk)
-{
-    if (ast && ast->data->word == WORD_COMMAND)
-    {
-        struct ast *newast = add_single_command(mj, ast, NULL);
-        ast = newast;
-    }
-    struct token *cond = lexer_pop_head(mj, lex);
-    struct token *then = lexer_pop_head(mj, lex);
-    struct token *expr = NULL;
-    struct ast *newast = create_ast(mj, tk);
-    newast->left = take_action(mj, newast->left, lex, cond);
-    while ((expr = lexer_pop_head(mj, lex))->word != WORD_FI)
-    {
-        if (expr->word == WORD_EOF)
-            my_err(1, mj, "parser_if: unexpected EOF");
-        newast->right = take_action(mj, newast->right, lex, expr);
-    }
-    if (then->word != WORD_THEN)
-        my_err(1, mj, "parser_if: syntax error");
-    token_free(then);
-    token_free(expr);
-    if (ast)
-        ast->right = newast;
-    else
-        ast = newast;
-    return ast;
-}
-
-/**
  * @brief Decides which function to call depending on the kind of token
  *
  * @param mj
@@ -108,7 +69,6 @@ struct ast *parser(struct major *mj, struct lexer *lex)
     {
         ast = take_action(mj, ast, lex, tk);
         exec_ast(mj, ast);
-        ast_printer(ast);
         ast_free(ast);
         ast = NULL;
     }

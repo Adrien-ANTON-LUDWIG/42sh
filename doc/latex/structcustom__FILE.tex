@@ -1,0 +1,43 @@
+\hypertarget{structcustom__FILE}{}\doxysection{custom\+\_\+\+F\+I\+LE Struct Reference}
+\label{structcustom__FILE}\index{custom\_FILE@{custom\_FILE}}
+
+
+if fd == C\+U\+S\+T\+O\+M\+\_\+\+FD then we will be reading str instead of using fgets. If fd != C\+U\+S\+T\+O\+M\+\_\+\+FD index and str will not be used
+
+
+
+
+{\ttfamily \#include $<$custom\+\_\+descriptor.\+h$>$}
+
+\doxysubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item
+\mbox{\Hypertarget{structcustom__FILE_a0dbc25bf110c468a2d5df1b29b04e6b7}\label{structcustom__FILE_a0dbc25bf110c468a2d5df1b29b04e6b7}}
+int {\bfseries fd}
+\item
+\mbox{\Hypertarget{structcustom__FILE_a1e94de2d27053c897e4d959a81a90664}\label{structcustom__FILE_a1e94de2d27053c897e4d959a81a90664}}
+F\+I\+LE $\ast$ {\bfseries file}
+\item
+\mbox{\Hypertarget{structcustom__FILE_a83b712e1d670177883013808b300da83}\label{structcustom__FILE_a83b712e1d670177883013808b300da83}}
+size\+\_\+t {\bfseries index}
+\item
+\mbox{\Hypertarget{structcustom__FILE_a8a0c27915cc2ab0be4117bddee216264}\label{structcustom__FILE_a8a0c27915cc2ab0be4117bddee216264}}
+char $\ast$ {\bfseries str}
+\item
+\mbox{\Hypertarget{structcustom__FILE_a0c9079aed4fb5e08eaca29513a8a0bc9}\label{structcustom__FILE_a0c9079aed4fb5e08eaca29513a8a0bc9}}
+size\+\_\+t {\bfseries len}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+if fd == C\+U\+S\+T\+O\+M\+\_\+\+FD then we will be reading str instead of using fgets. If fd != C\+U\+S\+T\+O\+M\+\_\+\+FD index and str will not be used
+
+42sh can be called with the -\/c option, with a file as an argument or with stdin as the input.
+
+Here, a custom descriptor is a wrapper around the classical file I/O operations This way, the code is the same for the rest of the program
+
+This means that the file M\+U\+ST BE passed as a \mbox{\hyperlink{structcustom__FILE}{custom\+\_\+\+F\+I\+LE}} by the core to the lexer ! No filename, F\+I\+LE or fd involved
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item
+src/include/core/custom\+\_\+descriptor.\+h\end{DoxyCompactItemize}

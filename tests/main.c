@@ -109,18 +109,20 @@ Test(_42SH, simple_redir_lex)
 
 Test(_42sh, custom_descriptor1)
 {
-    struct custom_FILE *f =
-        createfrom_string("Salut!\nJe suis un test\nEt je te veux du mal");
+    struct custom_FILE *f = createfrom_string(
+        "Salut!\nJe suis un test\nEt je te veux du mal\nissou");
     char *buffer = malloc(128 * sizeof(char));
     char *savedbuffer = buffer;
     buffer = custom_fgets(buffer, 128, f);
-    cr_assert_eq(strcmp(buffer, "Salut!\n"), 0);
+    cr_expect_eq(strcmp(buffer, "Salut!\n"), 0);
     buffer = custom_fgets(buffer, 128, f);
-    cr_assert_eq(strcmp(buffer, "Je suis un test\n"), 0);
+    cr_expect_eq(strcmp(buffer, "Je suis un test\n"), 0);
     buffer = custom_fgets(buffer, 128, f);
-    cr_assert_eq(strcmp(buffer, "Et je te veux du mal"), 0);
+    cr_expect_eq(strcmp(buffer, "Et je te veux du mal\n"), 0);
+    buffer = custom_fgets(buffer, 128, f);
+    cr_expect_eq(strcmp(buffer, "issou"), 0);
     char *newbuffer = custom_fgets(buffer, 128, f);
-    cr_assert_null(newbuffer);
+    cr_expect_null(newbuffer);
     free(savedbuffer);
     custom_fclose(f);
 }
@@ -146,6 +148,19 @@ Test(_42sh, merge_commands_empty)
     char *argv[] = { NULL };
     char *merged = merge_arguments(0, argv);
     cr_assert_null(merged);
+    free(merged);
+}
+
+Test(_42sh, parser_simple_if)
+{
+    struct lexer *lex = lexer_build(NULL, "if echo test; then echo toto; fi");
+    struct ast *ast = take_action(NULL, NULL, lex, lexer_pop_head(NULL, lex));
+    cr_assert_eq(strcmp(ast->left->data->data->head->data, "echo"), 0);
+    cr_assert_eq(strcmp(ast->left->data->data->tail->data, "test"), 0);
+    cr_assert_eq(strcmp(ast->right->data->data->head->data, "echo"), 0);
+    cr_assert_eq(strcmp(ast->right->data->data->tail->data, "toto"), 0);
+    lexer_free(lex);
+    ast_free(ast);
 }
 
 int main(int argc, char **argv)
