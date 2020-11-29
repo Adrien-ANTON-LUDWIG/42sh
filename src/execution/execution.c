@@ -6,10 +6,11 @@
 
 #include "lexer.h"
 #include "my_utils.h"
+#include "my_xmalloc.h"
 
 char **token_list_to_char_array(struct list *l)
 {
-    char **tab = malloc(sizeof(char **) * l->size);
+    char **tab = my_xcalloc(NULL, l->size + 1, sizeof(char **));
 
     struct list_item *cpy = l->head;
     for (size_t i = 0; cpy && i < l->size; i++)
@@ -32,6 +33,6 @@ int run_command(char **args)
     waitpid(pid, &rvalue, 0);
     rvalue = WEXITSTATUS(rvalue);
     if (rvalue == 127)
-        fprintf(stderr, "Command not found: %s\n", args[0]);
+        fprintf(stderr, "Command not found zeubi : %s\n", args[0]);
     return rvalue;
 }
