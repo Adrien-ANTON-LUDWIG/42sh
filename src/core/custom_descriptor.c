@@ -82,29 +82,8 @@ void get_new_string(struct major *mj)
 
     mj->file->str = custom_fgets(mj->file->str, SIZE_TO_GET, mj->file);
     mj->file->lexer_index = 0;
-
     if (mj->file->str)
         mj->file->len = strlen(mj->file->str);
     else
         mj->file->len = 0;
 }
-
-/*
-char *custom_getfile(struct custom_FILE *f)
-{
-    if (f->fd == CUSTOM_FD)
-        return strdup(f->str);
-    int size = fseek(f->file, 0, SEEK_END);
-    size = ftell(f->file);
-    fseek(f->file, 0, SEEK_SET);
-
-    char *getfile = my_xmalloc(NULL, size + 1);
-
-    if (fread(getfile, sizeof(char), size, f->file) == 0)
-        errx(2, "Custom getfile: could not open file\n");
-
-    getfile[size] = 0;
-
-    return getfile;
-}
-*/
