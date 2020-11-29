@@ -6,6 +6,9 @@
 
 struct token *lexe_cmd(struct major *mj, struct token *tk)
 {
+    if (!mj->file->str)
+        return tk;
+
     if (mj->file->str[mj->file->lexer_index] == ';')
     {
         mj->file->lexer_index++;
@@ -17,6 +20,10 @@ struct token *lexe_cmd(struct major *mj, struct token *tk)
     while (word && !is_redirection(mj))
     {
         list_append(mj, tk->data, word);
+
+        if (!mj->file->str)
+            return tk;
+
         if (mj->file->str[mj->file->lexer_index] == ';')
         {
             mj->file->lexer_index++;

@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "lexer.h"
+
 static int my_is_space(int c)
 {
     return c == ' ' || c == '\t' || c == '\v';
@@ -38,7 +40,8 @@ void skip_class(int (*classifier)(int), struct major *mj)
 
         if (mj->file->lexer_index >= mj->file->len)
         {
-            if (mj->file->fd != CUSTOM_FD && mj->file->str)
+            if (mj->file->fd != CUSTOM_FD && mj->file->str
+                && mj->file->lexer_index >= SIZE_TO_GET)
             {
                 get_new_string(mj);
                 if (mj->file->len == 0)
@@ -58,6 +61,8 @@ void skip_class(int (*classifier)(int), struct major *mj)
  */
 char *get_word(struct major *mj)
 {
+    if (mj->file->str && mj->file->str[mj->file->lexer_index] == ';')
+        mj->file->lexer_index++;
     // Prendre en charge le buffer plein (>512)
     skip_class(my_is_space, mj);
 
@@ -70,11 +75,6 @@ char *get_word(struct major *mj)
     // printf("start: %s\n", start);
 
     char *end = mj->file->str + mj->file->lexer_index;
-<<<<<<< HEAD
-=======
-    // printf("end: %s\n", end);
-
->>>>>>> f6566b8e93664d7c2b7551db481ccae4cafd3ac8
     if (end == start)
         return NULL;
 
