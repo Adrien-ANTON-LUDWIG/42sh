@@ -30,14 +30,20 @@ static int is_word(int c)
 void skip_class(int (*classifier)(int), struct major *mj)
 {
     char *cursor = mj->file->str;
+    if (!cursor)
+        return;
     while (classifier(cursor[mj->file->lexer_index]))
     {
         mj->file->lexer_index++;
 
         if (mj->file->lexer_index >= mj->file->len)
         {
-            if (mj->file->fd != CUSTOM_FD)
+            if (mj->file->fd != CUSTOM_FD && mj->file->str)
+            {
                 get_new_string(mj);
+                if (mj->file->len == 0)
+                    break;
+            }
             else
                 return;
         }
@@ -55,16 +61,16 @@ char *get_word(struct major *mj)
     // Prendre en charge le buffer plein (>512)
     skip_class(my_is_space, mj);
 
-    if (mj->file->lexer_index >= mj->file->len - 1)
+    if (mj->file->lexer_index >= mj->file->len - 1 || !mj->file->str)
         return NULL;
 
     char *start = mj->file->str + mj->file->lexer_index;
     skip_class(is_word, mj);
 
-    printf("start: %s\n", start);
+    // printf("start: %s\n", start);
 
     char *end = mj->file->str + mj->file->lexer_index;
-    printf("end: %s\n", end);
+    // printf("end: %s\n", end);
 
     if (end == start)
         return NULL;
