@@ -102,10 +102,19 @@ struct token *lexer_build(struct major *mj)
     int from_file = file->fd != CUSTOM_FD;
     char *s = NULL;
 
-    if (!from_file)
-        s = my_xmalloc(mj, sizeof(char) * SIZE_TO_GET);
+    if (from_file && (!file->str || file->lexer_index >= file->len))
+    {
+        if (!file->str)
+            file->str = my_xmalloc(mj, SIZE_TO_GET);
 
-    s = custom_fgets(s, SIZE_TO_GET, file);
+        file->str = custom_fgets(file->str, SIZE_TO_GET, file);
+        file->len = strlen(file->str);
+    }
+    else if (!from_file)
+    {
+        s = my_xmalloc(mj, sizeof(char) * SIZE_TO_GET);
+        s = custom_fgets(s, SIZE_TO_GET, file);
+    }
 
     return get_token(mj);
 }

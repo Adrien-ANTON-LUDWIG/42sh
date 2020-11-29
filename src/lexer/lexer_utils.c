@@ -55,7 +55,7 @@ char *get_word(struct major *mj)
     // Prendre en charge le buffer plein (>512)
     skip_class(my_is_space, mj);
 
-    if (mj->file->lexer_index >= mj->file->len)
+    if (mj->file->lexer_index >= mj->file->len - 1)
         return NULL;
 
     char *start = mj->file->str + mj->file->lexer_index;
