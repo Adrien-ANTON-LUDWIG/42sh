@@ -35,7 +35,7 @@ set (SRC
     tests/printer.c
 )
 
-set(CMAKE_LINKER_FLAGS_DEBUG "-fsanitize=address")
+set(CMAKE_LINKER_FLAGS_DEBUG "-g -fsanitize=address")
 
 file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/include/*.h")
 
