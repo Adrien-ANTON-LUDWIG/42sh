@@ -82,7 +82,11 @@ void get_new_string(struct major *mj)
 
     mj->file->str = custom_fgets(mj->file->str, SIZE_TO_GET, mj->file);
     mj->file->lexer_index = 0;
-    mj->file->len = strlen(mj->file->str);
+
+    if (mj->file->str)
+        mj->file->len = strlen(mj->file->str);
+    else
+        mj->file->len = 0;
 }
 
 /*
