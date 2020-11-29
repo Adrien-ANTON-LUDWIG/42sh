@@ -9,8 +9,8 @@
 
 #define TOKENS_TO_STRING                                                       \
     {                                                                          \
-        "WORD_IF", "WORD_THEN", "WORD_FI", "WORD_REDIR", "WORD_COMMAND",       \
-            "WORD_EOF", "WORD_AND"                                             \
+        "WORD_IF", "WORD_THEN", "WORD_ELIF", "WORD_ELSE", "WORD_FI",           \
+            "WORD_REDIR", "WORD_COMMAND", "WORD_EOF", "WORD_AND"               \
     }
 
 struct token *token_init(struct major *mj)
@@ -21,6 +21,18 @@ struct token *token_init(struct major *mj)
     new->data = NULL;
     new->redirection = 0;
 
+    return new;
+}
+
+struct token *token_cpy(struct major *mj, struct token *src)
+{
+    if (src->word == WORD_COMMAND)
+        my_err(1, mj,
+               "token_cpy: stop right there! this was node made for that");
+
+    struct token *new = token_init(mj);
+
+    new->word = src->word;
     return new;
 }
 

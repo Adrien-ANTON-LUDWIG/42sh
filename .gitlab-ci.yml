@@ -13,5 +13,4 @@ test:
     tags:
         - docker
     script:
-        - echo "There is nothing to test..."
         - find . -name '*.c' | xargs wc -l

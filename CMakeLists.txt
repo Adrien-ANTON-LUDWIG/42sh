@@ -21,6 +21,7 @@ set (SRC
     src/lexer/lexer.c
     src/parser/ast.c
     src/parser/parser.c
+    src/parser/parser_if.c
     src/tokens/execution/command_execution.c
     src/tokens/execution/if_execution.c
     src/tokens/lexing/redirection.c
@@ -40,11 +41,8 @@ add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99 -lcriterion)
 
 add_executable(42sh ${SRC} ${HEADERS} src/main.c)
 
-#add_library(asan "-fasnitize=address")
-#target_link_libraries(42h PUBLIC asan)
-#add_executable(testsuite ${SRC} ${HEADERS} tests/main.c)
-#add_executable(lexer_test ${SRC} tests/lexer_tests/lexer_test.c ${HEADERS})
+add_executable(testsuite ${SRC} ${HEADERS} tests/main.c)
+add_executable(lexer_test ${SRC} tests/lexer_tests/lexer_test.c ${HEADERS})
+target_link_libraries(testsuite PUBLIC criterion)
 
-#target_link_libraries(testsuite PUBLIC criterion)
-
-#add_custom_target(check ./testsuite)
+add_custom_target(check ./testsuite --verbose)

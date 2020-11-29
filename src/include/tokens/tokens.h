@@ -5,7 +5,7 @@
 
 #define TOKENS_STRINGS                                                         \
     {                                                                          \
-        "if", "then", "fi"                                                     \
+        "if", "then", "elif", "else", "fi"                                     \
     }
 
 #define TOKENS_STRINGS_REDIR                                                   \
@@ -20,6 +20,8 @@ enum words
 {
     WORD_IF,
     WORD_THEN,
+    WORD_ELIF,
+    WORD_ELSE,
     WORD_FI,
     WORD_REDIR,
     WORD_COMMAND,
@@ -50,6 +52,15 @@ struct redir
  * @return struct token*
  */
 struct token *token_init(struct major *major);
+
+/**
+ * @brief Create a deepcopy of the given src token.
+ *
+ * @param mj
+ * @param src
+ * @return struct token*
+ */
+struct token *token_cpy(struct major *mj, struct token *src);
 
 /**
  * @brief Gets the WORD_TYPE (enum words) of a char*

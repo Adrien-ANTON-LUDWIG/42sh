@@ -11,6 +11,16 @@
 #include "lexer.h"
 #include "printer.h"
 
+/**
+ * @brief Main to test the lexer.
+ *
+ * Parse the options as the real main but does not parse nor execute. Instead,
+ * it prints the result of the lexer.
+ *
+ * @param argc
+ * @param argv
+ * @return int
+ */
 int main(int argc, char **argv)
 {
     if (argc < 2)
@@ -29,14 +39,27 @@ int main(int argc, char **argv)
             struct lexer *lexer = lexer_build(mj, args);
             lexer_printer(lexer);
             free(args);
+            lexer_free(lexer);
+            major_free(mj);
             return 0;
         }
         else if (strcmp(argv[i], "-O") == 0)
-            return 0;
+            continue;
         else if (strcmp(argv[i], "+O") == 0)
-            return 0;
+            continue;
         else
-            errx(1, "Wait, that's illegal!");
+        {
+            struct custom_FILE *file = custom_fopen(argv[i]);
+
+            struct major *mj = major_init();
+            char *content = custom_getfile(file);
+            struct lexer *lexer = lexer_build(mj, content);
+            lexer_printer(lexer);
+            custom_fclose(file);
+            free(content);
+            lexer_free(lexer);
+            major_free(mj);
+        }
     }
     return 0;
 }
