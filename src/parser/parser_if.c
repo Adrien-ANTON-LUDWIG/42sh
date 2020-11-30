@@ -68,7 +68,10 @@ struct ast *parser_if(struct major *mj, struct ast *ast, struct token *tk)
         newast->right = take_action(mj, newast->right, expr);
     }
     if (then->word != WORD_THEN)
+    {
+        token_free(then);
         my_err(1, mj, "parser_if: syntax error");
+    }
 
     token_free(then);
 

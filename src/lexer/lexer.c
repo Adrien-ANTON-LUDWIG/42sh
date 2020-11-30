@@ -35,13 +35,16 @@ static struct token *get_token(struct major *mj)
         struct list *tmp = list_append(mj, tk->data, word);
         tk->data = tmp;
         lexe_cmd(mj, tk);
+        return tk;
     }
-    else if (tk->word == WORD_REDIR)
+    if (tk->word == WORD_REDIR)
     {
         tk->redirection = init_redirection(mj);
         char *file = get_word(mj);
-        set_redirection(mj, tk->redirection, word, file);
+        set_redirection(mj, tk->redirection, word, file);        
     }
+
+    free(word);
 
     return tk;
 }
@@ -61,17 +64,24 @@ struct token *lexer_build(struct major *mj)
         if (!file->str)
             file->str = my_xmalloc(mj, SIZE_TO_GET);
 
-        file->str = custom_fgets(file->str, SIZE_TO_GET, file);
-
+        char *tmp;
+        tmp = custom_fgets(file->str, SIZE_TO_GET, file);
+        if (!tmp)
+        {
+            free(file->str);
+            file->str = NULL;
+            return get_token(mj);
+        }
+            
         if (file->str)
             file->len = strlen(file->str);
         else
             file->len = 0;
         file->lexer_index = 0;
     }
-    else if (!from_file)
+    else if (!from_file && !file->str)
     {
-        s = my_xmalloc(mj, sizeof(char) * SIZE_TO_GET);
+        s = my_xmalloc(mj, SIZE_TO_GET);
         s = custom_fgets(s, SIZE_TO_GET, file);
     }
 

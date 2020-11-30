@@ -24,9 +24,11 @@ int is_redirection(struct major *mj)
         if (strcmp(s, str[i]) == 0)
         {
             mj->file->lexer_index = temp;
+            free(s);
             return 1;
         }
     }
+    free(s);
     mj->file->lexer_index = temp;
     return 0;
 }
