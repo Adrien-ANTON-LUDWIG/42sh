@@ -33,16 +33,26 @@ set (SRC
     tests/printer.c
 )
 
+add_library(42 STATIC ${SRC})
+
 set(CMAKE_LINKER_FLAGS_DEBUG "-fsanitize=address")
 
 file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/include/*.h")
 
 add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99 -lcriterion)
 
-add_executable(42sh ${SRC} ${HEADERS} src/main.c)
+add_executable(42sh ${HEADERS} src/main.c)
+target_link_libraries(42sh 42)
 
-add_executable(testsuite ${SRC} ${HEADERS} tests/main.c)
-add_executable(lexer_test ${SRC} tests/lexer_tests/lexer_test.c ${HEADERS})
-target_link_libraries(testsuite PUBLIC criterion)
+add_executable(testsuite EXCLUDE_FROM_ALL ${HEADERS} tests/main.c)
+target_link_libraries(testsuite PUBLIC criterion 42)
 
-add_custom_target(check ./testsuite --verbose)
+add_executable(lexer_test EXCLUDE_FROM_ALL tests/lexer_tests/lexer_test.c ${HEADERS})
+target_link_libraries(lexer_test 42)
+
+add_custom_target(lt
+    DEPENDS lexer_test)
+
+add_custom_target(check
+    DEPENDS testsuite
+    COMMAND ./testsuite --verbose)
