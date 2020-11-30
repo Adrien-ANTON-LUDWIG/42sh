@@ -33,16 +33,15 @@ set (SRC
     tests/printer.c
 )
 
-add_library(42 STATIC ${SRC})
-
-set(CMAKE_LINKER_FLAGS_DEBUG "-fsanitize=address")
-
 file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/include/*.h")
 
-add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99)
+add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99 -g)
+
+add_library(42 STATIC ${SRC})
 
 add_executable(42sh ${HEADERS} src/main.c)
 target_link_libraries(42sh 42)
+#target_compile_options(42sh PRIVATE -lasan -fsanitize=address)
 
 add_executable(testsuite EXCLUDE_FROM_ALL ${HEADERS} tests/main.c)
 target_link_libraries(testsuite PUBLIC criterion 42)
@@ -55,4 +54,4 @@ add_custom_target(lt
 
 add_custom_target(check
     DEPENDS testsuite
-    COMMAND ./testsuite --verbose)
+    COMMAND valgrind --leak-check=full ./testsuite --verbose)
