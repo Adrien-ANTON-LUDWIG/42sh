@@ -30,16 +30,24 @@ int main(int argc, char **argv)
     {
         if (strcmp(argv[i], "-c") == 0)
         {
-            if (i + 1 == argc)
+            if (i + 1 >= argc)
                 errx(2, "-c: option requires an argument");
 
             struct major *mj = major_init();
             int from = get_index_command_string(i + 1, argc, argv);
             char *args = merge_arguments(argc - from, argv + from);
-            struct lexer *lexer = lexer_build(mj, args);
-            lexer_printer(lexer);
+            mj->file = createfrom_string(args);
+            struct token *tk = lexer_build(mj);
+
+            while (tk->word != WORD_EOF)
+            {
+                print_token(tk);
+                token_free(tk);
+                tk = lexer_build(mj);
+            }
+            print_token(tk);
+            token_free(tk);
             free(args);
-            lexer_free(lexer);
             major_free(mj);
             return 0;
         }
@@ -49,15 +57,19 @@ int main(int argc, char **argv)
             continue;
         else
         {
-            struct custom_FILE *file = custom_fopen(argv[i]);
-
             struct major *mj = major_init();
-            char *content = custom_getfile(file);
-            struct lexer *lexer = lexer_build(mj, content);
-            lexer_printer(lexer);
-            custom_fclose(file);
-            free(content);
-            lexer_free(lexer);
+            mj->file = custom_fopen(argv[i]);
+
+            struct token *tk = lexer_build(mj);
+
+            while (tk->word != WORD_EOF)
+            {
+                print_token(tk);
+                token_free(tk);
+                tk = lexer_build(mj);
+            }
+            print_token(tk);
+            token_free(tk);
             major_free(mj);
         }
     }

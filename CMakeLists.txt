@@ -18,6 +18,8 @@ set (SRC
     src/execution/execution.c
     src/execution/exec_ast.c
     src/lexer/lexer_list.c
+    src/lexer/lexer_utils.c
+    src/lexer/lexer_cmd.c
     src/lexer/lexer.c
     src/parser/ast.c
     src/parser/parser.c

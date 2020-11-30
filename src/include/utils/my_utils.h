@@ -49,8 +49,29 @@ struct list_item
     char *data;
 };
 
+/**
+ * @brief Appends a string str to the list list
+ *
+ * @param mj
+ * @param list
+ * @param str
+ * @return struct list*
+ */
 struct list *list_append(struct major *mj, struct list *list, char *str);
+
+/**
+ * @brief Frees the list l
+ *
+ * @param l
+ */
 void list_free(struct list *l);
+
+/**
+ * @brief Inits a struct list
+ *
+ * @param mj
+ * @return struct list*
+ */
 struct list *list_init(struct major *mj);
 
 #endif /* UTILS_H */
