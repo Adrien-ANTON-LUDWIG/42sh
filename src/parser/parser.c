@@ -36,15 +36,13 @@ struct ast *add_single_command(struct major *mj, struct ast *ast,
  *
  * @param mj
  * @param ast
- * @param lex
  * @param tk
  * @return struct ast*
  */
-struct ast *take_action(struct major *mj, struct ast *ast, struct lexer *lex,
-                        struct token *tk)
+struct ast *take_action(struct major *mj, struct ast *ast, struct token *tk)
 {
     if (tk->word == WORD_IF)
-        ast = parser_if(mj, lex, ast, tk);
+        ast = parser_if(mj, ast, tk);
     else if (tk->word == WORD_COMMAND)
         ast = add_single_command(mj, ast, tk);
     else if (tk->word == WORD_REDIR)
@@ -58,16 +56,15 @@ struct ast *take_action(struct major *mj, struct ast *ast, struct lexer *lex,
  * @brief Parses and executes
  *
  * @param mj
- * @param lex
  * @return struct ast*
  */
-struct ast *parser(struct major *mj, struct lexer *lex)
+struct ast *parser(struct major *mj)
 {
     struct token *tk = NULL;
     struct ast *ast = NULL;
-    while ((tk = lexer_pop_head(mj, lex))->word != WORD_EOF)
+    while ((tk = lexer_build(mj))->word != WORD_EOF)
     {
-        ast = take_action(mj, ast, lex, tk);
+        ast = take_action(mj, ast, tk);
         exec_ast(mj, ast);
         ast_free(ast);
         ast = NULL;

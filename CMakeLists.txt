@@ -18,6 +18,8 @@ set (SRC
     src/execution/execution.c
     src/execution/exec_ast.c
     src/lexer/lexer_list.c
+    src/lexer/lexer_utils.c
+    src/lexer/lexer_cmd.c
     src/lexer/lexer.c
     src/parser/ast.c
     src/parser/parser.c
@@ -33,11 +35,11 @@ set (SRC
     tests/printer.c
 )
 
-set(CMAKE_LINKER_FLAGS_DEBUG "-g -fsanitize=address")
+set(CMAKE_LINKER_FLAGS_DEBUG "-fsanitize=address")
 
 file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/include/*.h")
 
-add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99 -lcriterion)
+add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99 -lcriterion -g)
 
 add_executable(42sh ${SRC} ${HEADERS} src/main.c)
 
