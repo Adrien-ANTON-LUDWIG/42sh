@@ -35,7 +35,7 @@ set (SRC
 
 file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/include/*.h")
 
-message("GBD:" $ENV{DBG})
+message("DBG:" $ENV{DBG})
 if (DEFINED ENV{DBG})
     add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99 -fsanitize=address -g)
     add_link_options(-Wall -Wextra -pedantic -Werror -std=c99 -fsanitize=address -g)
@@ -54,6 +54,12 @@ target_link_libraries(testsuite PUBLIC criterion 42)
 
 add_executable(lexer_test EXCLUDE_FROM_ALL tests/lexer_tests/lexer_test.c ${HEADERS})
 target_link_libraries(lexer_test 42)
+
+add_custom_target(debug
+    COMMAND export DBG=DEBUG && cmake .. && make)
+
+add_custom_target(release
+    COMMAND unset DBG && make clean && cmake .. && make)
 
 add_custom_target(lt
     DEPENDS lexer_test)
