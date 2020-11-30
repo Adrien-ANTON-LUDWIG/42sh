@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "custom_descriptor.h"
+#include "my_err.h"
 #include "my_xmalloc.h"
 #include "redirection.h"
 #include "tokens.h"
@@ -54,7 +55,7 @@ struct token *lexer_build(struct major *mj)
     struct custom_FILE *file = mj->file;
 
     if (!file)
-        return NULL;
+        my_errx(1, mj, "lexer_build: file should not be NULL");
 
     int from_file = file->fd != CUSTOM_FD;
     char *s = NULL;
