@@ -39,7 +39,7 @@ set(CMAKE_LINKER_FLAGS_DEBUG "-fsanitize=address")
 
 file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/include/*.h")
 
-add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99 -lcriterion)
+add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99)
 
 add_executable(42sh ${HEADERS} src/main.c)
 target_link_libraries(42sh 42)
