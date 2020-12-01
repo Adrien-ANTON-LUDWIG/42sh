@@ -36,7 +36,7 @@ struct token *token_cpy(struct major *mj, struct token *src)
     return new;
 }
 
-int token_get(char *s)
+int word_type(char *s)
 {
     char *tokens_strings[] = TOKENS_STRINGS;
 
@@ -45,6 +45,7 @@ int token_get(char *s)
             return i;
 
     char *tokens_strings_redir[] = TOKENS_STRINGS_REDIR;
+
     for (size_t i = 0; i < 2; i++)
         if (!strcmp(s, tokens_strings_redir[i]))
             return WORD_REDIR;

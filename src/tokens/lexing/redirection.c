@@ -9,10 +9,11 @@
 #include "structures.h"
 #include "tokens.h"
 
-int is_redirection(struct major *mj)
+int next_is_redirection(struct major *mj)
 {
     size_t temp = mj->file->lexer_index;
     char *str[] = TOKENS_STRINGS_REDIR;
+    int return_value = 0;
 
     char *s = get_word(mj);
 
@@ -23,14 +24,13 @@ int is_redirection(struct major *mj)
     {
         if (strcmp(s, str[i]) == 0)
         {
-            mj->file->lexer_index = temp;
-            free(s);
-            return 1;
+            return_value = 1;
+            break;
         }
     }
     free(s);
     mj->file->lexer_index = temp;
-    return 0;
+    return return_value;
 }
 struct redir *init_redirection(struct major *mj)
 {
@@ -64,8 +64,6 @@ void set_redirection(struct major *mj, struct redir *redirection, char *word,
         redirection->std_out = file;
         redirection->std_out_append_mode = REDIR_APPEND;
     }
-
-    free(word);
 }
 
 void free_redirection(struct redir *redir)

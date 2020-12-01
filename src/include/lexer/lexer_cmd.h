@@ -11,6 +11,6 @@
  * @param tk
  * @return struct token*
  */
-struct token *lexe_cmd(struct major *mj, struct token *tk);
+struct token *lexer_cmd(struct major *mj, struct token *tk, char *cmd);
 
 #endif

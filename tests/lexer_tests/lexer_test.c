@@ -37,13 +37,13 @@ int main(int argc, char **argv)
             int from = get_index_command_string(i + 1, argc, argv);
             char *args = merge_arguments(argc - from, argv + from);
             mj->file = createfrom_string(args);
-            struct token *tk = lexer_build(mj);
+            struct token *tk = get_next_token(mj);
 
             while (tk->word != WORD_EOF)
             {
                 print_token(tk);
                 token_free(tk);
-                tk = lexer_build(mj);
+                tk = get_next_token(mj);
             }
             print_token(tk);
             token_free(tk);
@@ -60,13 +60,13 @@ int main(int argc, char **argv)
             struct major *mj = major_init();
             mj->file = custom_fopen(argv[i]);
 
-            struct token *tk = lexer_build(mj);
+            struct token *tk = get_next_token(mj);
 
             while (tk->word != WORD_EOF)
             {
                 print_token(tk);
                 token_free(tk);
-                tk = lexer_build(mj);
+                tk = get_next_token(mj);
             }
             print_token(tk);
             token_free(tk);

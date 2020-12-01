@@ -17,8 +17,9 @@ Test(_42SH, simple_lex_if)
     char *s = "if";
     struct major *mj = major_init();
     mj->file = createfrom_string(s);
-    struct token *tk = lexer_build(mj);
+    struct token *tk = get_next_token(mj);
     cr_assert_eq(strcmp("WORD_IF", token2string(tk)), 0);
+    token_free(tk);
     major_free(mj);
 }
 
@@ -27,8 +28,9 @@ Test(_42SH, simple_lex_then)
     char *s = "then";
     struct major *mj = major_init();
     mj->file = createfrom_string(s);
-    struct token *tk = lexer_build(mj);
+    struct token *tk = get_next_token(mj);
     cr_assert_eq(strcmp("WORD_THEN", token2string(tk)), 0);
+    token_free(tk);
     major_free(mj);
 }
 
@@ -37,8 +39,9 @@ Test(_42SH, simple_lex_else)
     char *s = "else";
     struct major *mj = major_init();
     mj->file = createfrom_string(s);
-    struct token *tk = lexer_build(mj);
+    struct token *tk = get_next_token(mj);
     cr_assert_eq(strcmp("WORD_ELSE", token2string(tk)), 0);
+    token_free(tk);
     major_free(mj);
 }
 
@@ -47,8 +50,9 @@ Test(_42SH, simple_lex_fi)
     char *s = "fi";
     struct major *mj = major_init();
     mj->file = createfrom_string(s);
-    struct token *tk = lexer_build(mj);
+    struct token *tk = get_next_token(mj);
     cr_assert_eq(strcmp("WORD_FI", token2string(tk)), 0);
+    token_free(tk);
     major_free(mj);
 }
 
@@ -57,8 +61,9 @@ Test(_42SH, empty_string_lexer)
     char *s = "";
     struct major *mj = major_init();
     mj->file = createfrom_string(s);
-    struct token *tk = lexer_build(mj);
+    struct token *tk = get_next_token(mj);
     cr_assert_eq(strcmp("WORD_EOF", token2string(tk)), 0);
+    token_free(tk);
     major_free(mj);
 }
 
@@ -68,26 +73,33 @@ Test(_42SH, hard_lex_if)
     struct major *mj = major_init();
     mj->file = createfrom_string(s);
 
-    struct token *tk = lexer_build(mj);
+    struct token *tk = get_next_token(mj);
     cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+    token_free(tk);
 
-    tk = lexer_build(mj);
+    tk = get_next_token(mj);
     cr_assert_eq(strcmp("WORD_IF", token2string(tk)), 0);
+    token_free(tk);
 
-    tk = lexer_build(mj);
+    tk = get_next_token(mj);
     cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+    token_free(tk);
 
-    tk = lexer_build(mj);
+    tk = get_next_token(mj);
     cr_assert_eq(strcmp("WORD_THEN", token2string(tk)), 0);
+    token_free(tk);
 
-    tk = lexer_build(mj);
+    tk = get_next_token(mj);
     cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+    token_free(tk);
 
-    tk = lexer_build(mj);
+    tk = get_next_token(mj);
     cr_assert_eq(strcmp("WORD_FI", token2string(tk)), 0);
+    token_free(tk);
 
-    tk = lexer_build(mj);
+    tk = get_next_token(mj);
     cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+    token_free(tk);
 
     major_free(mj);
 }
@@ -98,11 +110,13 @@ Test(_42SH, simple_redir_lex)
     struct major *mj = major_init();
     mj->file = createfrom_string(s);
 
-    struct token *tk = lexer_build(mj);
+    struct token *tk = get_next_token(mj);
     cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+    token_free(tk);
 
-    tk = lexer_build(mj);
+    tk = get_next_token(mj);
     cr_assert_eq(strcmp("WORD_REDIR", token2string(tk)), 0);
+    token_free(tk);
 
     major_free(mj);
 }
@@ -153,8 +167,8 @@ Test(_42sh, merge_commands_empty)
 /*
 Test(_42sh, parser_simple_if)
 {
-    struct lexer *lex = lexer_build(NULL, "if echo test; then echo toto; fi");
-    struct ast *ast = take_action(NULL, NULL, lex, lexer_pop_head(NULL, lex));
+    struct lexer *lex = get_next_token(NULL, "if echo test; then echo toto;
+fi"); struct ast *ast = take_action(NULL, NULL, lex, lexer_pop_head(NULL, lex));
     cr_assert_eq(strcmp(ast->left->data->data->head->data, "echo"), 0);
     cr_assert_eq(strcmp(ast->left->data->data->tail->data, "test"), 0);
     cr_assert_eq(strcmp(ast->right->data->data->head->data, "echo"), 0);
