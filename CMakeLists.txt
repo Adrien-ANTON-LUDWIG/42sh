@@ -24,6 +24,7 @@ set (SRC
     src/lexer/lexer.c
     src/parser/ast.c
     src/parser/parser.c
+    src/parser/parser_cpdlist.c
     src/parser/parser_if.c
     src/tokens/execution/command_execution.c
     src/tokens/execution/if_execution.c
@@ -34,6 +35,12 @@ set (SRC
     src/utils/my_err.c
     src/utils/my_xmalloc.c
     tests/printer.c
+)
+
+set(ADDITIONAL_CLEAN_FILES
+    doc/html
+    doc/latex
+    scripts
 )
 
 file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/include/*.h")
@@ -70,3 +77,11 @@ add_custom_target(lt
 add_custom_target(check
     DEPENDS testsuite
     COMMAND ./testsuite --verbose)
+
+add_custom_target(doc
+    COMMAND doxygen ${CMAKE_SOURCE_DIR}/doc/doxconf ${CMAKE_SOURCE_DIR}/doc)
+
+add_custom_target(script_test
+    DEPENDS 42sh
+    COMMAND cp -r ${CMAKE_SOURCE_DIR}/tests/scripts ./
+    COMMAND bash ./scripts/tests_script.sh)
