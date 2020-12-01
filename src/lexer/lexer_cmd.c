@@ -4,8 +4,11 @@
 #include "my_utils.h"
 #include "redirection.h"
 
-struct token *lexe_cmd(struct major *mj, struct token *tk)
+struct token *lexer_cmd(struct major *mj, struct token *tk, char *cmd)
 {
+    struct list *tmp = list_append(mj, tk->data, cmd);
+    tk->data = tmp;
+
     if (!mj->file->str)
         return tk;
 

@@ -32,18 +32,10 @@ static struct token *get_token(struct major *mj)
     tk->word = i;
 
     if (tk->word == WORD_COMMAND)
-    {
-        struct list *tmp = list_append(mj, tk->data, word);
-        tk->data = tmp;
-        lexe_cmd(mj, tk);
-        return tk;
-    }
+        return lexer_cmd(mj, tk, word);
+
     if (tk->word == WORD_REDIR)
-    {
-        tk->redirection = init_redirection(mj);
-        char *file = get_word(mj);
-        set_redirection(mj, tk->redirection, word, file);
-    }
+        return lexer_redir(mj, tk, word);
 
     free(word);
 

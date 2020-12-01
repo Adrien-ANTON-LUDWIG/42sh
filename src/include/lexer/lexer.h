@@ -1,12 +1,13 @@
 #ifndef LEXER_H
 #define LEXER_H
 
-#define BUFFER_SIZE 4096
+#define BUFFER_SIZE 512
 
 #include <stddef.h>
 #include <string.h>
 
 #include "lexer_cmd.h"
+#include "lexer_redir.h"
 #include "lexer_utils.h"
 #include "my_utils.h"
 #include "tokens.h"
