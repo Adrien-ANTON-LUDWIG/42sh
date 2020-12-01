@@ -23,6 +23,7 @@ set (SRC
     src/lexer/lexer.c
     src/parser/ast.c
     src/parser/parser.c
+    src/parser/parser_cpdlist.c
     src/parser/parser_if.c
     src/tokens/execution/command_execution.c
     src/tokens/execution/if_execution.c
@@ -69,3 +70,7 @@ add_custom_target(lt
 add_custom_target(check
     DEPENDS testsuite
     COMMAND ./testsuite --verbose)
+
+#add_custom_target(script
+#    DEPENDS 42sh
+#    COMMAND ${CMAKE_SOURCE_DIR}/build/42sh ${CMAKE_SOURCE_DIR}/tests/scripts/script.sh > ${CMAKE_SOURCE_DIR}/
