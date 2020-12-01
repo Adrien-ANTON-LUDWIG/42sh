@@ -68,7 +68,7 @@ struct token *token_cpy(struct major *mj, struct token *src);
  * @param s
  * @return int
  */
-int token_get(char *s);
+int word_type(char *s);
 
 /**
  * @brief Converts a the field word of a token into a string

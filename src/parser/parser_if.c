@@ -31,7 +31,7 @@ static void parser_else(struct major *mj, struct ast *ast)
 {
     struct token *expr = NULL;
 
-    while ((expr = lexer_build(mj))->word != WORD_FI)
+    while ((expr = get_next_token(mj))->word != WORD_FI)
     {
         if (expr->word == WORD_EOF)
             my_err(1, mj, "parser_if: unexpected EOF");
@@ -56,12 +56,12 @@ struct ast *parser_if(struct major *mj, struct ast *ast, struct token *tk)
         struct ast *newast = add_single_command(mj, ast, NULL);
         ast = newast;
     }
-    struct token *cond = lexer_build(mj);
-    struct token *then = lexer_build(mj);
+    struct token *cond = get_next_token(mj);
+    struct token *then = get_next_token(mj);
     struct token *expr = NULL;
     struct ast *newast = create_ast(mj, tk);
     newast->left = take_action(mj, newast->left, cond);
-    while (should_loop((expr = lexer_build(mj))->word))
+    while (should_loop((expr = get_next_token(mj))->word))
     {
         if (expr->word == WORD_EOF)
             my_err(1, mj, "parser_if: unexpected EOF");
