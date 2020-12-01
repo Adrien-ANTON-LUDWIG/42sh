@@ -41,7 +41,7 @@ void skip_class(int (*classifier)(int), struct major *mj)
         if (mj->file->lexer_index >= mj->file->len)
         {
             if (mj->file->fd != CUSTOM_FD && mj->file->str
-                && mj->file->lexer_index >= SIZE_TO_GET)
+                && mj->file->lexer_index >= BUFFER_SIZE)
             {
                 get_new_string(mj);
                 if (mj->file->len == 0)
@@ -72,9 +72,8 @@ char *get_word(struct major *mj)
     char *start = mj->file->str + mj->file->lexer_index;
     skip_class(is_word, mj);
 
-    // printf("start: %s\n", start);
-
     char *end = mj->file->str + mj->file->lexer_index;
+
     if (end == start)
         return NULL;
 

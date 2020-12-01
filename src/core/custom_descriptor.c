@@ -82,7 +82,7 @@ void get_new_string(struct major *mj)
     if (!mj || mj->file->fd == CUSTOM_FD)
         return;
 
-    mj->file->str = custom_fgets(mj->file->str, SIZE_TO_GET, mj->file);
+    mj->file->str = custom_fgets(mj->file->str, BUFFER_SIZE, mj->file);
     mj->file->lexer_index = 0;
     if (mj->file->str)
         mj->file->len = strlen(mj->file->str);

@@ -62,7 +62,7 @@ struct ast *parser(struct major *mj)
 {
     struct token *tk = NULL;
     struct ast *ast = NULL;
-    while ((tk = lexer_build(mj))->word != WORD_EOF)
+    while ((tk = get_next_token(mj))->word != WORD_EOF)
     {
         ast = take_action(mj, ast, tk);
         exec_ast(mj, ast);

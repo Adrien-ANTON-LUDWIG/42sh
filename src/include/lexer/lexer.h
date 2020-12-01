@@ -1,12 +1,13 @@
 #ifndef LEXER_H
 #define LEXER_H
 
-#define SIZE_TO_GET 4096
+#define BUFFER_SIZE 512
 
 #include <stddef.h>
 #include <string.h>
 
 #include "lexer_cmd.h"
+#include "lexer_redir.h"
 #include "lexer_utils.h"
 #include "my_utils.h"
 #include "tokens.h"
@@ -64,6 +65,6 @@ void lexer_free(struct lexer *lex);
  * @param mj
  * @return struct token*
  */
-struct token *lexer_build(struct major *mj);
+struct token *get_next_token(struct major *mj);
 
 #endif /* LEXER_H */

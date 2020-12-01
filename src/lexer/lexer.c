@@ -28,29 +28,21 @@ static struct token *get_token(struct major *mj)
     if (!word)
         return tk;
 
-    int i = token_get(word);
+    int i = word_type(word);
     tk->word = i;
 
     if (tk->word == WORD_COMMAND)
-    {
-        struct list *tmp = list_append(mj, tk->data, word);
-        tk->data = tmp;
-        lexe_cmd(mj, tk);
-        return tk;
-    }
+        return lexer_cmd(mj, tk, word);
+
     if (tk->word == WORD_REDIR)
-    {
-        tk->redirection = init_redirection(mj);
-        char *file = get_word(mj);
-        set_redirection(mj, tk->redirection, word, file);        
-    }
+        return lexer_redir(mj, tk, word);
 
     free(word);
 
     return tk;
 }
 
-struct token *lexer_build(struct major *mj)
+struct token *get_next_token(struct major *mj)
 {
     struct custom_FILE *file = mj->file;
 
@@ -63,27 +55,23 @@ struct token *lexer_build(struct major *mj)
     if (from_file && (!file->str || file->lexer_index >= file->len - 1))
     {
         if (!file->str)
-            file->str = my_xmalloc(mj, SIZE_TO_GET);
+            file->str = my_xmalloc(mj, BUFFER_SIZE);
 
-        char *tmp;
-        tmp = custom_fgets(file->str, SIZE_TO_GET, file);
+        char *tmp = custom_fgets(file->str, BUFFER_SIZE, file);
+
         if (!tmp)
         {
             free(file->str);
             file->str = NULL;
             return get_token(mj);
         }
-            
-        if (file->str)
-            file->len = strlen(file->str);
-        else
-            file->len = 0;
+        file->len = strlen(file->str);
         file->lexer_index = 0;
     }
     else if (!from_file && !file->str)
     {
-        s = my_xmalloc(mj, SIZE_TO_GET);
-        s = custom_fgets(s, SIZE_TO_GET, file);
+        s = my_xmalloc(mj, BUFFER_SIZE);
+        s = custom_fgets(s, BUFFER_SIZE, file);
     }
 
     return get_token(mj);

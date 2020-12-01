@@ -36,6 +36,6 @@ void free_redirection(struct redir *redir);
  * @param mj
  * @return int
  */
-int is_redirection(struct major *mj);
+int next_is_redirection(struct major *mj);
 
 #endif /* REDIRECTION_H */
