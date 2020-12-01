@@ -79,3 +79,8 @@ add_custom_target(check
 add_custom_target(doc
     COMMAND doxygen ${CMAKE_SOURCE_DIR}/doc/doxconf ${CMAKE_SOURCE_DIR}/doc
     COMMAND echo doxygen ${CMAKE_SOURCE_DIR}/doc/doxconf ${CMAKE_SOURCE_DIR}/doc)
+
+add_custom_target(script_test
+    DEPENDS 42sh
+    COMMAND cp -r ${CMAKE_SOURCE_DIR}/tests/scripts ./
+    COMMAND bash ./scripts/tests_script.sh)
