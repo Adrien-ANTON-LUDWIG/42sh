@@ -5,9 +5,9 @@
 /**
  * @brief Predicate used by parser_while() to know if this is still a compound
  * list.
- * 
- * @param w 
- * @return int 
+ *
+ * @param w
+ * @return int
  */
 static int should_loop(enum words w)
 {
@@ -33,8 +33,8 @@ struct ast *parser_while(struct major *mj, struct ast *ast, struct token *tk)
         struct ast *newast = add_single_command(mj, ast, NULL);
         ast = newast;
     }
-    struct token *cond = lexer_build(mj);
-    struct token *t_do = lexer_build(mj);
+    struct token *cond = get_next_token(mj);
+    struct token *t_do = get_next_token(mj);
     struct token *expr = NULL;
     struct ast *newast = create_ast(mj, tk);
     newast->left = take_action(mj, newast->left, cond);
