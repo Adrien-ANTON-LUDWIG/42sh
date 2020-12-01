@@ -61,12 +61,8 @@ struct ast *parser_if(struct major *mj, struct ast *ast, struct token *tk)
     struct token *expr = NULL;
     struct ast *newast = create_ast(mj, tk);
     newast->left = take_action(mj, newast->left, cond);
-    while (should_loop((expr = lexer_build(mj))->word))
-    {
-        if (expr->word == WORD_EOF)
-            my_err(1, mj, "parser_if: unexpected EOF");
-        newast->right = take_action(mj, newast->right, expr);
-    }
+    parser_cpdlist(mj, &expr, newast, should_loop);
+
     if (then->word != WORD_THEN)
     {
         token_free(then);
