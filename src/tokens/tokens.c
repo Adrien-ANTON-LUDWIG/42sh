@@ -10,7 +10,8 @@
 #define TOKENS_TO_STRING                                                       \
     {                                                                          \
         "WORD_IF", "WORD_THEN", "WORD_ELIF", "WORD_ELSE", "WORD_FI",           \
-            "WORD_REDIR", "WORD_COMMAND", "WORD_EOF", "WORD_AND"               \
+            "WORD_WHILE", "WORD_DO", "WORD_DONE", "WORD_REDIR",                \
+            "WORD_COMMAND", "WORD_EOF", "WORD_AND"                             \
     }
 
 struct token *token_init(struct major *mj)

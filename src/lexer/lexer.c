@@ -25,6 +25,7 @@ static struct token *get_token(struct major *mj)
         return tk;
 
     char *word = get_word(mj);
+
     if (!word)
         return tk;
 
