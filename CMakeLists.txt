@@ -39,6 +39,7 @@ set (SRC
 set(ADDITIONAL_CLEAN_FILES
     doc/html
     doc/latex
+    scripts
 )
 
 file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/include/*.h")
