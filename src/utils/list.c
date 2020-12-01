@@ -67,3 +67,29 @@ struct list *list_append(struct major *mj, struct list *list, char *str)
 
     return list;
 }
+
+struct list *list_append_variable(struct major *mj, struct list *list,
+                                  char *name, char *str)
+{
+    if (!str || !name)
+        my_err(1, mj, "list_append_variable: str should not be empty");
+
+    struct list_item *item = list_item_init(mj, str);
+    item->name = name;
+
+    if (!list)
+    {
+        list = list_init(mj);
+        list->head = item;
+        list->tail = item;
+        list->size++;
+
+        return list;
+    }
+
+    list->tail->next = item;
+    list->tail = item;
+    list->size++;
+
+    return list;
+}

@@ -46,6 +46,7 @@ struct list
 struct list_item
 {
     struct list_item *next;
+    char *name;
     char *data;
 };
 
@@ -58,6 +59,18 @@ struct list_item
  * @return struct list*
  */
 struct list *list_append(struct major *mj, struct list *list, char *str);
+
+/**
+ * @brief Appends a variable with name and data to the list list
+ *
+ * @param mj
+ * @param list
+ * @param name
+ * @param str
+ * @return struct list*
+ */
+struct list *list_append_variable(struct major *mj, struct list *list,
+                                  char *name, char *str);
 
 /**
  * @brief Frees the list l
