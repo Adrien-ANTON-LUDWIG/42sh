@@ -55,8 +55,10 @@ int main(int argc, char **argv)
 
         char *args = merge_arguments(argc - from, argv + from);
         mj->file = createfrom_string(args);
+        mj->rvalue = 0;
         free(args);
         parser(mj);
+        return mj->rvalue;
     }
     else
     {

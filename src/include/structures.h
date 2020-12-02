@@ -3,6 +3,7 @@
 
 struct major
 {
+    int rvalue;
     int options;
     struct custom_FILE *file;
     struct list *variables;
