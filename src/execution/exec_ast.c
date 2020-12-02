@@ -20,6 +20,13 @@ int exec_ast(struct major *mj, struct ast *ast)
         else if (ast->middle)
             exec_ast(mj, ast->middle);
     }
+    else if (tk->word == WORD_WHILE)
+    {
+        while (allow_son_execution_if(mj, tk, err))
+        {
+            exec_ast(mj, ast->right);
+        }
+    }
     else if (tk->word == WORD_COMMAND)
         return execution_command(mj, tk);
     else if (tk->word == WORD_AND)
