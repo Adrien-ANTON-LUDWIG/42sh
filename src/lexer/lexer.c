@@ -66,6 +66,9 @@ struct token *get_next_token(struct major *mj)
 
         char *tmp = custom_fgets(file->str, BUFFER_SIZE, file);
 
+        while (tmp && *tmp == '\n')
+            tmp = custom_fgets(file->str, BUFFER_SIZE, file);
+
         if (!tmp)
         {
             free(file->str);
