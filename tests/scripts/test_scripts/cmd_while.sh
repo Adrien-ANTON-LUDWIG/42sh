@@ -4,4 +4,4 @@ do
 	echo willneverbeprinted
 done
 echo no no no;
-echo Mission reussi, extraction
+echo Mission reussie, extraction
