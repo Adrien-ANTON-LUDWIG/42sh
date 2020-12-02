@@ -25,6 +25,7 @@ int exec_ast(struct major *mj, struct ast *ast)
         while (allow_son_execution_if(mj, tk, err))
         {
             exec_ast(mj, ast->right);
+            err = exec_ast(mj, ast->left);
         }
     }
     else if (tk->word == WORD_COMMAND)
