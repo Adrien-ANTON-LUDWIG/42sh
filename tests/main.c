@@ -163,6 +163,35 @@ Test(_42SH, simple_while_lex)
     major_free(mj);
 }
 
+Test(_42SH, simple_for_lex)
+{
+    char *s = "for true; do echo tata; done";
+    struct major *mj = major_init();
+    mj->file = createfrom_string(s);
+
+    struct token *tk = get_next_token(mj);
+    cr_assert_eq(strcmp("WORD_FOR", token2string(tk)), 0);
+    token_free(tk);
+
+    tk = get_next_token(mj);
+    cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+    token_free(tk);
+
+    tk = get_next_token(mj);
+    cr_assert_eq(strcmp("WORD_DO", token2string(tk)), 0);
+    token_free(tk);
+
+    tk = get_next_token(mj);
+    cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+    token_free(tk);
+
+    tk = get_next_token(mj);
+    cr_assert_eq(strcmp("WORD_DONE", token2string(tk)), 0);
+    token_free(tk);
+
+    major_free(mj);
+}
+
 Test(_42sh, custom_descriptor1)
 {
     struct custom_FILE *f = createfrom_string(
