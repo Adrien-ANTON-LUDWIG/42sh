@@ -32,6 +32,24 @@ static void print_token_redir(struct token *tk)
                tk->redirection->std_err);
 }
 
+static void print_token_in(struct token *tk)
+{
+    struct list_item *l = tk->data->head;
+
+    if (!l)
+        return;
+    printf(" %s in", l->data);
+
+    l = l->next;
+
+    while (l)
+    {
+        printf(" %s", l->data);
+        l = l->next;
+    }
+    printf("\n");
+}
+
 void print_token(struct token *tk)
 {
     red();
@@ -51,6 +69,8 @@ void print_token(struct token *tk)
     {
         print_token_redir(tk);
     }
+    else if (tk->word == WORD_IN)
+        print_token_in(tk);
     reset();
     printf("\n");
 }

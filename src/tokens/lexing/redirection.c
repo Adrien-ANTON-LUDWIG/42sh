@@ -32,6 +32,7 @@ int next_is_redirection(struct major *mj)
     mj->file->lexer_index = temp;
     return return_value;
 }
+
 struct redir *init_redirection(struct major *mj)
 {
     struct redir *new_redir = malloc(sizeof(struct redir));
