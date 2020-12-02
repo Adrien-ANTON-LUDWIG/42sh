@@ -38,12 +38,6 @@ set (SRC
     tests/printer.c
 )
 
-set(ADDITIONAL_CLEAN_FILES
-    doc/html
-    doc/latex
-    scripts
-)
-
 file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/include/*.h")
 
 message("DBG:" $ENV{DBG})
@@ -80,9 +74,11 @@ add_custom_target(check
     COMMAND ./testsuite --verbose)
 
 add_custom_target(doc
-    COMMAND doxygen ${CMAKE_SOURCE_DIR}/doc/doxconf ${CMAKE_SOURCE_DIR}/doc)
+    COMMAND doxygen ${CMAKE_SOURCE_DIR}/doc/doxconf ${CMAKE_SOURCE_DIR}/doc
+    BYPRODUCTS ./doc/)
 
 add_custom_target(script_test
     DEPENDS 42sh
     COMMAND cp -r ${CMAKE_SOURCE_DIR}/tests/scripts ./
-    COMMAND bash ./scripts/tests_script.sh)
+    COMMAND bash ./scripts/tests_script.sh
+    BYPRODUCTS ./scripts/ actual expected)
