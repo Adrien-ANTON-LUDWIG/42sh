@@ -16,6 +16,7 @@ int execution_command(struct major *mj, struct token *tk)
     char **command = token_list_to_char_array(tk->data);
     int rvalue = run_command(command);
     free(command);
+    mj->rvalue = rvalue;
     return rvalue;
 }
 
