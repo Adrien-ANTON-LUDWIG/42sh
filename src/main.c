@@ -58,7 +58,10 @@ int main(int argc, char **argv)
         mj->rvalue = 0;
         free(args);
         parser(mj);
-        return mj->rvalue;
+        int rvalue = mj->rvalue;
+        major_free(mj);
+        return rvalue;
+        ;
     }
     else
     {

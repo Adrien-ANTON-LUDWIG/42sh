@@ -47,7 +47,7 @@ struct ast *take_action(struct major *mj, struct ast *ast, struct token *tk)
         ast = add_single_command(mj, ast, tk);
     else if (tk->word == WORD_REDIR)
         token_free(tk);
-    else if (tk->word == WORD_WHILE)
+    else if (tk->word == WORD_WHILE || tk->word == WORD_UNTIL)
         ast = parser_while(mj, ast, tk);
     else
         my_err(1, mj, "parser: syntax error");
