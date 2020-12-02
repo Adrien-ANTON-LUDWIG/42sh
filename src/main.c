@@ -61,7 +61,6 @@ int main(int argc, char **argv)
         int rvalue = mj->rvalue;
         major_free(mj);
         return rvalue;
-        ;
     }
     else
     {
