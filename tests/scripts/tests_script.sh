@@ -19,8 +19,10 @@ test_script()
 
 declare -a scripts=("cmd_if_if_cmd.sh")
 
-for i in $(seq 1 ${#scripts[@]})
+for args in "scripts/test_scripts/"*;
 do
-    args="./scripts/${scripts[i-1]}"
+    echo "${args}"
     test_script
 done
+
+exit 0
