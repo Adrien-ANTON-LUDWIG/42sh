@@ -12,6 +12,7 @@ struct major *major_init(void)
         errx(1, "major init: could not malloc struct major\n");
     new->options = 0;
     new->file = NULL;
+    new->variables = NULL;
     return new;
 }
 
@@ -23,5 +24,6 @@ struct major *major_init(void)
 void major_free(struct major *mj)
 {
     custom_fclose(mj->file);
+    list_free(mj->variables);
     free(mj);
 }

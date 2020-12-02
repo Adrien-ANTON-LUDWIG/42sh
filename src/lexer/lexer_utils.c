@@ -7,6 +7,21 @@
 
 #include "lexer.h"
 
+static void skip_to_new_line(struct major *mj)
+{
+    if (mj->file->fd == CUSTOM_FD)
+    {
+        for (; mj->file->lexer_index < mj->file->len; mj->file->lexer_index++)
+            if (mj->file->str[mj->file->lexer_index] == '\n')
+            {
+                mj->file->lexer_index++;
+                break;
+            }
+    }
+    else
+        mj->file->str = custom_fgets(mj->file->str, BUFFER_SIZE, mj->file);
+}
+
 static int my_is_space(int c)
 {
     return c == ' ' || c == '\t' || c == '\v';
@@ -70,6 +85,13 @@ char *get_word(struct major *mj)
         return NULL;
 
     char *start = mj->file->str + mj->file->lexer_index;
+
+    while (*start == '#')
+    {
+        skip_to_new_line(mj);
+        start = mj->file->str + mj->file->lexer_index;
+    }
+
     skip_class(is_word, mj);
 
     char *end = mj->file->str + mj->file->lexer_index;

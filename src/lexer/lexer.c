@@ -25,6 +25,7 @@ static struct token *get_token(struct major *mj)
         return tk;
 
     char *word = get_word(mj);
+
     if (!word)
         return tk;
 
@@ -47,7 +48,7 @@ struct token *get_next_token(struct major *mj)
     struct custom_FILE *file = mj->file;
 
     if (!file)
-        my_err(1, mj, "lexer_build: file should not be NULL");
+        my_err(1, mj, "get_next_token: file should not be NULL");
 
     int from_file = file->fd != CUSTOM_FD;
     char *s = NULL;
