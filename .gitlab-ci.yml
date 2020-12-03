@@ -1,5 +1,6 @@
 stages:
     - Build
+    - Lines counter
     - Unit tests
     - Functional tests
 build:
@@ -28,7 +29,7 @@ test2:
         - cmake ..
         - make check
 lines_counter:
-    stage: Lines Counter
+    stage: Lines counter
     tags:
         - docker
     script:
