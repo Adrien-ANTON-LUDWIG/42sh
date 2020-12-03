@@ -34,7 +34,7 @@ Test(_42SH, simple_lex_if)
     struct major *mj = major_init();
     mj->file = createfrom_string(s);
     struct token *tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_IF", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_IF", token2string(tk)), 0);
     token_free(tk);
     major_free(mj);
 }
@@ -45,7 +45,7 @@ Test(_42SH, simple_lex_then)
     struct major *mj = major_init();
     mj->file = createfrom_string(s);
     struct token *tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_THEN", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_THEN", token2string(tk)), 0);
     token_free(tk);
     major_free(mj);
 }
@@ -56,7 +56,7 @@ Test(_42SH, simple_lex_else)
     struct major *mj = major_init();
     mj->file = createfrom_string(s);
     struct token *tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_ELSE", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_ELSE", token2string(tk)), 0);
     token_free(tk);
     major_free(mj);
 }
@@ -67,7 +67,7 @@ Test(_42SH, simple_lex_fi)
     struct major *mj = major_init();
     mj->file = createfrom_string(s);
     struct token *tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_FI", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_FI", token2string(tk)), 0);
     token_free(tk);
     major_free(mj);
 }
@@ -78,7 +78,7 @@ Test(_42SH, empty_string_lexer)
     struct major *mj = major_init();
     mj->file = createfrom_string(s);
     struct token *tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_EOF", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_EOF", token2string(tk)), 0);
     token_free(tk);
     major_free(mj);
 }
@@ -90,31 +90,31 @@ Test(_42SH, hard_lex_if)
     mj->file = createfrom_string(s);
 
     struct token *tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
     token_free(tk);
 
     tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_IF", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_IF", token2string(tk)), 0);
     token_free(tk);
 
     tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
     token_free(tk);
 
     tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_THEN", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_THEN", token2string(tk)), 0);
     token_free(tk);
 
     tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
     token_free(tk);
 
     tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_FI", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_FI", token2string(tk)), 0);
     token_free(tk);
 
     tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
     token_free(tk);
 
     major_free(mj);
@@ -127,11 +127,11 @@ Test(_42SH, simple_redir_lex)
     mj->file = createfrom_string(s);
 
     struct token *tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
     token_free(tk);
 
     tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_REDIR", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_REDIR", token2string(tk)), 0);
     token_free(tk);
 
     major_free(mj);
@@ -144,7 +144,7 @@ Test(_42SH, simple_comment_lex)
     mj->file = createfrom_string(s);
 
     struct token *tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
     token_free(tk);
 
     major_free(mj);
@@ -157,23 +157,23 @@ Test(_42SH, simple_while_lex)
     mj->file = createfrom_string(s);
 
     struct token *tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_WHILE", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_WHILE", token2string(tk)), 0);
     token_free(tk);
 
     tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
     token_free(tk);
 
     tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_DO", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_DO", token2string(tk)), 0);
     token_free(tk);
 
     tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
     token_free(tk);
 
     tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_DONE", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_DONE", token2string(tk)), 0);
     token_free(tk);
 
     major_free(mj);
@@ -186,23 +186,23 @@ Test(_42SH, simple_for_lex)
     mj->file = createfrom_string(s);
 
     struct token *tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_FOR", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_FOR", token2string(tk)), 0);
     token_free(tk);
 
     tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
     token_free(tk);
 
     tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_DO", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_DO", token2string(tk)), 0);
     token_free(tk);
 
     tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
     token_free(tk);
 
     tk = get_next_token(mj);
-    cr_assert_eq(strcmp("WORD_DONE", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_DONE", token2string(tk)), 0);
     token_free(tk);
 
     major_free(mj);
@@ -216,12 +216,12 @@ Test(_42SH, simple_in_lex)
 
     struct token *tk = get_next_token(mj);
 
-    cr_assert_eq(strcmp("WORD_IN", token2string(tk)), 0);
+    cr_expect_eq(strcmp("WORD_IN", token2string(tk)), 0);
 
-    cr_assert_eq(strcmp("test", tk->data->head->data), 0);
-    cr_assert_eq(strcmp("1", tk->data->head->next->data), 0);
-    cr_assert_eq(strcmp("2", tk->data->tail->data), 0);
-    // cr_assert_eq(strcmp("3", tk->data->head->next->next->next->data), 0);
+    cr_expect_eq(strcmp("test", tk->data->head->data), 0);
+    cr_expect_eq(strcmp("1", tk->data->head->next->data), 0);
+    cr_expect_eq(strcmp("2", tk->data->tail->data), 0);
+    // cr_expect_eq(strcmp("3", tk->data->head->next->next->next->data), 0);
 
     token_free(tk);
     major_free(mj);
@@ -251,7 +251,7 @@ Test(_42sh, merge_commands)
 {
     char *argv[] = { "Salut", "comment", "ça", "va" };
     char *merged = merge_arguments(4, argv);
-    cr_assert_eq(strcmp("Salut comment ça va", merged), 0);
+    cr_expect_eq(strcmp("Salut comment ça va", merged), 0);
     free(merged);
 }
 
@@ -259,7 +259,7 @@ Test(_42sh, merge_commands_first_empty)
 {
     char *argv[] = { "", "Salut" };
     char *merged = merge_arguments(2, argv);
-    cr_assert_eq(strcmp("Salut", merged), 0);
+    cr_expect_eq(strcmp("Salut", merged), 0);
     free(merged);
 }
 
@@ -267,7 +267,7 @@ Test(_42sh, merge_commands_empty)
 {
     char *argv[] = { NULL };
     char *merged = merge_arguments(0, argv);
-    cr_assert_null(merged);
+    cr_expect_null(merged);
     free(merged);
 }
 /*
@@ -275,10 +275,10 @@ Test(_42sh, parser_simple_if)
 {
     struct lexer *lex = get_next_token(NULL, "if echo test; then echo toto;
 fi"); struct ast *ast = take_action(NULL, NULL, lex, lexer_pop_head(NULL, lex));
-    cr_assert_eq(strcmp(ast->left->data->data->head->data, "echo"), 0);
-    cr_assert_eq(strcmp(ast->left->data->data->tail->data, "test"), 0);
-    cr_assert_eq(strcmp(ast->right->data->data->head->data, "echo"), 0);
-    cr_assert_eq(strcmp(ast->right->data->data->tail->data, "toto"), 0);
+    cr_expect_eq(strcmp(ast->left->data->data->head->data, "echo"), 0);
+    cr_expect_eq(strcmp(ast->left->data->data->tail->data, "test"), 0);
+    cr_expect_eq(strcmp(ast->right->data->data->head->data, "echo"), 0);
+    cr_expect_eq(strcmp(ast->right->data->data->tail->data, "toto"), 0);
     lexer_free(lex);
     ast_free(ast);
 }
