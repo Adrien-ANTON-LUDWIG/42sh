@@ -26,11 +26,9 @@ static void skip_to_new_line(struct major *mj)
         {
             free(mj->file->str);
             mj->file->str = NULL;
+            return;
         }
     }
-
-    if (!mj->file->str)
-        return;
 
     mj->file->lexer_index = 0;
     mj->file->len = strlen(mj->file->str);
