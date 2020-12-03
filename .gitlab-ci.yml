@@ -1,20 +1,35 @@
 stages:
-    - build
-    - test
+    - Build
+    - Unit tests
+    - Functional tests
 build:
-    stage: build
+    stage: Build
     tags:
         - docker
     script:
         - mkdir build && cd build
         - cmake .. && make
 test:
-    stage: test
+    stage: Functional tests
     tags:
         - docker
     script:
-        - find . -name '*.c' | xargs wc -l
         - mkdir build && cd build
         - cmake .. && make
         - cp /usr/src/app/script.sh .
         - valgrind --leak-check=full --error-exitcode=1 ./42sh script.sh
+        - make script_test
+test2:
+    stage: Unit tests
+    tags:
+        - docker
+    script:
+        - mkdir build && cd build
+        - cmake ..
+        - make check
+lines_counter:
+    stage: Lines Counter
+    tags:
+        - docker
+    script:
+        - find . -name '*.c' | xargs wc -l
