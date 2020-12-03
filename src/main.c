@@ -9,6 +9,7 @@
 #include "custom_descriptor.h"
 #include "execution.h"
 #include "lexer.h"
+#include "my_xmalloc.h"
 #include "parser.h"
 #include "printer.h"
 
@@ -20,6 +21,8 @@
  */
 void shopt_options(int *i, char **argv)
 {
+    if (!argv[*i])
+        return;
     while (!strcmp(argv[*i], "-O") || !strcmp(argv[*i], "+O"))
     {
         if (argv[*i][0] == '-')
@@ -39,11 +42,10 @@ void shopt_options(int *i, char **argv)
  */
 int main(int argc, char **argv)
 {
-    if (argc < 2)
-        return 0;
+    int i = 0;
 
-    int i = 1;
-    shopt_options(&i, argv);
+    if (argc > 1)
+        i = 1;
 
     struct major *mj = major_init();
     int from = get_index_command_string(i, argc, argv);
@@ -64,7 +66,15 @@ int main(int argc, char **argv)
     }
     else
     {
-        struct custom_FILE *file = custom_fopen(argv[from]);
+        struct custom_FILE *file;
+        if (argc >= 2)
+            file = custom_fopen(argv[from]);
+        else
+        {
+            file = calloc(1, sizeof(struct custom_FILE));
+            file->file = stdin;
+            file->fd = stdin->_fileno;
+        }
         mj->file = file;
         parser(mj);
     }

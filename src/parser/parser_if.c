@@ -34,7 +34,7 @@ static void parser_else(struct major *mj, struct ast *ast)
     while ((expr = get_next_token(mj))->word != WORD_FI)
     {
         if (expr->word == WORD_EOF)
-            my_err(1, mj, "parser_if: unexpected EOF");
+            my_err(2, mj, "parser_if: unexpected EOF");
         ast->middle = take_action(mj, NULL, expr);
     }
 
@@ -66,7 +66,7 @@ struct ast *parser_if(struct major *mj, struct ast *ast, struct token *tk)
     if (then->word != WORD_THEN)
     {
         token_free(then);
-        my_err(1, mj, "parser_if: syntax error");
+        my_err(2, mj, "parser_if: syntax error");
     }
 
     token_free(then);

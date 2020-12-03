@@ -38,7 +38,7 @@ struct ast *parser_for(struct major *mj, struct ast *ast, struct token *tk)
     if (t_do->word != WORD_DO)
     {
         token_free(t_do);
-        my_err(1, mj, "parser_for: syntax error: unexpected EOF");
+        my_err(2, mj, "parser_for: syntax error: unexpected EOF");
     }
 
     struct ast *newast = create_ast(mj, tk);
