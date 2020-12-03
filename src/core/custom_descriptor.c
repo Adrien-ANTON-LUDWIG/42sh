@@ -55,10 +55,7 @@ void custom_fclose(struct custom_FILE *f)
 char *custom_fgets(char *s, size_t size, struct custom_FILE *f)
 {
     if (f->fd != CUSTOM_FD)
-    {
-        s = memset(s, 0, size);
         return fgets(s, size, f->file);
-    }
 
     if (f->index >= f->len)
         return NULL;
