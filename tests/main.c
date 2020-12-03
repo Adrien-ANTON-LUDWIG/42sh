@@ -12,6 +12,22 @@
 
 TestSuite(_42sh, .timeout = 15);
 // LEXER
+
+Test(_42sh, parser_for)
+{
+    char *s = "for true in a b c d; do echo foobar; done";
+    struct major *mj = major_init();
+    mj->file = createfrom_string(s);
+
+    struct ast *ast = parser_for(mj, NULL, get_next_token(mj));
+    cr_expect_eq(ast->data->word, WORD_FOR, "Root word type");
+    cr_expect_eq(ast->left->data->word, WORD_IN, "Left child word type");
+    cr_expect_eq(ast->right->data->word, WORD_COMMAND, "Right child word type");
+
+    major_free(mj);
+    ast_free(ast);
+}
+
 Test(_42SH, simple_lex_if)
 {
     char *s = "if";
@@ -205,44 +221,9 @@ Test(_42SH, simple_in_lex)
     cr_expect_eq(strcmp("test", tk->data->head->data), 0);
     cr_expect_eq(strcmp("1", tk->data->head->next->data), 0);
     cr_expect_eq(strcmp("2", tk->data->tail->data), 0);
+    // cr_expect_eq(strcmp("3", tk->data->head->next->next->next->data), 0);
 
     token_free(tk);
-    major_free(mj);
-}
-
-Test(_42SH, for_lex)
-{
-    char *s = "for i in 1 2 3 4 5; do echo toto; done";
-    struct major *mj = major_init();
-    mj->file = createfrom_string(s);
-
-    struct token *tk = get_next_token(mj);
-    cr_expect_eq(strcmp("WORD_FOR", token2string(tk)), 0);
-    token_free(tk);
-
-    tk = get_next_token(mj);
-    cr_expect_eq(strcmp("WORD_IN", token2string(tk)), 0);
-    cr_expect_eq(strcmp("i", tk->data->head->data), 0);
-    cr_expect_eq(strcmp("1", tk->data->head->next->data), 0);
-    cr_expect_eq(strcmp("2", tk->data->head->next->next->data), 0);
-    cr_expect_eq(strcmp("3", tk->data->head->next->next->next->data), 0);
-    cr_expect_eq(strcmp("4", tk->data->head->next->next->next->next->data), 0);
-    cr_expect_eq(
-    strcmp("5", tk->data->head->next->next->next->next->next->data), 0);
-    token_free(tk);
-
-    tk = get_next_token(mj);
-    cr_expect_eq(strcmp("WORD_DO", token2string(tk)), 0);
-    token_free(tk);
-
-    tk = get_next_token(mj);
-    cr_expect_eq(strcmp("WORD_COMMAND", token2string(tk)), 0);
-    token_free(tk);
-
-    tk = get_next_token(mj);
-    cr_expect_eq(strcmp("WORD_DONE", token2string(tk)), 0);
-    token_free(tk);
-
     major_free(mj);
 }
 

@@ -28,8 +28,8 @@ set (SRC
     src/parser/parser_cpdlist.c
     src/parser/parser_if.c
     src/parser/parser_while.c
+    src/parser/parser_for.c
     src/tokens/execution/command_execution.c
-    src/tokens/execution/if_execution.c
     src/tokens/lexing/redirection.c
     src/tokens/tokens.c
     src/utils/list.c
