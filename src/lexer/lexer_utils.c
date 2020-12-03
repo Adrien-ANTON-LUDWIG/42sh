@@ -86,12 +86,6 @@ char *get_word(struct major *mj)
 
     char *start = mj->file->str + mj->file->lexer_index;
 
-    while (start && *start == '#')
-    {
-        skip_to_new_line(mj);
-        start = mj->file->str + mj->file->lexer_index;
-    }
-
     skip_class(is_word, mj);
 
     char *end = mj->file->str + mj->file->lexer_index;
@@ -103,6 +97,20 @@ char *get_word(struct major *mj)
     char *word = strndup(start, len);
 
     skip_class(my_is_space, mj);
+
+    return word;
+}
+
+char *get_first_word(struct major *mj)
+{
+    char *word = get_word(mj);
+
+    while (word && *word == '#')
+    {
+        free(word);
+        skip_to_new_line(mj);
+        word = get_word(mj);
+    }
 
     return word;
 }

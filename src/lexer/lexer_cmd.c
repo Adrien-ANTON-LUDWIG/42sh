@@ -22,6 +22,12 @@ struct token *lexer_cmd(struct major *mj, struct token *tk, char *cmd)
 
     while (word)
     {
+        if (*word == '#')
+        {
+            free(word);
+            return tk;
+        }
+
         list_append(mj, tk->data, word);
 
         if (next_is_redirection(mj))
