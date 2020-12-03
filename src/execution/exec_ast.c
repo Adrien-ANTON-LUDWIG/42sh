@@ -35,7 +35,7 @@ int exec_ast(struct major *mj, struct ast *ast)
     else if (tk->word == WORD_AND)
         return exec_ast(mj, ast->right);
     else if (tk->word == WORD_FOR)
-        exec_for(mj, ast);
+        return exec_for(mj, ast);
     return err;
 }
 
