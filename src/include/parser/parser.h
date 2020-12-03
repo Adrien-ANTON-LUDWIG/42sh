@@ -18,5 +18,6 @@ void parser_cpdlist(struct major *mj, struct token **expr, struct ast *newast,
                     int (*should_loop)(enum words));
 
 struct ast *parser_while(struct major *mj, struct ast *ast, struct token *tk);
+struct ast *parser_for(struct major *mj, struct ast *ast, struct token *tk);
 
 #endif /* PARSER_H */

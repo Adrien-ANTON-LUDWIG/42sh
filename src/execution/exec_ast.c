@@ -1,3 +1,5 @@
+#include "exec_ast.h"
+
 #include "ast.h"
 #include "command_execution.h"
 #include "execution.h"
@@ -32,6 +34,18 @@ int exec_ast(struct major *mj, struct ast *ast)
         return execution_command(mj, tk);
     else if (tk->word == WORD_AND)
         return exec_ast(mj, ast->right);
-
+    else if (tk->word == WORD_FOR)
+        exec_for(mj, ast);
     return err;
+}
+
+int exec_for(struct major *mj, struct ast *ast)
+{
+    int rvalue = 0;
+    struct token *start = ast->left->data;
+    for (size_t i = 0; i < start->data->size - 1; i++)
+    {
+        rvalue = exec_ast(mj, ast->right);
+    }
+    return rvalue;
 }
