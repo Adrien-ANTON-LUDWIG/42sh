@@ -20,9 +20,9 @@ int exec_ast(struct major *mj, struct ast *ast)
         else if (ast->middle)
             exec_ast(mj, ast->middle);
     }
-    else if (tk->word == WORD_WHILE)
+    else if (tk->word == WORD_WHILE || tk->word == WORD_UNTIL)
     {
-        while (allow_son_execution_if(mj, tk, err))
+        while ((tk->word == WORD_UNTIL) ^ allow_son_execution_if(mj, tk, err))
         {
             exec_ast(mj, ast->right);
             err = exec_ast(mj, ast->left);
