@@ -21,4 +21,12 @@ void skip_class(int (*classifier)(int), struct major *mj);
  */
 char *get_word(struct major *mj);
 
+/**
+ * @brief Return a word for the first time
+ * 
+ * @param mj 
+ * @return char* 
+ */
+char *get_first_word(struct major *mj);
+
 #endif
