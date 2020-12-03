@@ -19,7 +19,21 @@ static void skip_to_new_line(struct major *mj)
             }
     }
     else
-        mj->file->str = custom_fgets(mj->file->str, BUFFER_SIZE, mj->file);
+    {
+        char *tmp = custom_fgets(mj->file->str, BUFFER_SIZE, mj->file);
+
+        if (!tmp)
+        {
+            free(mj->file->str);
+            mj->file->str = NULL;
+        }
+    }
+
+    if (!mj->file->str)
+        return;
+
+    mj->file->lexer_index = 0;
+    mj->file->len = strlen(mj->file->str);
 }
 
 static int my_is_space(int c)
