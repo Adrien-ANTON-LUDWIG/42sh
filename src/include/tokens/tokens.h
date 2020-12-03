@@ -6,7 +6,7 @@
 #define TOKENS_STRINGS                                                         \
     {                                                                          \
         "if", "then", "elif", "else", "fi", "while", "until", "for", "in",     \
-        "do", "done"                                                           \
+            "do", "done"                                                       \
     }
 
 #define TOKENS_STRINGS_REDIR                                                   \
