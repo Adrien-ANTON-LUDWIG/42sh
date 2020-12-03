@@ -11,11 +11,7 @@
  */
 static int should_loop(enum words w)
 {
-    if (w == WORD_DO)
-        return 0;
-    if (w == WORD_DONE)
-        return 0;
-    return 1;
+    return w != WORD_DONE;
 }
 
 /**
@@ -26,26 +22,29 @@ static int should_loop(enum words w)
  * @param tk
  * @return struct ast*
  */
-struct ast *parser_while(struct major *mj, struct ast *ast, struct token *tk)
+struct ast *parser_for(struct major *mj, struct ast *ast, struct token *tk)
 {
     if (ast && ast->data->word == WORD_COMMAND)
     {
         struct ast *newast = add_single_command(mj, ast, NULL);
         ast = newast;
     }
-    struct token *cond = get_next_token(mj);
-    struct token *t_do = get_next_token(mj);
-    struct token *expr = NULL;
-    struct ast *newast = create_ast(mj, tk);
-    newast->left = take_action(mj, newast->left, cond);
-    parser_cpdlist(mj, &expr, newast, should_loop);
-
+    struct token *in_list = get_next_token(mj);
+    struct token *t_do = NULL;
+    if (in_list->word != WORD_IN)
+        t_do = in_list;
+    else
+        t_do = get_next_token(mj);
     if (t_do->word != WORD_DO)
     {
         token_free(t_do);
-        my_err(1, mj, "parser_if: syntax error");
+        my_err(1, mj, "parser_for: syntax error: unexpected EOF");
     }
 
+    struct ast *newast = create_ast(mj, tk);
+    struct token *expr = NULL;
+    parser_cpdlist(mj, &expr, newast, should_loop);
+    newast->left = create_ast(mj, in_list);
     token_free(t_do);
     token_free(expr);
     if (ast)
