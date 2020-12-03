@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 test_script()
 {
     (exec "./42sh" "${args}" > "actual")
