@@ -86,7 +86,7 @@ char *get_word(struct major *mj)
 
     char *start = mj->file->str + mj->file->lexer_index;
 
-    while (*start == '#')
+    while (start && *start == '#')
     {
         skip_to_new_line(mj);
         start = mj->file->str + mj->file->lexer_index;
