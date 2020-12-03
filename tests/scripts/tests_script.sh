@@ -12,6 +12,7 @@ test_script()
         echo -e '\e[1;32m PASSED \e[0m' "${args}"
     else
         echo -e '\e[1;31m ERROR \e[0m' "${args}" "return values do not match"
+        exit 1
     fi
 
     diff -u "actual" "expected"
