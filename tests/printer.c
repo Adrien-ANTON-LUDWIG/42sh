@@ -3,21 +3,6 @@
 #include "lexer.h"
 #include "tokens.h"
 
-static void red()
-{
-    printf("\033[1;31m");
-}
-
-static void yellow()
-{
-    printf("\033[0;36m");
-}
-
-static void reset()
-{
-    printf("\033[0m");
-}
-
 static void print_token_redir(struct token *tk)
 {
     if (tk->redirection->std_in)
@@ -32,9 +17,26 @@ static void print_token_redir(struct token *tk)
                tk->redirection->std_err);
 }
 
+static void print_token_in(struct token *tk)
+{
+    struct list_item *l = tk->data->head;
+
+    if (!l)
+        return;
+    printf(" %s in", l->data);
+
+    l = l->next;
+
+    while (l)
+    {
+        printf(" %s", l->data);
+        l = l->next;
+    }
+    printf("\n");
+}
+
 void print_token(struct token *tk)
 {
-    red();
     printf("%s", token2string(tk));
 
     if (tk->word == WORD_COMMAND)
@@ -42,7 +44,6 @@ void print_token(struct token *tk)
         struct list_item *li = tk->data->head;
         for (size_t i = 0; i < tk->data->size; i++)
         {
-            yellow();
             printf(" %s", li->data);
             li = li->next;
         }
@@ -51,7 +52,9 @@ void print_token(struct token *tk)
     {
         print_token_redir(tk);
     }
-    reset();
+    else if (tk->word == WORD_IN)
+        print_token_in(tk);
+
     printf("\n");
 }
 

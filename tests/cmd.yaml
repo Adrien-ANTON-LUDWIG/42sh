@@ -1,0 +1,31 @@
+name: echo_with_one_arg
+command: ../build/42sh -c "echo test"
+stdout: |
+  test
+returncode: 0
+
+---
+
+name: echo_with_two_args
+command: ../build/42sh -c "echo test1 test2"
+stdout: |
+  test1 test2
+returncode: 0
+
+---
+
+name: echo_with_two_commands
+command: ../build/42sh -c "echo foo; echo bar"
+stdout: |
+  foo
+  bar
+returncode: 0
+
+---
+
+name: echo_with_no_arg
+command: ../build/42sh -c "echo foo bar; echo super foobar"
+stdout: |
+  foo bar
+  super foobar
+returncode: 0

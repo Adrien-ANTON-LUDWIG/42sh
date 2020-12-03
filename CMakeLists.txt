@@ -21,6 +21,7 @@ set (SRC
     src/lexer/lexer_utils.c
     src/lexer/lexer_cmd.c
     src/lexer/lexer_redir.c
+    src/lexer/lexer_in.c
     src/lexer/lexer.c
     src/parser/ast.c
     src/parser/parser.c
