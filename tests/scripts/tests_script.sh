@@ -35,7 +35,6 @@ exit_val=0
 
 for args in "scripts/test_scripts/"*;
 do
-    echo "${args}"
     test_script
 done
 
