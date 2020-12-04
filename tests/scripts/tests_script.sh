@@ -3,6 +3,22 @@
 count_tests=0
 count_passed_tests=0
 
+
+
+# Clean the output
+echo -ne "\\033[2J\033[0;1f\e[0m"
+
+# Print the text at the center of the terminal
+print_center(){
+    local x
+    local y
+    text="$*"
+    x=$(( ($(tput cols) - ${#text}) / 2))
+    echo -ne "\E[6n";read -sdR y; y=$(echo -ne "${y#*[}" | cut -d';' -f1)
+    echo -ne "\033[${y};${x}f$*\e[0m"
+    echo ""
+}
+
 test_script()
 {
     count_tests=$(( $count_tests + 1 ))
@@ -14,7 +30,7 @@ test_script()
 
     if [ ${actual_err} -ne ${expected_err} ]
     then
-        echo -e '\e[1;31m ERROR \e[0m' "$1" "return values do not match"
+        echo -e '\e[1;31m ERROR \e[0m' "$1" "return values: Expected ${expected_err}, got ${actual_err}"
         ret_val=1
     fi
 
@@ -32,16 +48,22 @@ test_script()
     else
         exit_val=1
     fi
-
-
 }
 
 exit_val=0
 
-for f in $(find scripts/test_scripts/* -name '*.sh');
+for dir in $(find scripts/test_scripts/* -type d);
 do
-    test_script $f
+    echo ""
+    print_center "\e[1;33m### ${dir}: Tests in progress... ###\e[0m"
+    for f in $(find ${dir}/* -name '*.sh');
+    do
+        test_script $f
+    done
 done
 
-echo -e "\e[1;33m $count_passed_tests / $count_tests tests passed\e[0;"
+echo ""
+print_center "\e[5;33m$count_passed_tests / $count_tests tests passed\e[0m"
+echo ""
+
 exit ${exit_val}
