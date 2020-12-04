@@ -19,5 +19,7 @@ void parser_cpdlist(struct major *mj, struct token **expr, struct ast *newast,
 
 struct ast *parser_while(struct major *mj, struct ast *ast, struct token *tk);
 struct ast *parser_for(struct major *mj, struct ast *ast, struct token *tk);
+struct ast *parser_operator(struct major *mj, struct ast *ast,
+                            struct token *tk);
 
 #endif /* PARSER_H */

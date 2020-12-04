@@ -33,6 +33,10 @@ int exec_ast(struct major *mj, struct ast *ast)
     else if (tk->word == WORD_COMMAND)
         return execution_command(mj, tk);
     else if (tk->word == WORD_AND)
+        return !(!err && (!exec_ast(mj, ast->right)));
+    else if (tk->word == WORD_OR)
+        return !(!err || (!exec_ast(mj, ast->right)));
+    else if (tk->word == WORD_SUPERAND)
         return exec_ast(mj, ast->right);
     else if (tk->word == WORD_FOR)
         return exec_for(mj, ast);

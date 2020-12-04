@@ -6,6 +6,20 @@
 #include "exec_ast.h"
 #include "my_xmalloc.h"
 
+int is_operator(struct token *tk)
+{
+    switch (tk->word)
+    {
+    case WORD_AND:
+        return 1;
+    case WORD_OR:
+        return 1;
+    default:
+        return 0;
+    }
+    return 0;
+}
+
 /**
  * @brief Adds a AND command with the ast as its left son and tk as its right
  * son
@@ -24,7 +38,7 @@ struct ast *add_single_command(struct major *mj, struct ast *ast,
         return ast;
     }
     struct token *and = my_xcalloc(mj, 1, sizeof(struct token));
-    and->word = WORD_AND;
+    and->word = WORD_SUPERAND;
     struct ast *newast = create_ast(mj, and);
     newast->left = ast;
     if (tk)
@@ -65,14 +79,25 @@ struct ast *take_action(struct major *mj, struct ast *ast, struct token *tk)
  */
 struct ast *parser(struct major *mj)
 {
-    struct token *tk = NULL;
+    struct token *tk = get_next_token(mj);
     struct ast *ast = NULL;
-    while ((tk = get_next_token(mj))->word != WORD_EOF)
+    while (tk->word != WORD_EOF)
     {
         ast = take_action(mj, ast, tk);
+        struct token *pending = get_next_token(mj);
+        while (is_operator(pending))
+        {
+            ast = parser_operator(mj, ast, pending);
+            pending = get_next_token(mj);
+        }
         exec_ast(mj, ast);
         ast_free(ast);
         ast = NULL;
+        if (mj->pending)
+            tk = mj->pending;
+        else
+            tk = get_next_token(mj);
+        mj->pending = NULL;
     }
     token_free(tk);
     return ast;
