@@ -53,7 +53,7 @@ struct ast *take_action(struct major *mj, struct ast *ast, struct token *tk)
     else if (tk->word == WORD_FOR)
         ast = parser_for(mj, ast, tk);
     else
-        my_err(1, mj, "parser: syntax error");
+        my_err(2, mj, "parser: syntax error");
     return ast;
 }
 
