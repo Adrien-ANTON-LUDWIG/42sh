@@ -76,6 +76,6 @@ char *custom_fgets(char *s, size_t size, struct custom_FILE *f);
  * @return char*
  */
 // char *custom_getfile(struct custom_FILE *f);
-
 void get_new_string(struct major *mj);
+
 #endif

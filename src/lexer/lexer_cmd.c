@@ -3,6 +3,7 @@
 #include "lexer_utils.h"
 #include "my_utils.h"
 #include "redirection.h"
+#include "lexer_operator.h"
 
 struct token *lexer_cmd(struct major *mj, struct token *tk, char *cmd)
 {
@@ -30,7 +31,7 @@ struct token *lexer_cmd(struct major *mj, struct token *tk, char *cmd)
 
         list_append(mj, tk->data, word);
 
-        if (next_is_redirection(mj))
+        if (next_is_redirection(mj) || next_is_operator(mj))
             break;
 
         if (!mj->file->str)
