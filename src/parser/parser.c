@@ -93,11 +93,7 @@ struct ast *parser(struct major *mj)
         exec_ast(mj, ast);
         ast_free(ast);
         ast = NULL;
-        if (mj->pending)
-            tk = mj->pending;
-        else
-            tk = get_next_token(mj);
-        mj->pending = NULL;
+        tk = pending;
     }
     token_free(tk);
     return ast;

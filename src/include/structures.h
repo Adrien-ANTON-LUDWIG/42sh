@@ -7,7 +7,6 @@ struct major
     int options;
     struct custom_FILE *file;
     struct list *variables;
-    struct token *pending;
 };
 
 #endif /* STRUCTURES_H */
