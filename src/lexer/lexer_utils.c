@@ -47,7 +47,7 @@ static int my_is_space(int c)
  */
 static int is_word(int c)
 {
-    return c != '\0' && !my_is_space(c) && c != ';' && c != '\n' && c != '\r' && c != '|';
+    return c != '\0' && !my_is_space(c) && c != ';' && c != '\n' && c != '\r';
 }
 
 /**
@@ -97,18 +97,23 @@ char *get_word(struct major *mj)
         return NULL;
 
     char *start = mj->file->str + mj->file->lexer_index;
+    size_t len = 1;
 
-    skip_class(is_word, mj);
+    if (*start != '|')
+    {
+        skip_class(is_word, mj);
 
-    char *end = mj->file->str + mj->file->lexer_index;
+        char *end = mj->file->str + mj->file->lexer_index;
 
-    if (end == start)
-        return NULL;
+        if (end == start)
+                return NULL;
 
-    size_t len = end - start;
+        len = end - start;        
+    }
+    else
+        mj->file->lexer_index++;
     char *word = strndup(start, len);
-
-    skip_class(my_is_space, mj);
+    //skip_class(my_is_space, mj);
 
     return word;
 }

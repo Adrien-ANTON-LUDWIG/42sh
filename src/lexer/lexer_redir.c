@@ -27,7 +27,7 @@ int next_is_redirection(struct major *mj)
 
     for (int i = 0; i < 2; i++)
     {
-        if (strcmp(s, str[i]) == 0)
+        if (strstr(s, str[i]) != NULL)
         {
             return_value = 1;
             break;

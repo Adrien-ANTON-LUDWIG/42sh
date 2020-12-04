@@ -49,7 +49,7 @@ int word_type(char *s)
     char *tokens_strings_redir[] = TOKENS_STRINGS_REDIR;
 
     for (size_t i = 0; i < 2; i++)
-        if (!strcmp(s, tokens_strings_redir[i]))
+        if (strstr(s, tokens_strings_redir[i]) != NULL)
             return WORD_REDIR;
 
     return WORD_COMMAND;
