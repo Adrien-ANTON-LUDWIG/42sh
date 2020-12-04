@@ -1,7 +1,11 @@
 #!/bin/bash
 
+count_tests=0
+count_passed_tests=0
+
 test_script()
 {
+    count_tests=$(( $count_tests + 1 ))
     ret_val=0
     (exec "./42sh" "${args}" > "actual")
     actual_err=$?
@@ -24,6 +28,7 @@ test_script()
     if [ "${ret_val}" -eq 0 ]
     then
         echo -e '\e[1;32m PASSED \e[0m' "${args}"
+        count_passed_tests=$(( $count_passed_tests + 1 ))
     else
         exit_val=1
     fi
@@ -38,4 +43,5 @@ do
     test_script
 done
 
+echo -e "\e[1;33m $count_passed_tests / $count_tests tests passed\e[0;"
 exit ${exit_val}
