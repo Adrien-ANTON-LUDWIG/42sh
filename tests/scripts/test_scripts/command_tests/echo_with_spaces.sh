@@ -1,0 +1,1 @@
+echo This      is  a test   to        see    if the     lexer      is working           with    a lot    of     space char
