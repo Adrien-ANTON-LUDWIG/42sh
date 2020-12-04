@@ -21,6 +21,8 @@ int exec_ast(struct major *mj, struct ast *ast)
             exec_ast(mj, ast->right);
         else if (ast->middle)
             exec_ast(mj, ast->middle);
+        mj->rvalue = 0;
+        return 0;
     }
     else if (tk->word == WORD_WHILE || tk->word == WORD_UNTIL)
     {
@@ -29,6 +31,7 @@ int exec_ast(struct major *mj, struct ast *ast)
             exec_ast(mj, ast->right);
             err = exec_ast(mj, ast->left);
         }
+        mj->rvalue = 0;
     }
     else if (tk->word == WORD_COMMAND)
         return execution_command(mj, tk);
@@ -51,5 +54,6 @@ int exec_for(struct major *mj, struct ast *ast)
     {
         rvalue = exec_ast(mj, ast->right);
     }
+    mj->rvalue = 0;
     return rvalue;
 }

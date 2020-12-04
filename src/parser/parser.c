@@ -71,30 +71,35 @@ struct ast *take_action(struct major *mj, struct ast *ast, struct token *tk)
     return ast;
 }
 
+struct ast *get_ast(struct major *mj, struct ast *ast, struct token **tk)
+{
+    ast = take_action(mj, ast, *tk);
+    struct token *pending = get_next_token(mj);
+    while (is_operator(pending))
+    {
+        ast = parser_operator(mj, ast, pending);
+        pending = get_next_token(mj);
+    }
+    *tk = pending;
+    return ast;
+}
+
 /**
  * @brief Parses and executes
  *
  * @param mj
  * @return struct ast*
  */
-struct ast *parser(struct major *mj)
+void parser(struct major *mj)
 {
     struct token *tk = get_next_token(mj);
     struct ast *ast = NULL;
     while (tk->word != WORD_EOF)
     {
-        ast = take_action(mj, ast, tk);
-        struct token *pending = get_next_token(mj);
-        while (is_operator(pending))
-        {
-            ast = parser_operator(mj, ast, pending);
-            pending = get_next_token(mj);
-        }
+        ast = get_ast(mj, ast, &tk);
         exec_ast(mj, ast);
         ast_free(ast);
         ast = NULL;
-        tk = pending;
     }
     token_free(tk);
-    return ast;
 }

@@ -5,7 +5,7 @@
 #include "structures.h"
 #include "tokens.h"
 
-struct ast *parser(struct major *mj);
+void parser(struct major *mj);
 struct ast *take_action(struct major *mj, struct ast *ast, struct token *tk);
 struct ast *add_single_command(struct major *mj, struct ast *ast,
                                struct token *tk);
@@ -21,5 +21,7 @@ struct ast *parser_while(struct major *mj, struct ast *ast, struct token *tk);
 struct ast *parser_for(struct major *mj, struct ast *ast, struct token *tk);
 struct ast *parser_operator(struct major *mj, struct ast *ast,
                             struct token *tk);
+
+struct ast *get_ast(struct major *mj, struct ast *ast, struct token **tk);
 
 #endif /* PARSER_H */
