@@ -23,9 +23,9 @@ test_script()
 {
     count_tests=$(( $count_tests + 1 ))
     ret_val=0
-    (exec "./42sh" "$1" > "actual")
+    (exec "./42sh" "$1" > "actual" 2> "$1_actual_err")
     actual_err=$?
-    (exec "bash" "--posix" "$1" > "expected")
+    (exec "bash" "--posix" "$1" > "expected" 2> "$1_expected_err")
     expected_err=$?
 
     if [ ${actual_err} -ne ${expected_err} ]
