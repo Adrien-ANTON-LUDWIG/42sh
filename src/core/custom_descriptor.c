@@ -57,7 +57,6 @@ char *custom_fgets(char *s, size_t size, struct custom_FILE *f)
     if (f->fd != CUSTOM_FD)
         return fgets(s, size, f->file);
 
-
     if (f->index >= f->len)
         return NULL;
 
