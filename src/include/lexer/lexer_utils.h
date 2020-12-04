@@ -11,7 +11,7 @@
  * @param classifier
  * @param mj
  */
-void skip_class(int (*classifier)(int), struct major *mj);
+//void skip_class(int (*classifier)(int), struct major *mj);
 
 /**
  * @brief Returns a word without whitespace before nor after the word
