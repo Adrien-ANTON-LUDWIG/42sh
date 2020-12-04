@@ -33,6 +33,18 @@ void shopt_options(int *i, char **argv)
     }
 }
 
+static int run_command_line(int argc, char *argv[], int from, struct major *mj)
+{
+    char *args = merge_arguments(argc - from, argv + from);
+    mj->file = createfrom_string(args);
+    mj->rvalue = 0;
+    free(args);
+    parser(mj);
+    int rvalue = mj->rvalue;
+    major_free(mj);
+    return rvalue;
+}
+
 /**
  * @brief It's the main function :)
  *
@@ -55,14 +67,7 @@ int main(int argc, char **argv)
         if (i + 1 == argc)
             errx(2, "-c: option requires an argument");
 
-        char *args = merge_arguments(argc - from, argv + from);
-        mj->file = createfrom_string(args);
-        mj->rvalue = 0;
-        free(args);
-        parser(mj);
-        int rvalue = mj->rvalue;
-        major_free(mj);
-        return rvalue;
+        return run_command_line(argc, argv, from, mj);
     }
     else
     {
