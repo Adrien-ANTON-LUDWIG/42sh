@@ -93,25 +93,18 @@ char *get_word(struct major *mj)
     // Prendre en charge le buffer plein (>512)
     skip_class(my_is_space, mj);
 
-    if (mj->file->lexer_index >= mj->file->len - 1 || !mj->file->str)
+    if (mj->file->lexer_index >= mj->file->len || !mj->file->str)
         return NULL;
 
     char *start = mj->file->str + mj->file->lexer_index;
-    size_t len = 1;
+    skip_class(is_word, mj);
 
-    if (*start != '|')
-    {
-        skip_class(is_word, mj);
+    char *end = mj->file->str + mj->file->lexer_index;
 
-        char *end = mj->file->str + mj->file->lexer_index;
+    if (end == start)
+            return NULL;
 
-        if (end == start)
-                return NULL;
-
-        len = end - start;        
-    }
-    else
-        mj->file->lexer_index++;
+    size_t len = end - start;
     char *word = strndup(start, len);
     //skip_class(my_is_space, mj);
 
