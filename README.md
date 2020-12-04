@@ -1,5 +1,3 @@
-Still in 
-
 # TEST   
 To add a test, just add it in the correct directory in tests/scripts/test_scripts  
 
