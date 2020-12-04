@@ -6,7 +6,7 @@
 #define TOKENS_STRINGS                                                         \
     {                                                                          \
         "if", "then", "elif", "else", "fi", "while", "until", "for", "in",     \
-            "do", "done", "&&", "||", ""                                       \
+            "do", "done", "&&", "||", "|"                                      \
     }
 
 #define TOKENS_STRINGS_REDIR                                                   \
@@ -33,6 +33,7 @@ enum words
     WORD_AND,
     WORD_OR,
     WORD_REDIR,
+    WORD_PIPE,
     WORD_COMMAND,
     WORD_EOF,
     WORD_SUPERAND,

@@ -47,7 +47,7 @@ static int my_is_space(int c)
  */
 static int is_word(int c)
 {
-    return c != '\0' && !my_is_space(c) && c != ';' && c != '\n' && c != '\r';
+    return c != '\0' && !my_is_space(c) && c != ';' && c != '\n' && c != '\r' && c != '|';
 }
 
 /**
