@@ -1,9 +1,15 @@
 #!/bin/bash
 
+# Protection against big mistake (as we override the tests with there output)
+if [[ ! `pwd` =~ "build"$ ]]
+then
+    echo "Usage: please run this script only through the 'make script_tests' \
+command in a 'build' directory"
+    exit 42
+fi
+
 count_tests=0
 count_passed_tests=0
-
-
 
 # Clean the output
 echo -ne "\\033[2J\033[0;1f\e[0m"
