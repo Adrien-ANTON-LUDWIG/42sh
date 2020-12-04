@@ -6,7 +6,7 @@
 #define TOKENS_STRINGS                                                         \
     {                                                                          \
         "if", "then", "elif", "else", "fi", "while", "until", "for", "in",     \
-            "do", "done"                                                       \
+            "do", "done", "&&", "||", "|"                                      \
     }
 
 #define TOKENS_STRINGS_REDIR                                                   \
@@ -30,10 +30,13 @@ enum words
     WORD_IN,
     WORD_DO,
     WORD_DONE,
+    WORD_AND,
+    WORD_OR,    
+    WORD_PIPE,
     WORD_REDIR,
     WORD_COMMAND,
     WORD_EOF,
-    WORD_AND
+    WORD_SUPERAND,
 };
 
 struct token

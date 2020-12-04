@@ -1,6 +1,8 @@
 #ifndef STRUCTURES_H
 #define STRUCTURES_H
 
+#include "my_utils.h"
+
 struct major
 {
     int rvalue;

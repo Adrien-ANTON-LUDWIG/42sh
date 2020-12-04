@@ -21,11 +21,12 @@ char **token_list_to_char_array(struct list *l)
     return tab;
 }
 
-int run_command(char **args)
+int run_command(struct major *mj, char **args)
 {
     int pid = fork();
     if (!pid)
     {
+        custom_fclose(mj->file);
         execvp(args[0], args);
         exit(127);
     }

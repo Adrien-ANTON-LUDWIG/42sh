@@ -13,3 +13,27 @@ struct token *lexer_redir(struct major *mj, struct token *tk, char *word)
     free(word);
     return tk;
 }
+
+int next_is_redirection(struct major *mj)
+{
+    size_t temp = mj->file->lexer_index;
+    char *str[] = TOKENS_STRINGS_REDIR;
+    int return_value = 0;
+
+    char *s = get_word(mj);
+
+    if (!s)
+        return 0;
+
+    for (int i = 0; i < 2; i++)
+    {
+        if (strstr(s, str[i]) != NULL)
+        {
+            return_value = 1;
+            break;
+        }
+    }
+    free(s);
+    mj->file->lexer_index = temp;
+    return return_value;
+}

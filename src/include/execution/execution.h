@@ -17,6 +17,6 @@ char **token_list_to_char_array(struct list *l);
  * @param args
  * @return int
  */
-int run_command(char **args);
+int run_command(struct major *mj, char **args);
 
 #endif

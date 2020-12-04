@@ -11,7 +11,8 @@
     {                                                                          \
         "WORD_IF", "WORD_THEN", "WORD_ELIF", "WORD_ELSE", "WORD_FI",           \
             "WORD_WHILE", "WORD_UNTIL", "WORD_FOR", "WORD_IN", "WORD_DO",      \
-            "WORD_DONE", "WORD_REDIR", "WORD_COMMAND", "WORD_EOF", "WORD_AND"  \
+            "WORD_DONE", "WORD_AND", "WORD_OR", "WORD_PIPE", "WORD_REDIR",     \
+            "WORD_COMMAND", "WORD_EOF", "WORD_SUPERAND"                        \
     }
 
 struct token *token_init(struct major *mj)
@@ -48,7 +49,7 @@ int word_type(char *s)
     char *tokens_strings_redir[] = TOKENS_STRINGS_REDIR;
 
     for (size_t i = 0; i < 2; i++)
-        if (!strcmp(s, tokens_strings_redir[i]))
+        if (strstr(s, tokens_strings_redir[i]) != NULL)
             return WORD_REDIR;
 
     return WORD_COMMAND;

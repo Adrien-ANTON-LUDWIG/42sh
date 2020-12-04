@@ -1,1 +1,4 @@
-42sh
+LEXER:
+
+- Handle redir with number before the >
+- Handle multiple redir

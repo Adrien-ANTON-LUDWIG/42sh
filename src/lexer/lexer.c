@@ -11,9 +11,6 @@
 #include "tokens.h"
 #include "lexer_in.h"
 
-#define BASIC_SEPARATOR "\r\v\n\t "
-#define COMMAND_SEPARTOR ";\n\t"
-
 static struct token *get_token(struct major *mj)
 {
     struct token *tk = token_init(mj);

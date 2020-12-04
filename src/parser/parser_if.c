@@ -17,6 +17,8 @@ static int should_loop(enum words w)
         return 0;
     if (w == WORD_ELSE)
         return 0;
+    if (w == WORD_THEN)
+        return 0;
     return 1;
 }
 
@@ -57,10 +59,10 @@ struct ast *parser_if(struct major *mj, struct ast *ast, struct token *tk)
         ast = newast;
     }
     struct token *cond = get_next_token(mj);
-    struct token *then = get_next_token(mj);
-    struct token *expr = NULL;
     struct ast *newast = create_ast(mj, tk);
-    newast->left = take_action(mj, newast->left, cond);
+    newast->left = get_ast(mj, newast->left, &cond);
+    struct token *then = cond;
+    struct token *expr = NULL;
     parser_cpdlist(mj, &expr, newast, should_loop);
 
     if (then->word != WORD_THEN)

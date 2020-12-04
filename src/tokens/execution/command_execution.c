@@ -14,7 +14,7 @@ int execution_command(struct major *mj, struct token *tk)
         my_err(1, mj, "execution command: no token found");
 
     char **command = token_list_to_char_array(tk->data);
-    int rvalue = run_command(command);
+    int rvalue = run_command(mj, command);
     free(command);
     mj->rvalue = rvalue;
     return rvalue;
