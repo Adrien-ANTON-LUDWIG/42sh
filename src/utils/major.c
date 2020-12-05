@@ -1,5 +1,6 @@
 #include "custom_descriptor.h"
 #include "my_utils.h"
+#include "my_xmalloc.h"
 /**
  * @brief Initializes major
  *
@@ -7,13 +8,7 @@
  */
 struct major *major_init(void)
 {
-    struct major *new = malloc(sizeof(struct major));
-    if (!new)
-        errx(1, "major init: could not malloc struct major\n");
-    new->options = 0;
-    new->file = NULL;
-    new->variables = NULL;
-    return new;
+    return my_xcalloc(NULL, 1, sizeof(struct major));
 }
 
 /**

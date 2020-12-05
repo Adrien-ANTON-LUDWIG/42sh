@@ -83,7 +83,8 @@ int main(int argc, char **argv)
         mj->file = file;
         parser(mj);
     }
-    major_free(mj);
 
-    return 0;
+    int rvalue = mj->rvalue;
+    major_free(mj);
+    return rvalue;
 }

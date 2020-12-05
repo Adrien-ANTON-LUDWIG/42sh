@@ -23,8 +23,7 @@ static int run_programs(struct major *mj, int pipefd[2], struct ast *left,
         close(pipefd[1]);
         dup2(pipefd[0], STDIN_FILENO);
         close(pipefd[0]);
-        exec_ast(mj, right);
-        exit(127);
+        exit(exec_ast(mj, right));
     }
     else
     {
@@ -34,8 +33,7 @@ static int run_programs(struct major *mj, int pipefd[2], struct ast *left,
             close(pipefd[0]);
             dup2(pipefd[1], STDOUT_FILENO);
             close(pipefd[1]);
-            exec_ast(mj, left);
-            exit(127);
+            exit(exec_ast(mj, left));
         }
         else
         {
@@ -52,6 +50,8 @@ static int run_programs(struct major *mj, int pipefd[2], struct ast *left,
 
 int exec_pipe(struct major *mj, struct ast *ast)
 {
+    if (!ast->left || !ast->right)
+        my_err(2, mj, "Unexpected EOF");
     int pipefd[2];
     if (pipe(pipefd) == -1)
         my_err(1, mj, "Failed to create pipe");
