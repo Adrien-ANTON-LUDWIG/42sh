@@ -103,9 +103,6 @@ char *get_word(struct major *mj)
 
     char *start = mj->file->str + mj->file->lexer_index;
 
-    if (start && *start == '|')
-        mj->file->lexer_index++;
-        
     skip_class(is_word, mj);
 
     char *end = mj->file->str + mj->file->lexer_index;
