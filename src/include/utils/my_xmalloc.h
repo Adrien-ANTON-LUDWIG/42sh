@@ -15,6 +15,16 @@
 void *my_xmalloc(struct major *mj, size_t size);
 
 /**
+ * @brief realloc but crashes if realloc fails
+ *
+ * @param mj
+ * @param ptr
+ * @param size
+ * @return void*
+ */
+void *my_xrealloc(struct major *mj, void *ptr, size_t size);
+
+/**
  * @brief Calloc but crashes on fail
  *
  * @param mj
