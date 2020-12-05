@@ -31,8 +31,8 @@ static struct token *get_token(struct major *mj)
     tk->word = i;
 
     if (tk->word >= WORD_REDIR_LR && tk->word <= WORD_REDIR_R)
-        return lexer_redir(mj, tk, word);
-        
+        return lexer_redir(tk, word);
+
     int is_next_in = next_is_in(mj);
 
     if (tk->word == WORD_COMMAND && !is_next_in)

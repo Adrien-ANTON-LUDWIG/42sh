@@ -13,9 +13,10 @@
             "WORD_WHILE", "WORD_UNTIL", "WORD_FOR", "WORD_IN", "WORD_DO",      \
             "WORD_DONE", "WORD_AND", "WORD_OR", "WORD_PIPE", "WORD_REDIR_LR",  \
             "WORD_REDIR_RP", "WORD_REDIR_LA", "WORD_REDIR_RA",                 \
-            "WORD_REDIR_LLM", "WORD_REDIR_LL", "WORD_REDIR_RR", "WORD_REDIR_L",\
-             "WORD_REDIR_R","WORD_COMMAND", "WORD_EOF", "WORD_SUPERAND"        \
-}
+            "WORD_REDIR_LLM", "WORD_REDIR_LL", "WORD_REDIR_RR",                \
+            "WORD_REDIR_L", "WORD_REDIR_R", "WORD_COMMAND", "WORD_EOF",        \
+            "WORD_SUPERAND"                                                    \
+    }
 
 struct token *token_init(struct major *mj)
 {
@@ -53,7 +54,9 @@ int word_type(struct major *mj, struct token *tk, char *s)
     for (size_t i = 0; i < sizeof(tokens_strings_redir) / sizeof(char *); i++)
         if (strstr(s, tokens_strings_redir[i]) != NULL)
         {
-            tk->data = list_append(mj, tk->data, strdup(defaut_value[i]));
+            char *number =
+                strndup((*s >= '0' && *s <= '9') ? &(*s) : defaut_value[i], 1);
+            tk->data = list_append(mj, tk->data, number);
             return i + WORD_REDIR_LR;
         }
 
