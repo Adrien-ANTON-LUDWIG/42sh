@@ -31,6 +31,7 @@ struct custom_FILE
     size_t lexer_index;
     char *str;
     size_t len;
+    size_t buffer_size;
 };
 
 /**
@@ -77,5 +78,36 @@ char *custom_fgets(char *s, size_t size, struct custom_FILE *f);
  */
 // char *custom_getfile(struct custom_FILE *f);
 void get_new_string(struct major *mj);
+
+/**
+ * @brief Same as getline but works with a custom_FILE.
+ *
+ *
+ * This function should be called when the buffer mj->file->str was entirely
+ * read.
+ * This function overrides the buffer.
+ * Therefore, this function should only be called when everything was read
+ * if the custom_FILE was created with a string. That's why it always returns 0
+ * in this case.
+ *
+ * @param mj Contains mj->file which is the custom_FILE to update.
+ * @return returns 1 upon succes, 0 otherwise
+ */
+int custom_getline(struct major *mj);
+
+/**
+ * @brief This function works as custom_getline() but it does not override the
+ * buffer, it expands it.
+ *
+ * This function should be called when the buffer mj->file->str was entirely
+ * read.
+ * Therefore, this function should only be called when everything was read
+ * if the custom_FILE was created with a string. That's why it always returns 0
+ * in this case.
+ *
+ * @param mj Contains mj->file which is the custom_FILE to update.
+ * @return returns 1 upon succes, 0 otherwise
+ */
+int custom_getline_same_buf(struct major *mj);
 
 #endif
