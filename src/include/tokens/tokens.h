@@ -11,11 +11,8 @@
 
 #define TOKENS_STRINGS_REDIR                                                   \
     {                                                                          \
-        ">", ">>"                                                              \
+        "<>", ">|", "<&", ">&", "<<-", "<<", ">>", "<", ">"                    \
     }
-
-#define REDIR_APPEND 1
-#define REDIR_TRUNK 0
 
 enum words
 {
@@ -43,16 +40,6 @@ struct token
 {
     enum words word;
     struct list *data;
-    struct redir *redirection;
-};
-
-struct redir
-{
-    char *std_in;
-    char *std_out;
-    char *std_err;
-    int std_out_append_mode;
-    int std_err_append_mode;
 };
 
 /**

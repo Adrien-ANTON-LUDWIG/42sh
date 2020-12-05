@@ -2,8 +2,8 @@
 
 #include "lexer_utils.h"
 #include "my_utils.h"
-#include "redirection.h"
 #include "lexer_operator.h"
+#include "lexer_redir.h"
 
 struct token *lexer_cmd(struct major *mj, struct token *tk, char *cmd)
 {

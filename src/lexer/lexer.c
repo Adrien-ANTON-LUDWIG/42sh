@@ -7,9 +7,9 @@
 #include "custom_descriptor.h"
 #include "my_utils.h"
 #include "my_xmalloc.h"
-#include "redirection.h"
 #include "tokens.h"
 #include "lexer_in.h"
+#include "lexer_redir.h"
 
 static struct token *get_token(struct major *mj)
 {
@@ -36,7 +36,7 @@ static struct token *get_token(struct major *mj)
         return lexer_cmd(mj, tk, word);
 
     if (tk->word == WORD_REDIR)
-        return lexer_redir(mj, tk, word);
+        return lexer_redir(mj, tk);
 
     if (is_next_in)
         return lexer_in(mj, tk, word);

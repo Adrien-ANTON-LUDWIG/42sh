@@ -5,7 +5,6 @@
 
 #include "my_utils.h"
 #include "my_xmalloc.h"
-#include "redirection.h"
 
 #define TOKENS_TO_STRING                                                       \
     {                                                                          \
@@ -21,7 +20,6 @@ struct token *token_init(struct major *mj)
 
     new->word = 0;
     new->data = NULL;
-    new->redirection = 0;
 
     return new;
 }
@@ -67,6 +65,5 @@ void token_free(struct token *tk)
         return;
 
     list_free(tk->data);
-    free_redirection(tk->redirection);
     free(tk);
 }

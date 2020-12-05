@@ -39,6 +39,11 @@ static int my_is_space(int c)
     return c == ' ' || c == '\t' || c == '\v';
 }
 
+static int c_is_redir(int c)
+{
+    return c == '<' || c == '>' || c == '-' || c == '|' || c == '&';
+}
+
 /**
  * @brief Returns 1 if a given char is not a space of separator. Else return 0;
  *
@@ -47,7 +52,7 @@ static int my_is_space(int c)
  */
 static int is_word(int c)
 {
-    return c != '\0' && !my_is_space(c) && c != ';' && c != '\n' && c != '\r' && c != '&' && c!= '|';
+    return c != '\0' && !my_is_space(c) && c != ';' && c != '\n' && c != '\r' && c != '&' && c != '|' && c != '<' && c != '>';
 }
 
 static int is_operator(int c)
@@ -95,7 +100,7 @@ char *get_word(struct major *mj)
 {
     if (mj->file->str && mj->file->str[mj->file->lexer_index] == ';')
         mj->file->lexer_index++;
-    // Prendre en charge le buffer plein (>512)
+        
     skip_class(my_is_space, mj);
 
     if (mj->file->lexer_index >= mj->file->len || !mj->file->str)
@@ -112,7 +117,6 @@ char *get_word(struct major *mj)
 
     size_t len = end - start;
     char *word = strndup(start, len);
-    //skip_class(my_is_space, mj);
 
     return word;
 }
@@ -127,7 +131,7 @@ char *get_operator(struct major *mj)
 {
     if (mj->file->str && mj->file->str[mj->file->lexer_index] == ';')
         mj->file->lexer_index++;
-    // Prendre en charge le buffer plein (>512)
+
     skip_class(my_is_space, mj);
 
     if (mj->file->lexer_index >= mj->file->len || !mj->file->str)
@@ -143,28 +147,81 @@ char *get_operator(struct major *mj)
 
     size_t len = end - start;
     char *word = strndup(start, len);
-    //skip_class(my_is_space, mj);
 
     return word;
 }
+
+/**
+ * @brief Get the redir word
+ * 
+ * @param mj 
+ * @return char* 
+ */
+char *get_redir(struct major *mj)
+{
+    if (mj->file->str && mj->file->str[mj->file->lexer_index] == ';')
+        mj->file->lexer_index++;
+        
+    skip_class(my_is_space, mj);
+
+    if (mj->file->lexer_index >= mj->file->len || !mj->file->str)
+        return NULL;
+
+    char *start = mj->file->str + mj->file->lexer_index;
+
+    if (start && *start >= '0' && *start <= '9')
+        mj->file->lexer_index++;
+
+    skip_class(c_is_redir, mj);
+
+    char *end = mj->file->str + mj->file->lexer_index;
+
+    if (end == start)
+            return NULL;
+
+    size_t len = end - start;
+    char *word = strndup(start, len);
+
+    return word;
+}
+
 char *get_first_word(struct major *mj)
 {
     size_t temp_index = mj->file->lexer_index;
-
-    char *word = get_operator(mj);
-
-    if (!word)
+    char *word = NULL;    
+    do
     {
-        mj->file->lexer_index = temp_index;
-        word = get_word(mj);
-    }
+        word = get_operator(mj);
 
-    while (word && *word == '#')
-    {
-        free(word);
-        skip_to_new_line(mj);
-        word = get_word(mj);
-    }
+        if (!word)
+        {
+            mj->file->lexer_index = temp_index;
+            word = get_redir(mj);
+        }
+
+        if (!word)
+        {
+            mj->file->lexer_index = temp_index;
+            word = get_word(mj);
+        }
+
+        if (word && *word == '#') 
+        {
+            free(word);
+            word = NULL;
+            skip_to_new_line(mj);
+
+            if (!mj->file->str)
+                break;
+        }
+        else if (!word)
+        {
+            mj->file->str = custom_fgets(mj->file->str, BUFFER_SIZE, mj->file);
+
+            if (!mj->file->str)
+                break;
+        }
+    }while (!word);
 
     return word;
 }
