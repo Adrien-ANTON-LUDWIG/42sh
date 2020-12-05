@@ -39,7 +39,7 @@ struct custom_FILE
  * @param path Can be NULL
  * @return struct custom_FILE*
  */
-struct custom_FILE *custom_fopen(const char *path);
+struct custom_FILE *custom_fopen(struct major *mj, const char *path);
 
 /**
  * @brief Creates a custom_FILE structure from a string
@@ -47,7 +47,7 @@ struct custom_FILE *custom_fopen(const char *path);
  * @param str
  * @return struct custom_FILE*
  */
-struct custom_FILE *createfrom_string(char *str);
+struct custom_FILE *createfrom_string(struct major *mj, char *str);
 
 /**
  * @brief If the custom_FILE is linked to a FILE structure

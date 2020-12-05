@@ -9,11 +9,9 @@
 #include "lexer.h"
 #include "my_xmalloc.h"
 
-struct custom_FILE *custom_fopen(const char *path)
+struct custom_FILE *custom_fopen(struct major *mj, const char *path)
 {
-    struct custom_FILE *f = malloc(sizeof(struct custom_FILE));
-    if (!f) // The program should not have allocated anything at that point
-        errx(2, "Could not allocate memory !");
+    struct custom_FILE *f = my_xmalloc(mj, sizeof(struct custom_FILE));
 
     f->lexer_index = 0;
     if (!path)
@@ -35,9 +33,9 @@ struct custom_FILE *custom_fopen(const char *path)
     return f;
 }
 
-struct custom_FILE *createfrom_string(char *str)
+struct custom_FILE *createfrom_string(struct major *mj, char *str)
 {
-    struct custom_FILE *f = custom_fopen(NULL);
+    struct custom_FILE *f = custom_fopen(mj, NULL);
     f->str = strdup(str);
     f->file = NULL;
     f->len = strlen(str);
