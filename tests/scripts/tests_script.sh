@@ -47,6 +47,24 @@ test_script()
         ret_val=1
     fi
 
+    (exec "./42sh" "$1" > "actual" 2> "$1_actual_err")
+    actual_err=$?
+    (exec "bash" "--posix" "$1" > "expected" 2> "$1_expected_err")
+    expected_err=$?
+
+    if [ ${actual_err} -ne ${expected_err} ]
+    then
+        echo -e '\e[1;31m ERROR \e[0m' "$1" "return values: Expected ${expected_err}, got ${actual_err}"
+        ret_val=1
+    fi
+
+    diff -u "actual" "expected" > "$1"
+    if [ $? -ne 0 ]
+    then
+        echo -e '\e[1;31m ERROR \e[0m' "$1" "wrong output"
+        ret_val=1
+    fi
+
     if [ "${ret_val}" -eq 0 ]
     then
         echo -e '\e[1;32m PASSED \e[0m' "$1"
