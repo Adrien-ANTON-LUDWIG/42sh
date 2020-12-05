@@ -19,7 +19,7 @@ static struct token *get_token(struct major *mj)
     if (!mj->file->str)
         return tk;
 
-    if (mj->file->fd == CUSTOM_FD && mj->file->lexer_index >= mj->file->len - 1)
+    if (mj->file->fd == CUSTOM_FD && mj->file->lexer_index >= mj->file->len )
         return tk;
 
     char *word = get_first_word(mj);

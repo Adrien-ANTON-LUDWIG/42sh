@@ -102,6 +102,7 @@ char *get_word(struct major *mj)
         return NULL;
 
     char *start = mj->file->str + mj->file->lexer_index;
+
     skip_class(is_word, mj);
 
     char *end = mj->file->str + mj->file->lexer_index;
