@@ -62,7 +62,7 @@ struct ast *take_action(struct major *mj, struct ast *ast, struct token *tk)
         ast = parser_if(mj, ast, tk);
     else if (tk->word == WORD_COMMAND)
         ast = add_single_command(mj, ast, tk);
-    else if (tk->word == WORD_REDIR)
+    else if (tk->word == WORD_REDIR_R)
         token_free(tk);
     else if (tk->word == WORD_WHILE || tk->word == WORD_UNTIL)
         ast = parser_while(mj, ast, tk);

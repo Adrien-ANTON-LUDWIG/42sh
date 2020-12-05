@@ -11,12 +11,17 @@
 
 #define TOKENS_STRINGS_REDIR                                                   \
     {                                                                          \
-        ">", ">>"                                                              \
+        "<>", ">|", "<&", ">&", "<<-", "<<", ">>", "<", ">"                    \
     }
 
-#define REDIR_APPEND 1
-#define REDIR_TRUNK 0
+#define DEFAULT_REDIR_VALUE                                                    \
+    {                                                                          \
+        "0", "1", "0", "1", "0", "0", "1", "0", "1"                            \
+    }
 
+/**
+ * @brief enum words
+ */
 enum words
 {
     WORD_IF,
@@ -31,9 +36,17 @@ enum words
     WORD_DO,
     WORD_DONE,
     WORD_AND,
-    WORD_OR,    
+    WORD_OR,
     WORD_PIPE,
-    WORD_REDIR,
+    WORD_REDIR_LR,
+    WORD_REDIR_RP,
+    WORD_REDIR_LA,
+    WORD_REDIR_RA,
+    WORD_REDIR_LLM,
+    WORD_REDIR_LL,
+    WORD_REDIR_RR,
+    WORD_REDIR_L,
+    WORD_REDIR_R,
     WORD_COMMAND,
     WORD_EOF,
     WORD_SUPERAND,
@@ -43,16 +56,6 @@ struct token
 {
     enum words word;
     struct list *data;
-    struct redir *redirection;
-};
-
-struct redir
-{
-    char *std_in;
-    char *std_out;
-    char *std_err;
-    int std_out_append_mode;
-    int std_err_append_mode;
 };
 
 /**
@@ -78,7 +81,7 @@ struct token *token_cpy(struct major *mj, struct token *src);
  * @param s
  * @return int
  */
-int word_type(char *s);
+int word_type(struct major *mj, struct token *tk, char *s);
 
 /**
  * @brief Converts a the field word of a token into a string

@@ -1,13 +1,9 @@
 #include "my_utils.h"
+#include "my_xmalloc.h"
 
 static struct list_item *list_item_init(struct major *mj, char *str)
 {
-    struct list_item *l = malloc(sizeof(struct list_item));
-
-    if (!l)
-        my_err(1, mj, "list_item_init: malloc failed");
-
-    l->next = NULL;
+    struct list_item *l = my_xcalloc(mj, 1, sizeof(struct list_item));
     l->data = str;
 
     return l;
@@ -15,14 +11,7 @@ static struct list_item *list_item_init(struct major *mj, char *str)
 
 struct list *list_init(struct major *mj)
 {
-    struct list *l = malloc(sizeof(struct list));
-
-    if (!l)
-        my_err(1, mj, "list_init: error with malloc");
-
-    l->head = NULL;
-    l->tail = NULL;
-    l->size = 0;
+    struct list *l = my_xcalloc(mj, 1, sizeof(struct list));
 
     return l;
 }
@@ -40,7 +29,6 @@ void list_free(struct list *l)
         free(temp->data);
         free(temp);
     }
-
     free(l);
 }
 

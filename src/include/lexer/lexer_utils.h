@@ -29,4 +29,7 @@ char *get_word(struct major *mj);
  */
 char *get_first_word(struct major *mj);
 
+char *get_redir(struct major *mj);
+char *get_operator(struct major *mj);
+
 #endif
