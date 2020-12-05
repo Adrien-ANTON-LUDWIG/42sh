@@ -1,0 +1,1 @@
+echo I am the best pipe ever | cat | cat

@@ -14,6 +14,8 @@ int is_operator(struct token *tk)
         return 1;
     case WORD_OR:
         return 1;
+    case WORD_PIPE:
+        return 1;
     default:
         return 0;
     }
