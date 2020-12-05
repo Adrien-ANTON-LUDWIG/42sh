@@ -51,11 +51,16 @@ int word_type(struct major *mj, struct token *tk, char *s)
     char *tokens_strings_redir[] = TOKENS_STRINGS_REDIR;
     char *defaut_value[] = DEFAULT_REDIR_VALUE;
 
+    char c = (*s >= '0' && *s <= '9') ? *s : 0;
+
+    char *temp = s;
+    if (c)
+        temp++;
+
     for (size_t i = 0; i < sizeof(tokens_strings_redir) / sizeof(char *); i++)
-        if (strstr(s, tokens_strings_redir[i]) != NULL)
+        if (!strcmp(temp, tokens_strings_redir[i]))
         {
-            char *number =
-                strndup((*s >= '0' && *s <= '9') ? &(*s) : defaut_value[i], 1);
+            char *number = strndup( (c) ? &c : defaut_value[i], 1);
             tk->data = list_append(mj, tk->data, number);
             return i + WORD_REDIR_LR;
         }
