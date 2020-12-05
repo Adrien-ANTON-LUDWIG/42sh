@@ -21,19 +21,11 @@ struct token *lexer_cmd(struct major *mj, struct token *tk, char *cmd)
 
     char *word = get_word(mj);
 
-    while (word && *word != '|')
+    while (word)
     {
         if (*word == '#')
         {
             free(word);
-            return tk;
-        }
-
-        if (word[strlen(word) - 1 ] == '|')
-        {
-            word[strlen(word) - 1] = 0;
-            list_append(mj, tk->data, word);
-            mj->file->lexer_index--; 
             return tk;
         }
 
@@ -51,12 +43,6 @@ struct token *lexer_cmd(struct major *mj, struct token *tk, char *cmd)
             break;
         }
         word = get_word(mj);
-    }
-
-    if (word && *word == '|')
-    {
-        mj->file->lexer_index-= (mj->file->lexer_index > 1) ? 2 : 1;
-        free(word);
     }
 
     return tk;

@@ -58,12 +58,14 @@ int word_type(struct major *mj, struct token *tk, char *s)
         temp++;
 
     for (size_t i = 0; i < sizeof(tokens_strings_redir) / sizeof(char *); i++)
+    {
         if (!strcmp(temp, tokens_strings_redir[i]))
         {
             char *number = strndup( (c) ? &c : defaut_value[i], 1);
             tk->data = list_append(mj, tk->data, number);
             return i + WORD_REDIR_LR;
         }
+    }
 
     return WORD_COMMAND;
 }

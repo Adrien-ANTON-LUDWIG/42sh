@@ -18,7 +18,6 @@ set (SRC
     src/execution/execution.c
     src/execution/exec_ast.c
     src/execution/pipe.c
-    src/lexer/lexer_list.c
     src/lexer/lexer_utils.c
     src/lexer/lexer_cmd.c
     src/lexer/lexer_redir.c

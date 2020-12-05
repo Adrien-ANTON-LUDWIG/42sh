@@ -1,13 +1,14 @@
 #include "structures.h"
 #include "lexer_utils.h"
 #include "lexer_operator.h"
+#include "lexer_utils.h"
 
 #include <string.h>
 
 int next_is_operator(struct major *mj)
 {
     size_t temp = mj->file->lexer_index;
-    char *s = get_word(mj);
+    char *s = get_operator(mj);
     mj->file->lexer_index = temp;
     int rvalue = 0;
 

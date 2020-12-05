@@ -38,8 +38,6 @@ static struct token *get_token(struct major *mj)
     if (tk->word == WORD_COMMAND && !is_next_in)
         return lexer_cmd(mj, tk, word);
 
-    
-
     if (is_next_in)
         return lexer_in(mj, tk, word);
 
