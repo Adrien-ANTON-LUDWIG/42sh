@@ -1,0 +1,1 @@
+echo gloubiboulga <<- heredocument

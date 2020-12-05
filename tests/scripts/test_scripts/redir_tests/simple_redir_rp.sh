@@ -1,0 +1,1 @@
+echo super mega test de l enfer >| anothersuperfile
