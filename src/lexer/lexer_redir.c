@@ -5,10 +5,12 @@
 #include "lexer_utils.h"
 #include "tokens.h"
 
-struct token *lexer_redir(struct major *mj, struct token *tk)
+struct token *lexer_redir(struct major *mj, struct token *tk, char *word)
 {
-    char *word = get_word(mj);
-    list_append(mj, tk->data, word);
+    if (word && *word >= '0' && *word <= '9')
+        list_append(mj, tk->data, &word[0]);
+     
+    free(word);
     return tk;
 }
 

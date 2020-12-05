@@ -21,6 +21,13 @@ static void print_token_in(struct token *tk)
     printf("\n");
 }
 
+static void print_token_redir(struct token *tk)
+{
+    printf(" ");
+    if (tk->data)
+        printf("%s", tk->data->head->data);     
+}
+
 void print_token(struct token *tk)
 {
     printf("%s", token2string(tk));
@@ -34,6 +41,8 @@ void print_token(struct token *tk)
             li = li->next;
         }
     }
+    else if (tk->word >= WORD_REDIR_LR && tk->word <= WORD_REDIR_R)
+        print_token_redir(tk);
     else if (tk->word == WORD_IN)
         print_token_in(tk);
 
