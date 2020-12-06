@@ -1,13 +1,9 @@
+#include <stdlib.h>
+
 #include "execution.h"
+#include "my_err.h"
 #include "tokens.h"
 
-/**
- * @brief Standard for node execution
- *
- * @param mj
- * @param tk
- * @return int
- */
 int execution_command(struct major *mj, struct token *tk)
 {
     if (!tk)
@@ -20,14 +16,6 @@ int execution_command(struct major *mj, struct token *tk)
     return rvalue;
 }
 
-/**
- * @brief Standard for allowing the left son of a command node/token
- *
- * @param mj
- * @param tk
- * @param rvalue
- * @return int
- */
 int allow_son_execution_command(struct major *mj, struct token *tk, int rvalue)
 {
     if (mj && tk)

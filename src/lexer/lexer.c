@@ -2,14 +2,16 @@
 
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "custom_descriptor.h"
+#include "lexer_cmd.h"
 #include "lexer_in.h"
 #include "lexer_redir.h"
-#include "my_utils.h"
+#include "lexer_utils.h"
+#include "my_err.h"
 #include "my_xmalloc.h"
-#include "tokens.h"
 
 static struct token *get_token(struct major *mj)
 {

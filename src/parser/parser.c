@@ -4,6 +4,7 @@
 
 #include "ast.h"
 #include "exec_ast.h"
+#include "my_err.h"
 #include "my_xmalloc.h"
 
 int is_operator(struct token *tk)
@@ -11,15 +12,6 @@ int is_operator(struct token *tk)
     return WORD_AND <= tk->word && tk->word < WORD_COMMAND;
 }
 
-/**
- * @brief Adds a AND command with the ast as its left son and tk as its right
- * son
- *
- * @param mj major structure
- * @param ast an ast
- * @param tk
- * @return struct ast* The newly built ast
- */
 struct ast *add_single_command(struct major *mj, struct ast *ast,
                                struct token *tk)
 {
@@ -37,14 +29,6 @@ struct ast *add_single_command(struct major *mj, struct ast *ast,
     return newast;
 }
 
-/**
- * @brief Decides which function to call depending on the kind of token
- *
- * @param mj
- * @param ast
- * @param tk
- * @return struct ast*
- */
 struct ast *take_action(struct major *mj, struct ast *ast, struct token *tk)
 {
     if (tk->word == WORD_IF)
@@ -75,12 +59,6 @@ struct ast *get_ast(struct major *mj, struct ast *ast, struct token **tk)
     return ast;
 }
 
-/**
- * @brief Parses and executes
- *
- * @param mj
- * @return struct ast*
- */
 void parser(struct major *mj)
 {
     struct token *tk = get_next_token(mj);

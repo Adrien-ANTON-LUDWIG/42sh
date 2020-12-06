@@ -9,9 +9,9 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#include "ast.h"
 #include "exec_ast.h"
 #include "execution.h"
+#include "my_err.h"
 
 static int run_programs(struct major *mj, int pipefd[2], struct ast *left,
                         struct ast *right)

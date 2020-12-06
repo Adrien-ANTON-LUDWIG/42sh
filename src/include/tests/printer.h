@@ -1,9 +1,13 @@
 #ifndef PRINTER_H
 #define PRINTER_H
 
-#include "lexer.h"
+#include "tokens.h"
 
-void lexer_printer(struct lexer *lex);
+/**
+ * @brief Prints the token
+ *
+ * @param tk
+ */
 void print_token(struct token *tk);
 
 #endif /* PRINTER_H */

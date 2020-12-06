@@ -1,9 +1,10 @@
 #include "lexer_redir.h"
 
-#include "custom_descriptor.h"
-#include "lexer.h"
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "lexer_utils.h"
-#include "tokens.h"
 
 struct token *lexer_redir(struct token *tk, char *word)
 {

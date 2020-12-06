@@ -3,6 +3,7 @@
 
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "lexer.h"
@@ -44,12 +45,6 @@ static int c_is_redir(int c)
     return c == '<' || c == '>' || c == '-' || c == '|' || c == '&';
 }
 
-/**
- * @brief Returns 1 if a given char is not a space of separator. Else return 0;
- *
- * @param c
- * @return int
- */
 static int is_word(int c)
 {
     return c != '\0' && !my_is_space(c) && c != ';' && c != '\n' && c != '\r'
@@ -61,12 +56,6 @@ static int is_operator(int c)
     return c == '&' || c == '|';
 }
 
-/**
- * @brief
- *
- * @param classifier
- * @param cursor
- */
 static void skip_class(int (*classifier)(int), struct major *mj)
 {
     char *cursor = mj->file->str;
@@ -91,12 +80,6 @@ static void skip_class(int (*classifier)(int), struct major *mj)
     }
 }
 
-/**
- * @brief Get the word object
- *
- * @param s
- * @return char*
- */
 char *get_word(struct major *mj)
 {
     if (mj->file->str && mj->file->str[mj->file->lexer_index] == ';')
@@ -122,12 +105,6 @@ char *get_word(struct major *mj)
     return word;
 }
 
-/**
- * @brief Return the next word if it is an operator
- *
- * @param mj
- * @return char*
- */
 char *get_operator(struct major *mj)
 {
     if (mj->file->str && mj->file->str[mj->file->lexer_index] == ';')
@@ -152,12 +129,6 @@ char *get_operator(struct major *mj)
     return word;
 }
 
-/**
- * @brief Get the redir word
- *
- * @param mj
- * @return char*
- */
 char *get_redir(struct major *mj)
 {
     if (mj->file->str && mj->file->str[mj->file->lexer_index] == ';')

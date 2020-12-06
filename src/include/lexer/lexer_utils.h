@@ -2,16 +2,7 @@
 #define LEXER_UTILS_H
 
 #include "custom_descriptor.h"
-#include "structures.h"
-
-/**
- * @brief While classifier returns 1, increments 1 to the lexer_index in
- * mj->file
- *
- * @param classifier
- * @param mj
- */
-//void skip_class(int (*classifier)(int), struct major *mj);
+#include "major.h"
 
 /**
  * @brief Returns a word without whitespace before nor after the word
@@ -23,13 +14,27 @@ char *get_word(struct major *mj);
 
 /**
  * @brief Return a word for the first time
- * 
- * @param mj 
- * @return char* 
+ *
+ * @param mj
+ * @return char*
  */
 char *get_first_word(struct major *mj);
 
+/**
+ * @brief Gets the next word if it's a WORD_REDIR.
+ * If it is not a WORD_REDIR, return NULL
+ *
+ * @param mj
+ * @return char*
+ */
 char *get_redir(struct major *mj);
+
+/**
+ * @brief Gets the operator if it is one.
+ *
+ * @param mj
+ * @return char* NULL if it is not an operator
+ */
 char *get_operator(struct major *mj);
 
-#endif
+#endif /* LEXER_UTILS_H */

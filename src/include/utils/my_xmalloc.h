@@ -1,12 +1,13 @@
-#ifndef MY_XMALLOC_H
-#define MY_XMALLOC_H
+#ifndef MY_XMALLOC_H_
+#define MY_XMALLOC_H_
 
 #include <stddef.h>
 
-#include "my_utils.h"
+#include "major.h"
+#include "my_xmalloc.h"
 
 /**
- * @brief malloc but crashes if malloc fails
+ * @brief Malloc but crashes if malloc fails
  *
  * @param mj
  * @param size
@@ -24,4 +25,4 @@ void *my_xmalloc(struct major *mj, size_t size);
  */
 void *my_xcalloc(struct major *mj, size_t nbmem, size_t size);
 
-#endif
+#endif /* MY_XMALLOC_H_ */

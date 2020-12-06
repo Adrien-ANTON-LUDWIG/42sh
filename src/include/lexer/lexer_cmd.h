@@ -1,8 +1,8 @@
 #ifndef LEXER_CMD_H
 #define LEXER_CMD_H
 
-#include "lexer.h"
-#include "my_utils.h"
+#include "major.h"
+#include "tokens.h"
 
 /**
  * @brief Returns a token WORD_COMMAND tk with it's own list of commands
