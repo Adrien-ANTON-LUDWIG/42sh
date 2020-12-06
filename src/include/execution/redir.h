@@ -1,8 +1,8 @@
-#ifndef REDIR_H
-#define REDIR_H
+#ifndef REDIR_H_
+#define REDIR_H_
 
 #include "ast.h"
-#include "structures.h"
+#include "major.h"
 
 /**
  * @brief Execute an ast which root is a WORD_REDIR
@@ -13,4 +13,4 @@
  */
 int exec_redir(struct major *mj, struct ast *ast);
 
-#endif
+#endif /* REDIR_H_ */

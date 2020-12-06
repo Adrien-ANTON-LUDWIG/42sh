@@ -1,21 +1,24 @@
+#include "redir.h"
+
 #include <err.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
-#include "ast.h"
 #include "exec_ast.h"
+#include "list.h"
+#include "my_err.h"
 
 static int run_command(struct major *mj, int fd_new, int fd_old,
                        struct ast *ast)
 {
     int rvalue = exec_ast(mj, ast);
     fflush(stdout);
-    // dup2(fd_old, STDOUT_FILENO);
     close(fd_old);
     close(fd_new);
     return rvalue;
