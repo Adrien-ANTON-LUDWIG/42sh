@@ -8,18 +8,7 @@
 
 int is_operator(struct token *tk)
 {
-    switch (tk->word)
-    {
-    case WORD_AND:
-        return 1;
-    case WORD_OR:
-        return 1;
-    case WORD_PIPE:
-        return 1;
-    default:
-        return 0;
-    }
-    return 0;
+    return WORD_AND <= tk->word && tk->word < WORD_COMMAND;
 }
 
 /**

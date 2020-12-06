@@ -18,6 +18,7 @@ set (SRC
     src/execution/execution.c
     src/execution/exec_ast.c
     src/execution/pipe.c
+    src/execution/redir.c
     src/lexer/lexer_utils.c
     src/lexer/lexer_cmd.c
     src/lexer/lexer_redir.c
@@ -44,8 +45,8 @@ file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/include/*.h")
 
 message("DBG:" $ENV{DBG})
 if (DEFINED ENV{DBG})
-    add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99 -g)
-    add_link_options(-Wall -Wextra -pedantic -Werror -std=c99 -g)
+    add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99 -fsanitize=address -g)
+    add_link_options(-Wall -Wextra -pedantic -Werror -std=c99 -fsanitize=address -g)
 else()
     add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99)
     add_link_options(-Wall -Wextra -pedantic -Werror -std=c99)
