@@ -1,7 +1,8 @@
+#include "printer.h"
+
 #include <stdio.h>
 
-#include "lexer.h"
-#include "tokens.h"
+#include "list.h"
 
 static void print_token_in(struct token *tk)
 {

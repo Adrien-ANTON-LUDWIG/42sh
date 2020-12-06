@@ -1,41 +1,10 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef LIST_H_
+#define LIST_H_
 
-#include <ctype.h>
-#include <err.h>
 #include <stddef.h>
-#include <stdlib.h>
 
-#include "structures.h"
+#include "major.h"
 
-/* MAJOR */
-
-/**
- * @brief Initializes major
- *
- * @return struct major*
- */
-struct major *major_init(void);
-
-/**
- * @brief Frees struct major
- *
- * @param mj
- */
-void major_free(struct major *mj);
-
-/* MY_ERR */
-
-/**
- * @brief Frees major and crashes
- *
- * @param err_code
- * @param mj
- * @param message
- */
-void my_err(int err_code, struct major *mj, char *message);
-
-/* LIST */
 struct list
 {
     struct list_item *head;
@@ -87,4 +56,4 @@ void list_free(struct list *l);
  */
 struct list *list_init(struct major *mj);
 
-#endif /* UTILS_H */
+#endif /* LIST_H_ */

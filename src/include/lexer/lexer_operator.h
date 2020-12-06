@@ -1,9 +1,7 @@
 #ifndef LEXER_OPERATOR_H_
 #define LEXER_OPERATOR_H_
 
-#include <stddef.h>
-
-#include "structures.h"
+#include "major.h"
 
 /**
  * @brief Checks if the next word is a WORD_OPERATOR

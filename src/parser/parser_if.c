@@ -1,14 +1,9 @@
-#include "ast.h"
-#include "parser.h"
-#include "tokens.h"
+#include <stdlib.h>
 
-/**
- * @brief Predicate used by parser_if() to know if this is still a compound
- * list.
- *
- * @param w
- * @return int
- */
+#include "ast.h"
+#include "my_err.h"
+#include "parser.h"
+
 static int should_loop(enum words w)
 {
     if (w == WORD_ELIF)
@@ -22,13 +17,6 @@ static int should_loop(enum words w)
     return 1;
 }
 
-/**
- * @brief Handles the parsing of an "else" condition
- *
- * @param mj major structure
- * @param ast
- * @return struct ast*
- */
 static void parser_else(struct major *mj, struct ast *ast)
 {
     struct token *expr = NULL;
@@ -43,14 +31,6 @@ static void parser_else(struct major *mj, struct ast *ast)
     token_free(expr);
 }
 
-/**
- * @brief Handles the parsing of an "if" condition
- *
- * @param mj major structure
- * @param ast
- * @param tk
- * @return struct ast*
- */
 struct ast *parser_if(struct major *mj, struct ast *ast, struct token *tk)
 {
     if (ast && ast->data->word == WORD_COMMAND)

@@ -1,6 +1,6 @@
 #include "ast.h"
+#include "my_err.h"
 #include "parser.h"
-#include "tokens.h"
 
 void parser_cpdlist(struct major *mj, struct token **expr, struct ast *newast,
                     int (*should_loop)(enum words))

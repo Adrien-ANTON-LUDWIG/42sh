@@ -1,4 +1,8 @@
-#include "my_utils.h"
+#include "list.h"
+
+#include <stdlib.h>
+
+#include "my_err.h"
 #include "my_xmalloc.h"
 
 static struct list_item *list_item_init(struct major *mj, char *str)

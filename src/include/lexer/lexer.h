@@ -3,13 +3,7 @@
 
 #define BUFFER_SIZE 512
 
-#include <stddef.h>
-#include <string.h>
-
-#include "lexer_cmd.h"
-#include "lexer_redir.h"
-#include "lexer_utils.h"
-#include "my_utils.h"
+#include "major.h"
 #include "tokens.h"
 
 /**

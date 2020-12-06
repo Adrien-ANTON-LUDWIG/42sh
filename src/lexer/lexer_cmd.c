@@ -1,9 +1,11 @@
 #include "lexer_cmd.h"
 
-#include "lexer_utils.h"
-#include "my_utils.h"
+#include <stdlib.h>
+
 #include "lexer_operator.h"
 #include "lexer_redir.h"
+#include "lexer_utils.h"
+#include "list.h"
 
 struct token *lexer_cmd(struct major *mj, struct token *tk, char *cmd)
 {

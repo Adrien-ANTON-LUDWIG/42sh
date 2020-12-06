@@ -2,7 +2,7 @@
 #define LEXER_UTILS_H
 
 #include "custom_descriptor.h"
-#include "structures.h"
+#include "major.h"
 
 /**
  * @brief Returns a word without whitespace before nor after the word

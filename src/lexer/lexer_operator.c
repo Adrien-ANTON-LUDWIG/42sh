@@ -1,9 +1,9 @@
 #include "lexer_operator.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 #include "lexer_utils.h"
-#include "structures.h"
 
 int next_is_operator(struct major *mj)
 {

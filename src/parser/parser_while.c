@@ -1,14 +1,9 @@
-#include "ast.h"
-#include "parser.h"
-#include "tokens.h"
+#include <stdlib.h>
 
-/**
- * @brief Predicate used by parser_while() to know if this is still a compound
- * list.
- *
- * @param w
- * @return int
- */
+#include "ast.h"
+#include "my_err.h"
+#include "parser.h"
+
 static int should_loop(enum words w)
 {
     if (w == WORD_DO)
@@ -18,14 +13,6 @@ static int should_loop(enum words w)
     return 1;
 }
 
-/**
- * @brief Handles the parsing of an "while" condition
- *
- * @param mj major structure
- * @param ast
- * @param tk
- * @return struct ast*
- */
 struct ast *parser_while(struct major *mj, struct ast *ast, struct token *tk)
 {
     if (ast && ast->data->word == WORD_COMMAND)

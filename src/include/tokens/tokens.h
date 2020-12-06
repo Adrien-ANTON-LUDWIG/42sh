@@ -1,7 +1,7 @@
 #ifndef TOKENS_H
 #define TOKENS_H
 
-#include "my_utils.h"
+#include "major.h"
 
 #define TOKENS_STRINGS                                                         \
     {                                                                          \
@@ -20,7 +20,7 @@
     }
 
 /**
- * @brief enum words
+ * @brief Enum words
  */
 enum words
 {
@@ -52,6 +52,10 @@ enum words
     WORD_SUPERAND,
 };
 
+/**
+ * @brief The structures that the lexer inits in order to give it to the parser.
+ *
+ */
 struct token
 {
     enum words word;

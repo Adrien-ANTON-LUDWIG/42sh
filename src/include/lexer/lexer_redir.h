@@ -1,7 +1,8 @@
 #ifndef LEXER_REDIR_H
 #define LEXER_REDIR_H
 
-#include "structures.h"
+#include "major.h"
+#include "tokens.h"
 
 /**
  * @brief Lexes a WORD_REDIR

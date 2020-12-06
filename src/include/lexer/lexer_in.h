@@ -1,8 +1,7 @@
 #ifndef LEXER_IN_H_
 #define LEXER_IN_H_
 
-#include "lexer_utils.h"
-#include "structures.h"
+#include "major.h"
 #include "tokens.h"
 
 /**

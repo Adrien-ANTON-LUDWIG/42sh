@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "my_utils.h"
+#include "list.h"
+#include "my_err.h"
 #include "my_xmalloc.h"
 
 #define TOKENS_TO_STRING                                                       \
@@ -61,7 +62,7 @@ int word_type(struct major *mj, struct token *tk, char *s)
     {
         if (!strcmp(temp, tokens_strings_redir[i]))
         {
-            char *number = strndup( (c) ? &c : defaut_value[i], 1);
+            char *number = strndup((c) ? &c : defaut_value[i], 1);
             tk->data = list_append(mj, tk->data, number);
             return i + WORD_REDIR_LR;
         }

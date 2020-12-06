@@ -1,11 +1,12 @@
+#include "execution.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
-#include "lexer.h"
-#include "my_utils.h"
+#include "custom_descriptor.h"
 #include "my_xmalloc.h"
 
 char **token_list_to_char_array(struct list *l)
