@@ -25,7 +25,7 @@ static void print_token_redir(struct token *tk)
 {
     printf(" ");
     if (tk->data)
-        printf("%s", tk->data->head->data);     
+        printf("%s", tk->data->head->data);
 }
 
 void print_token(struct token *tk)
@@ -47,22 +47,4 @@ void print_token(struct token *tk)
         print_token_in(tk);
 
     printf("\n");
-}
-
-void lexer_printer(struct lexer *lex)
-{
-    if (!lex)
-    {
-        printf("lexer_printer: Nothing to print\n");
-        return;
-    }
-
-    struct token_list *tmp = lex->head;
-
-    while (tmp)
-    {
-        struct token *tk = tmp->tk;
-        print_token(tk);
-        tmp = tmp->next;
-    }
 }
