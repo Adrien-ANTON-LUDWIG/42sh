@@ -1,1 +1,2 @@
-echo ikea <& bestPlaceEver
+echo ikea <& scripts/bestPlaceEver
+cat <& scripts/bestPlaceEver

@@ -6,6 +6,7 @@
 #include "if_execution.h"
 #include "parser.h"
 #include "pipe.h"
+#include "redir.h"
 
 static int redir_execution(struct major *mj, struct ast *ast, struct token *tk)
 {
@@ -14,6 +15,8 @@ static int redir_execution(struct major *mj, struct ast *ast, struct token *tk)
         mj->rvalue = exec_pipe(mj, ast);
         return mj->rvalue;
     }
+    else if (WORD_PIPE < tk->word && tk->word < WORD_COMMAND)
+        return exec_redir(mj, ast);
     else
         return -1;
 }

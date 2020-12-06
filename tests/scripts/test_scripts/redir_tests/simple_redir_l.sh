@@ -1,1 +1,2 @@
-echo tata < file
+cat actual > scripts/ininin
+cat < scripts/ininin
