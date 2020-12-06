@@ -5,11 +5,11 @@
 #include <string.h>
 
 #include "custom_descriptor.h"
+#include "lexer_in.h"
+#include "lexer_redir.h"
 #include "my_utils.h"
 #include "my_xmalloc.h"
 #include "tokens.h"
-#include "lexer_in.h"
-#include "lexer_redir.h"
 
 static struct token *get_token(struct major *mj)
 {
@@ -19,7 +19,7 @@ static struct token *get_token(struct major *mj)
     if (!mj->file->str)
         return tk;
 
-    if (mj->file->fd == CUSTOM_FD && mj->file->lexer_index >= mj->file->len )
+    if (mj->file->fd == CUSTOM_FD && mj->file->lexer_index >= mj->file->len)
         return tk;
 
     char *word = get_first_word(mj);
@@ -79,6 +79,13 @@ struct token *get_next_token(struct major *mj)
     {
         s = my_xmalloc(mj, BUFFER_SIZE);
         s = custom_fgets(s, BUFFER_SIZE, file);
+    }
+
+    if (!from_file)
+    {
+        while (file->lexer_index < file->len
+               && file->str[file->lexer_index] == '\n')
+            file->lexer_index++;
     }
 
     return get_token(mj);

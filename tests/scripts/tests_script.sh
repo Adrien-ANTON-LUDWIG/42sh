@@ -72,7 +72,7 @@ test_script()
 
     # FROM -C
 
-    (echo -c | cat - "$1" | xargs ./42sh > "actual" 2> "$1_cli_actual_err")
+    (./42sh "-c" "`cat $1`" > "actual" 2> "$1_cli_actual_err")
     actual_err=$?
 
     if [ ${actual_err} -ne ${expected_err} ]

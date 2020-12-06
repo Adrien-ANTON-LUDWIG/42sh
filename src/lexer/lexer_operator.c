@@ -1,9 +1,9 @@
-#include "structures.h"
-#include "lexer_utils.h"
 #include "lexer_operator.h"
-#include "lexer_utils.h"
 
 #include <string.h>
+
+#include "lexer_utils.h"
+#include "structures.h"
 
 int next_is_operator(struct major *mj)
 {
@@ -15,7 +15,8 @@ int next_is_operator(struct major *mj)
     if (!s)
         return 0;
 
-    if (strcmp(s, "&&") == 0 || strcmp(s, "||") == 0)
+    if (strcmp(s, "&&") == 0 || strcmp(s, "||") == 0 || strcmp(s, "|") == 0
+        || strcmp(s, "&") == 0)
         rvalue = 1;
 
     free(s);
