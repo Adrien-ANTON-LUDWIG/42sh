@@ -38,10 +38,13 @@ static char *get_path_destination(struct major *mj, char **argv)
     return path;
 }
 
-void cd(struct major *mj, char **argv)
+int cd(struct major *mj, char **argv)
 {
+    if (!mj || !argv)
+        return -1;
+
     char *path = get_path_destination(mj, argv);
     int r_value = chdir(path);
 
-    exit(r_value);
+    return r_value;
 }
