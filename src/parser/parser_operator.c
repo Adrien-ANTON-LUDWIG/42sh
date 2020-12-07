@@ -1,6 +1,6 @@
 #include "ast.h"
+#include "major.h"
 #include "parser.h"
-#include "structures.h"
 
 struct ast *parser_operator(struct major *mj, struct ast *ast, struct token *tk)
 {

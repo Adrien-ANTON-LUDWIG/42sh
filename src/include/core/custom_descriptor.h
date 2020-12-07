@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdio.h>
 
-#include "structures.h"
+#include "major.h"
 
 #define CUSTOM_FD -5
 /**

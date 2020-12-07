@@ -1,7 +1,8 @@
 #ifndef EXECUTION_H
 #define EXECUTION_H
 
-#include "tokens.h"
+#include "list.h"
+#include "major.h"
 
 /**
  * @brief Converts the command from struct list to a char **

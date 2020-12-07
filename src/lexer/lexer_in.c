@@ -1,11 +1,14 @@
 #include "lexer_in.h"
 
 #include <stddef.h>
+#include <stdlib.h>
 #include <string.h>
+
+#include "lexer_utils.h"
+#include "list.h"
 
 struct token *lexer_in(struct major *mj, struct token *tk, char *variable_name)
 {
-
     struct list *tmp = list_append(mj, tk->data, variable_name);
     tk->data = tmp;
     tk->word = WORD_IN;

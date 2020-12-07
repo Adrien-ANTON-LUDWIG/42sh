@@ -1,16 +1,10 @@
-#include <err.h>
+#include "my_xmalloc.h"
+
 #include <stddef.h>
 #include <stdlib.h>
 
-#include "my_utils.h"
+#include "my_err.h"
 
-/**
- * @brief malloc but crashes if malloc fails
- *
- * @param mj
- * @param size
- * @return void*
- */
 void *my_xmalloc(struct major *mj, size_t size)
 {
     void *ptr = malloc(size);

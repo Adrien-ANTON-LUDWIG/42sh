@@ -29,23 +29,66 @@ test_script()
 {
     count_tests=$(( $count_tests + 1 ))
     ret_val=0
-    (exec "./42sh" "$1" > "actual" 2> "$1_actual_err")
+
+    # FROM FILE
+
+    (exec "./42sh" "$1" > "actual" 2> "$1_file_actual_err")
     actual_err=$?
-    (exec "bash" "--posix" "$1" > "expected" 2> "$1_expected_err")
+    (exec "bash" "--posix" "$1" > "expected" 2> "$1_file_expected_err")
     expected_err=$?
 
     if [ ${actual_err} -ne ${expected_err} ]
     then
-        echo -e '\e[1;31m ERROR \e[0m' "$1" "return values: Expected ${expected_err}, got ${actual_err}"
+        echo -e '\e[1;31m ERROR \e[0m' "[FILE]" "$1" "return values: Expected ${expected_err}, got ${actual_err}"
         ret_val=1
     fi
 
-    diff -u "actual" "expected" > "$1"
+    diff -u "actual" "expected" > "$1_file"
     if [ $? -ne 0 ]
     then
-        echo -e '\e[1;31m ERROR \e[0m' "$1" "wrong output"
+        echo -e '\e[1;31m ERROR \e[0m' "[FILE]" "$1" "wrong output"
         ret_val=1
     fi
+
+    # FROM STDIN
+
+    (cat "$1" | "./42sh" > "actual" 2> "$1_stdin_actual_err")
+    actual_err=$?
+    (cat "$1" | "bash" "--posix" > "expected" 2> "$1_stdin_expected_err")
+    expected_err=$?
+
+    if [ ${actual_err} -ne ${expected_err} ]
+    then
+        echo -e '\e[1;31m ERROR \e[0m' "[STDIN]" "$1" "return values: Expected ${expected_err}, got ${actual_err}"
+        ret_val=1
+    fi
+
+    diff -u "actual" "expected" > "$1_stdin"
+    if [ $? -ne 0 ]
+    then
+        echo -e '\e[1;31m ERROR \e[0m' "[STDIN]" "$1" "wrong output"
+        ret_val=1
+    fi
+
+    # FROM -C
+
+    (./42sh "-c" "`cat $1`" > "actual" 2> "$1_cli_actual_err")
+    actual_err=$?
+
+    if [ ${actual_err} -ne ${expected_err} ]
+    then
+        echo -e '\e[1;31m ERROR \e[0m' "[CLI]" "$1" "return values: Expected ${expected_err}, got ${actual_err}"
+        ret_val=1
+    fi
+
+    diff -u "actual" "expected" > "$1_cli"
+    if [ $? -ne 0 ]
+    then
+        echo -e '\e[1;31m ERROR \e[0m' "[CLI]" "$1" "wrong output"
+        ret_val=1
+    fi
+
+    # Test if everything passed
 
     if [ "${ret_val}" -eq 0 ]
     then

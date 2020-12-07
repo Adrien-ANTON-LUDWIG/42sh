@@ -4,7 +4,6 @@
 #include <err.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 #include "lexer.h"
 #include "my_xmalloc.h"

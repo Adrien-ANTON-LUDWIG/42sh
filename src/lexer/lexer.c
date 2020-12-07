@@ -2,14 +2,16 @@
 
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "custom_descriptor.h"
-#include "my_utils.h"
-#include "my_xmalloc.h"
-#include "redirection.h"
-#include "tokens.h"
+#include "lexer_cmd.h"
 #include "lexer_in.h"
+#include "lexer_redir.h"
+#include "lexer_utils.h"
+#include "my_err.h"
+#include "my_xmalloc.h"
 
 static struct token *get_token(struct major *mj)
 {
@@ -19,7 +21,7 @@ static struct token *get_token(struct major *mj)
     if (!mj->file->str)
         return tk;
 
-    if (mj->file->fd == CUSTOM_FD && mj->file->lexer_index >= mj->file->len - 1)
+    if (mj->file->fd == CUSTOM_FD && mj->file->lexer_index >= mj->file->len)
         return tk;
 
     char *word = get_first_word(mj);
@@ -27,16 +29,16 @@ static struct token *get_token(struct major *mj)
     if (!word)
         return tk;
 
-    int i = word_type(word);
+    int i = word_type(mj, tk, word);
     tk->word = i;
+
+    if (tk->word >= WORD_REDIR_LR && tk->word <= WORD_REDIR_R)
+        return lexer_redir(tk, word);
 
     int is_next_in = next_is_in(mj);
 
     if (tk->word == WORD_COMMAND && !is_next_in)
         return lexer_cmd(mj, tk, word);
-
-    if (tk->word == WORD_REDIR)
-        return lexer_redir(mj, tk, word);
 
     if (is_next_in)
         return lexer_in(mj, tk, word);
@@ -79,6 +81,13 @@ struct token *get_next_token(struct major *mj)
     {
         s = my_xmalloc(mj, BUFFER_SIZE);
         s = custom_fgets(s, BUFFER_SIZE, file);
+    }
+
+    if (!from_file)
+    {
+        while (file->lexer_index < file->len
+               && file->str[file->lexer_index] == '\n')
+            file->lexer_index++;
     }
 
     return get_token(mj);
