@@ -2,8 +2,11 @@
 
 #include <stdlib.h>
 
-void b_exit(struct major *mj, char *argv[])
+int b_exit(struct major *mj, char *argv[])
 {
+    if (!mj || !argv)
+        return -1;
+
     int rvalue = 0;
 
     if (argv && *argv)
@@ -13,7 +16,7 @@ void b_exit(struct major *mj, char *argv[])
 
     if (argv)
         free(*argv);
-        
+
     free(argv);
 
     exit(rvalue);

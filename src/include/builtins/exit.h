@@ -3,6 +3,6 @@
 
 #include "major.h"
 
-void b_exit(struct major *mj, char *argv[]);
+int b_exit(struct major *mj, char *argv[]);
 
 #endif /* EXIT_H_ */
