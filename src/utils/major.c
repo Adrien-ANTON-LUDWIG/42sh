@@ -15,11 +15,5 @@ void major_free(struct major *mj)
 {
     custom_fclose(mj->file);
     list_free(mj->variables);
-
-    if (mj->pwd_dir)
-        free(mj->pwd_dir);
-    if (mj->oldpwd_dir)
-        free(mj->oldpwd_dir);
-
     free(mj);
 }

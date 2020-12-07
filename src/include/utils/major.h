@@ -13,8 +13,6 @@ struct major
     int options;
     struct custom_FILE *file;
     struct list *variables;
-    char *oldpwd_dir;
-    char *pwd_dir;
 };
 
 /**
