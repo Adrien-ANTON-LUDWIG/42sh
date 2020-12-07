@@ -15,7 +15,7 @@ func_tests:
         - docker
     script:
         - mkdir build && cd build
-        - cmake .. && make
+        - cmake .. && make debug
         - cp /usr/src/app/script.sh .
         - valgrind --leak-check=full --error-exitcode=1 ./42sh script.sh
         - make script_test
