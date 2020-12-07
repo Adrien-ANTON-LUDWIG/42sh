@@ -17,7 +17,6 @@ func_tests:
         - mkdir build && cd build
         - cmake .. && make debug
         - cp /usr/src/app/script.sh .
-        - valgrind --leak-check=full --error-exitcode=1 ./42sh script.sh
         - make script_test
 lines_counter:
     stage: Lines counter
