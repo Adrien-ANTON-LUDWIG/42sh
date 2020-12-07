@@ -16,6 +16,8 @@ include_directories("src/include/core"
 set (SRC
     src/builtins/cd.c
     src/builtins/exit.c
+    src/builtins/echo.c
+    src/builtins/export.c
     src/core/custom_descriptor.c
     src/core/argument_handler.c
     src/execution/execution.c
