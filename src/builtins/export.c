@@ -42,12 +42,6 @@ static void export_display(void)
         printf("declare -x %s\n", environ[i]);
 }
 
-static void export_display(void)
-{
-    for (int i = 0; environ[i]; i++)
-        printf("%s\n", environ[i]);
-}
-
 static void export_remove(int len, int nb_opt, char *argv[])
 {
     for (int i = nb_opt + 1; i < len; i++)
