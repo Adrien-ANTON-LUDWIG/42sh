@@ -76,4 +76,13 @@ struct ast *parser_operator(struct major *mj, struct ast *ast,
 
 struct ast *get_ast(struct major *mj, struct ast *ast, struct token **tk);
 
+struct token *build_command(struct major *mj, struct token **tk,
+                            struct token *tk2);
+
+struct list *add_to_list(struct major *mj, struct list *list, char *str);
+
+struct ast *parser_function(struct major *mj, struct ast *ast, struct token *tk,
+                            struct token *tk2);
+struct ast *parser_word(struct major *mj, struct ast *ast, struct token *tk);
+
 #endif /* PARSER_H */

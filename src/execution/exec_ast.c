@@ -38,7 +38,7 @@ static int conditional_execution(struct major *mj, struct ast *ast,
         while ((tk->word == WORD_UNTIL) ^ (!err))
         {
             exec_ast(mj, ast->right);
-            exec_ast(mj, ast->left);
+            err = exec_ast(mj, ast->left);
         }
         mj->rvalue = 0;
         return 0;

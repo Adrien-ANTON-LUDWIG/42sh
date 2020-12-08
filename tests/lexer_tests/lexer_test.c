@@ -9,13 +9,51 @@
 #include "custom_descriptor.h"
 #include "execution.h"
 #include "lexer.h"
+#include "my_xmalloc.h"
 #include "printer.h"
 
 /**
- * @brief Main to test the lexer.
+ * @brief Does nothing... yet
  *
- * Parse the options as the real main but does not parse nor execute. Instead,
- * it prints the result of the lexer.
+ * @param i
+ * @param argv
+ */
+void shopt_options(int *i, char **argv)
+{
+    if (!argv[*i])
+        return;
+    while (!strcmp(argv[*i], "-O") || !strcmp(argv[*i], "+O"))
+    {
+        if (argv[*i][0] == '-')
+            *i += 1;
+        else
+            *i += 1;
+        *i += 1;
+    }
+}
+
+static int run_command_line(int argc, char *argv[], int from, struct major *mj)
+{
+    char *args = merge_arguments(argc - from, argv + from);
+    mj->file = createfrom_string(mj, args);
+    mj->rvalue = 0;
+    free(args);
+
+    struct token *tk = NULL;
+    do
+    {
+        token_free(tk);
+        tk = get_next_token(mj);
+        print_token(tk);
+    } while (tk->word != WORD_EOF);
+
+    token_free(tk);
+    major_free(mj);
+    return 0;
+}
+
+/**
+ * @brief It's the main function :)
  *
  * @param argc
  * @param argv
@@ -23,55 +61,44 @@
  */
 int main(int argc, char **argv)
 {
-    if (argc < 2)
-        return 0;
+    int i = 0;
 
-    for (int i = 1; i < argc; i++)
+    if (argc > 1)
+        i = 1;
+
+    struct major *mj = major_init();
+    int from = get_index_command_string(i, argc, argv);
+
+    if (strcmp(argv[i], "-c") == 0)
     {
-        if (strcmp(argv[i], "-c") == 0)
-        {
-            if (i + 1 >= argc)
-                errx(2, "-c: option requires an argument");
+        if (i + 1 == argc)
+            errx(2, "-c: option requires an argument");
 
-            struct major *mj = major_init();
-            int from = get_index_command_string(i + 1, argc, argv);
-            char *args = merge_arguments(argc - from, argv + from);
-            mj->file = createfrom_string(args);
-            struct token *tk = get_next_token(mj);
-
-            while (tk->word != WORD_EOF)
-            {
-                print_token(tk);
-                token_free(tk);
-                tk = get_next_token(mj);
-            }
-            print_token(tk);
-            token_free(tk);
-            free(args);
-            major_free(mj);
-            return 0;
-        }
-        else if (strcmp(argv[i], "-O") == 0)
-            continue;
-        else if (strcmp(argv[i], "+O") == 0)
-            continue;
+        return run_command_line(argc, argv, from, mj);
+    }
+    else
+    {
+        struct custom_FILE *file;
+        if (argc >= 2)
+            file = custom_fopen(mj, argv[from]);
         else
         {
-            struct major *mj = major_init();
-            mj->file = custom_fopen(argv[i]);
-
-            struct token *tk = get_next_token(mj);
-
-            while (tk->word != WORD_EOF)
-            {
-                print_token(tk);
-                token_free(tk);
-                tk = get_next_token(mj);
-            }
-            print_token(tk);
-            token_free(tk);
-            major_free(mj);
+            file = my_xcalloc(mj, 1, sizeof(struct custom_FILE));
+            file->file = stdin;
+            file->fd = stdin->_fileno;
         }
+        mj->file = file;
+
+        struct token *tk = NULL;
+        do
+        {
+            token_free(tk);
+            tk = get_next_token(mj);
+            print_token(tk);
+        } while (tk->word != WORD_EOF);
+        token_free(tk);
     }
+
+    major_free(mj);
     return 0;
 }

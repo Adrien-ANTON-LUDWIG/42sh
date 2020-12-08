@@ -6,7 +6,7 @@
 #define TOKENS_STRINGS                                                         \
     {                                                                          \
         "if", "then", "elif", "else", "fi", "while", "until", "for", "in",     \
-            "do", "done", "&&", "||", "|"                                      \
+            "do", "done", "function", "{", "}"                                 \
     }
 
 #define TOKENS_STRINGS_REDIR                                                   \
@@ -16,8 +16,10 @@
 
 #define DEFAULT_REDIR_VALUE                                                    \
     {                                                                          \
-        "0", "1", "0", "1", "0", "0", "1", "0", "1"                            \
+        '0', '1', '0', '1', '0', '0', '1', '0', '1'                            \
     }
+
+#define NUMBER_OF_REDIR 9
 
 /**
  * @brief Enum words
@@ -35,6 +37,9 @@ enum words
     WORD_IN,
     WORD_DO,
     WORD_DONE,
+    WORD_FUNCTION,
+    WORD_LBRACKET,
+    WORD_RBRACKET,
     WORD_AND,
     WORD_OR,
     WORD_PIPE,
@@ -50,6 +55,13 @@ enum words
     WORD_COMMAND,
     WORD_EOF,
     WORD_SUPERAND,
+    WORD_SEMIC,
+    WORD_NEWLINE,
+    WORD_QUOTE,
+    WORD_LPARENTHESIS,
+    WORD_RPARENTHESIS,
+    WORD_DPARENTHESIS,
+    WORD_WORD
 };
 
 /**
@@ -68,7 +80,7 @@ struct token
  * @param major
  * @return struct token*
  */
-struct token *token_init(struct major *major);
+struct token *token_init(struct major *major, enum words word);
 
 /**
  * @brief Create a deepcopy of the given src token.

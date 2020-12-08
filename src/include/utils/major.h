@@ -1,6 +1,11 @@
-#ifndef MAJOR_H_
-#define MAJOR_H_
+#ifndef MAJOR_H
+#define MAJOR_H
 
+struct funclist
+{
+    struct funclist *next;
+    struct ast *ast;
+};
 /**
  * @brief Majors stores the important structures we use all along the project.
  * It also allows us to exit and free those structures whenever we need it
@@ -13,6 +18,7 @@ struct major
     int options;
     struct custom_FILE *file;
     struct list *variables;
+    struct funclist *flist;
 };
 
 /**

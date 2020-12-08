@@ -35,12 +35,14 @@ struct ast *take_action(struct major *mj, struct ast *ast, struct token *tk)
         ast = parser_if(mj, ast, tk);
     else if (tk->word == WORD_COMMAND)
         ast = add_single_command(mj, ast, tk);
-    else if (tk->word == WORD_REDIR_R)
+    else if (tk->word == WORD_REDIR_R) // Ouais je suis con, ouais
         token_free(tk);
     else if (tk->word == WORD_WHILE || tk->word == WORD_UNTIL)
         ast = parser_while(mj, ast, tk);
     else if (tk->word == WORD_FOR)
         ast = parser_for(mj, ast, tk);
+    else if (tk->word == WORD_WORD)
+        ast = parser_word(mj, ast, tk);
     else
         my_err(2, mj, "parser: syntax error");
     return ast;

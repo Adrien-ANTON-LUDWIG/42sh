@@ -39,6 +39,7 @@ struct custom_FILE *createfrom_string(struct major *mj, char *str)
     f->str = strdup(str);
     f->file = NULL;
     f->len = strlen(str);
+    f->buffer_size = f->len + 1;
     return f;
 }
 
