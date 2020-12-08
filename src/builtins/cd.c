@@ -41,7 +41,7 @@ static char *get_path_destination(struct major *mj, char **argv)
 int cd(struct major *mj, char **argv)
 {
     if (!mj || !argv)
-        return -1;
+        return 1;
 
     char *path = get_path_destination(mj, argv);
     int r_value = chdir(path);
