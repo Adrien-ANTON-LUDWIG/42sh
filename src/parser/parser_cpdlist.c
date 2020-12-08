@@ -8,7 +8,10 @@ void parser_cpdlist(struct major *mj, struct token **expr, struct ast *newast,
     while (should_loop((*expr = get_next_token(mj))->word))
     {
         if ((*expr)->word == WORD_EOF)
-            my_err(2, mj, "parser: unexpected EOF");
-        newast->right = take_action(mj, newast->right, *expr);
+            my_err(2, mj, "parser cpd: unexpected EOF");
+        if ((*expr)->data)
+            newast->right = take_action(mj, newast->right, *expr);
+        else
+            token_free(*expr);
     }
 }

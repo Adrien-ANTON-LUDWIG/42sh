@@ -2,6 +2,7 @@
 
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "custom_descriptor.h"
@@ -11,7 +12,7 @@
 #include "string_manipulation.h"
 #include "tokens.h"
 
-struct token *get_token_redir(struct major *mj, char c)
+static struct token *get_token_redir(struct major *mj, char c)
 {
     char *tokens_strings_redir[] = TOKENS_STRINGS_REDIR;
     char default_value[] = DEFAULT_REDIR_VALUE;
@@ -48,7 +49,7 @@ struct token *get_token_redir(struct major *mj, char c)
     return tk;
 }
 
-struct token *get_token_operator(struct major *mj)
+static struct token *get_token_operator(struct major *mj)
 {
     struct custom_FILE *f = mj->file;
     char c = f->str[f->lexer_index++];
@@ -91,7 +92,22 @@ struct token *get_token_operator(struct major *mj)
     // return get__token_quote(mj, c);
 }
 
-struct token *get_token_word(struct major *mj)
+static struct token *get_token_operator_skip_newline(struct major *mj)
+{
+    struct token *tk = get_token_operator(mj);
+
+    while (get_char(mj->file, 0) == '\n')
+    {
+        mj->file->lexer_index++;
+
+        if (at_end(mj->file))
+            custom_getline(mj);
+    }
+
+    return tk;
+}
+
+static struct token *get_token_word(struct major *mj)
 {
     struct custom_FILE *f = mj->file;
     size_t start = f->lexer_index;
@@ -145,7 +161,7 @@ struct token *get_next_token(struct major *mj)
     }
 
     if (is_in(get_char(f, 0), IS_OPERATOR))
-        return get_token_operator(mj);
+        return get_token_operator_skip_newline(mj);
 
     return get_token_word(mj);
 }

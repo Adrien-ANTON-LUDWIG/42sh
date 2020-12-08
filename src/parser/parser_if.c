@@ -21,13 +21,15 @@ static void parser_else(struct major *mj, struct ast *ast)
 {
     struct token *expr = NULL;
 
-    while ((expr = get_next_token(mj))->word != WORD_FI)
+    while (should_loop((expr = get_next_token(mj))->word))
     {
         if (expr->word == WORD_EOF)
-            my_err(2, mj, "parser_if: unexpected EOF");
-        ast->middle = take_action(mj, NULL, expr);
+            my_err(2, mj, "parser_else: unexpected EOF");
+        if (expr->data)
+            ast->middle = take_action(mj, ast->middle, expr);
+        else
+            token_free(expr);
     }
-
     token_free(expr);
 }
 

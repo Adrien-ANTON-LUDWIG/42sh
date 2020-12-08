@@ -4,10 +4,13 @@
 
 #include "ast.h"
 #include "exec_ast.h"
+#include "list.h"
 #include "my_err.h"
 #include "my_xmalloc.h"
+#include "string_manipulation.h"
+#include "tokens.h"
 
-int is_operator(struct token *tk)
+static int is_operator(struct token *tk)
 {
     return WORD_AND <= tk->word && tk->word < WORD_COMMAND;
 }
@@ -33,6 +36,8 @@ struct ast *take_action(struct major *mj, struct ast *ast, struct token *tk)
 {
     if (tk->word == WORD_IF)
         ast = parser_if(mj, ast, tk);
+    else if (tk->word == WORD_WORD)
+        ast = parser_word(mj, ast, tk);
     else if (tk->word == WORD_COMMAND)
         ast = add_single_command(mj, ast, tk);
     else if (tk->word == WORD_REDIR_R) // Ouais je suis con, ouais
@@ -41,10 +46,8 @@ struct ast *take_action(struct major *mj, struct ast *ast, struct token *tk)
         ast = parser_while(mj, ast, tk);
     else if (tk->word == WORD_FOR)
         ast = parser_for(mj, ast, tk);
-    else if (tk->word == WORD_WORD)
-        ast = parser_word(mj, ast, tk);
     else
-        my_err(2, mj, "parser: syntax error");
+        my_err(2, mj, "parser: take_action: syntax error");
     return ast;
 }
 
@@ -68,6 +71,11 @@ void parser(struct major *mj)
     while (tk->word != WORD_EOF)
     {
         ast = get_ast(mj, ast, &tk);
+        if (!tk->data)
+        {
+            token_free(tk);
+            tk = get_next_token(mj);
+        }
         exec_ast(mj, ast);
         ast_free(ast);
         ast = NULL;
