@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define NB_ESCAPE_SEQ 8
+#define CHAR_ZERO 48
+#define TO_UPPER 32
+#define NB_ESCAPE_SEQ 7
 #define CHAR_ESCAPE                                                            \
     {                                                                          \
         'a', 'b', /*'e', */ 'f', 'n', 'r', 't', 'v'                            \
@@ -52,7 +54,7 @@ static int str_oct_to_dec(char *s, int i, int to_read)
     int n = 0;
     for (int j = 0; j < to_read; j++)
     {
-        n += (((int)(s[i + j]) - 48) * my_pow(8, to_read - j - 1));
+        n += (((int)(s[i + j]) - CHAR_ZERO) * my_pow(8, to_read - j - 1));
     }
     return n;
 }
@@ -60,20 +62,12 @@ static int str_oct_to_dec(char *s, int i, int to_read)
 static int get_hex_val(char *c)
 {
     if ('a' <= *c && *c <= 'f')
-        *c -= 32;
+        *c -= TO_UPPER;
     int ret = 0;
     if (*c >= '0' && '9' >= *c)
-    {
-        ret = 0;
-        for (char i = '0'; i < '9' && i != *c; i++)
-            ret++;
-    }
+        ret = *c - '0';
     else
-    {
-        ret = 10;
-        for (char i = 'A'; i < 'G' && i != *c; i++)
-            ret++;
-    }
+        ret = *c - 'A' + 10;
     return ret;
 }
 
@@ -82,7 +76,7 @@ static int str_hx_to_dec(char *s, int i, int to_read)
     int n = 0;
     for (int j = 0; j < to_read; j++)
     {
-        n += (get_hex_val(&s[i + j])) * my_pow(16, to_read - j - 1);
+        n += (get_hex_val(s + i + j)) * my_pow(16, to_read - j - 1);
     }
     return n;
 }
@@ -168,14 +162,6 @@ static void echo_display(char *argv, int e, int *n)
     }
 }
 
-/*
-    -n do not output the trailing newline
-
-    -e enable interpretation of backslash escapes
-
-    -E disable interpretation of backslash escapes (default)
-*/
-
 static int argv_len(char *argv[])
 {
     int i = 0;
@@ -183,6 +169,14 @@ static int argv_len(char *argv[])
         i++;
     return i;
 }
+
+/*
+    -n do not output the trailing newline
+
+    -e enable interpretation of backslash escapes
+
+    -E disable interpretation of backslash escapes (default)
+*/
 
 int b_echo(char **argv)
 {

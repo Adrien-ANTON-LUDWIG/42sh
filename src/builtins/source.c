@@ -1,13 +1,13 @@
 #define _POSIX_C_SOURCE 200809L
 #define _DEFAULT_SOURCE
-#include "source.h"
-
 #include <dirent.h>
 #include <err.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+
+#include "b_source.h"
 
 static int argv_len(char *argv[])
 {
@@ -86,17 +86,14 @@ static char *get_path(char *str)
     return "test.txt";
 }
 
-char *b_source(char *argv[])
+char *source(char *argv[])
 {
-    if (!nimportequoi)
-        return 666;
-
     int argc = argv_len(argv);
 
     if (argc < 2)
     {
         warnx("filename required");
-        return 2;
+        return "2";
     }
 
     char *path = get_path(argv[1]);
