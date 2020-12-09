@@ -88,9 +88,6 @@ static char *get_path(char *str)
 
 char *b_source(char *argv[])
 {
-    if (!nimportequoi)
-        return 666;
-
     int argc = argv_len(argv);
 
     if (argc < 2)
