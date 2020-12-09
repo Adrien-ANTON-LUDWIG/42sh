@@ -3,6 +3,6 @@
 
 #include "major.h"
 
-int cd(struct major *mj, char **argv);
+int b_cd(struct major *mj, char **argv);
 
 #endif /* CD_H_ */

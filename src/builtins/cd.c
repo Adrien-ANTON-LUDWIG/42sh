@@ -38,7 +38,7 @@ static char *get_path_destination(struct major *mj, char **argv)
     return path;
 }
 
-int cd(struct major *mj, char **argv)
+int b_cd(struct major *mj, char **argv)
 {
     if (!mj || !argv)
         return 1;
