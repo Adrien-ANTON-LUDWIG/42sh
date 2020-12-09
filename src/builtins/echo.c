@@ -11,15 +11,31 @@
         '\a', '\b', '\e', '\f', '\n', '\r', '\t', '\v'                         \
     }
 
-static int nb_to_read(char *s, int i)
+static int nb_to_read_oct(char *s, int i)
 {
-    int j = i;
+    int j = i + 1;
+    for (; j < i + 4 && s[j]; j++)
+    {
+        if (s[j] < '0' || '7' < s[j])
+        {
+            break;
+        }
+    }
+    return j - i - 1;
+}
+
+static int nb_to_read_hx(char *s, int i)
+{
+    int j = i + 1;
     for (; j < i + 3 && s[j]; j++)
     {
-        if ('0' > s[j] || s[j] > '7')
+        if ((s[j] < '0' || '9' < s[j])
+            && ((s[j] < 'A' || 'F' < s[j]) || (s[j] < 'a' || 'f' < s[j])))
+        {
             break;
+        }
     }
-    return j - i;
+    return j - i - 1;
 }
 
 static int my_pow(int a, int b)
@@ -35,8 +51,32 @@ static int str_oct_to_dec(char *s, int i, int to_read)
     int n = 0;
     for (int j = 0; j < to_read; j++)
     {
-        printf("pow = %d\n", to_read - j - 1);
         n += (((int)(s[i + j]) - 48) * my_pow(8, to_read - j - 1));
+    }
+    return n;
+}
+
+static int get_hex_val(char *c)
+{
+    // convert c to uper case if needed
+    int ret = 0;
+    if (*c >= '0' && '9' >= *c)
+        ret = atoi(c);
+    else
+    {
+        ret = 10;
+        for (char i = 'A'; i < 'G' && i != *c; i++)
+            ret++;
+    }
+    return ret;
+}
+
+static int str_hx_to_dec(char *s, int i, int to_read)
+{
+    int n = 0;
+    for (int j = 0; j < to_read; j++)
+    {
+        n += (get_hex_val(&s[i + j])) * my_pow(16, to_read - j - 1);
     }
     return n;
 }
@@ -71,18 +111,20 @@ static int get_escape_index(char c)
         return -1;
     if (c == '0')
         return -2;
+    if (c == 'x')
+        return -3;
     for (int i = 0; i < NB_ESCAPE_SEQ; i++)
     {
         if (c == char_escape[i])
             return i;
     }
-    return -3;
+    return -4;
 }
 
 static void echo_display(char *argv, int e, int *n)
 {
-    char c = ' ';
     char str_escape[] = STRING_ESCAPE;
+    char c = ' ';
     for (size_t i = 0; i < strlen(argv); i++)
     {
         c = argv[i];
@@ -96,15 +138,24 @@ static void echo_display(char *argv, int e, int *n)
                 *n = 1;
                 return;
             }
-            if (index == -2)
+            if (index == -2 || index == -3)
             {
-                int to_read = nb_to_read(argv, i);
-
-                int ascii = str_oct_to_dec(argv + 1, i, to_read);
+                int to_read = 0;
+                int ascii = 0;
+                if (index == -2)
+                {
+                    to_read = nb_to_read_oct(argv, i);
+                    ascii = str_oct_to_dec(argv + 1, i, to_read);
+                }
+                else
+                {
+                    to_read = nb_to_read_hx(argv, i);
+                    ascii = str_hx_to_dec(argv + 1, i, to_read);
+                }
                 printf("%c", ascii);
                 i += to_read;
             }
-            if (index == -3)
+            if (index == -4)
             {
                 putchar(c);
                 putchar(argv[i]);
@@ -118,7 +169,7 @@ static void echo_display(char *argv, int e, int *n)
         }
     }
 }
-
+/*
 static int argv_len(char *argv[])
 {
     int i = 0;
@@ -126,6 +177,7 @@ static int argv_len(char *argv[])
         i++;
     return i;
 }
+*/
 
 /*
     -n do not output the trailing newline
@@ -137,8 +189,6 @@ static int argv_len(char *argv[])
 
 int main(int argc, char **argv)
 {
-    // printf("%c", atoi("041"));
-    // printf("%o\n", atoi("33"));
     if (argc < 2)
     {
         printf("\n");
@@ -150,15 +200,16 @@ int main(int argc, char **argv)
     int E = 0;
 
     int nb_opt = set_options(argv, &n, &e, &E);
-    int len = argv_len(argv + 1);
+    // int len = argv_len(argv + 1);
 
     if (nb_opt == 0)
         E = 1;
 
-    printf("len = %d\n", len);
-    printf("nb_opt: %d\n", nb_opt);
-    printf("n=%d\ne=%d\nE=%d\n", n, e, E);
-
+    /*
+        printf("len = %d\n", len);
+        printf("nb_opt: %d\n", nb_opt);
+        printf("n=%d\ne=%d\nE=%d\n", n, e, E);
+    */
     echo_display(argv[nb_opt + 1], e, &n);
 
     if (!n)
