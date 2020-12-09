@@ -50,13 +50,13 @@ struct token *build_command(struct major *mj, struct token **tk,
     return newtoken;
 }
 
-struct ast *parser_word(struct major *mj, struct ast *ast, struct token *tk)
+struct ast *parser_word(struct major *mj, struct ast *ast, struct token **tk)
 {
     struct token *tk2 = get_next_token(mj);
     if (tk2->word == WORD_DPARENTHESIS)
         return parser_function(mj, ast, tk, tk2);
-    struct token *command = build_command(mj, &tk, tk2);
-    token_free(tk);
-    ast = take_action(mj, ast, command);
+    struct token *command = build_command(mj, tk, tk2);
+    ast = take_action(mj, ast, &command);
+
     return ast;
 }

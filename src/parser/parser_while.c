@@ -13,7 +13,7 @@ static int should_loop(enum words w)
     return 1;
 }
 
-struct ast *parser_while(struct major *mj, struct ast *ast, struct token *tk)
+struct ast *parser_while(struct major *mj, struct ast *ast, struct token **tk)
 {
     if (ast && ast->data->word == WORD_COMMAND)
     {
@@ -21,10 +21,10 @@ struct ast *parser_while(struct major *mj, struct ast *ast, struct token *tk)
         ast = newast;
     }
     struct token *cond = get_next_token(mj);
-    struct ast *newast = create_ast(mj, tk);
+    struct ast *newast = create_ast(mj, *tk);
     newast->left = get_ast(mj, ast, &cond);
     struct token *t_do = cond;
-    struct token *expr = NULL;
+    struct token *expr = cond;
     parser_cpdlist(mj, &expr, newast, should_loop);
 
     if (t_do->word != WORD_DO)

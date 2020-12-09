@@ -39,16 +39,16 @@ void add_func_list(struct major *mj, struct ast *ast)
  * @param tk
  * @return struct ast*
  */
-struct ast *parser_function(struct major *mj, struct ast *ast, struct token *tk,
-                            struct token *tk2)
+struct ast *parser_function(struct major *mj, struct ast *ast,
+                            struct token **tk, struct token *tk2)
 {
     if (ast)
         my_err(2, mj, "Syntax error on function declaration");
-    struct token *fun_name = tk;
-    if (tk->word == WORD_FUNCTION)
+    struct token *fun_name = *tk;
+    if ((*tk)->word == WORD_FUNCTION)
     {
         fun_name = tk2;
-        token_free(tk);
+        token_free(*tk);
         struct token *parenthesis = get_next_token(mj);
         if (parenthesis->word != WORD_DPARENTHESIS)
             my_err(2, mj, "Syntax error on function declaration");

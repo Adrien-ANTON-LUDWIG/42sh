@@ -9,7 +9,7 @@ static int should_loop(enum words w)
     return w != WORD_DONE;
 }
 
-struct ast *parser_for(struct major *mj, struct ast *ast, struct token *tk)
+struct ast *parser_for(struct major *mj, struct ast *ast, struct token **tk)
 {
     if (ast && ast->data->word == WORD_COMMAND)
     {
@@ -28,7 +28,7 @@ struct ast *parser_for(struct major *mj, struct ast *ast, struct token *tk)
         my_err(2, mj, "parser_for: syntax error: unexpected EOF");
     }
 
-    struct ast *newast = create_ast(mj, tk);
+    struct ast *newast = create_ast(mj, *tk);
     struct token *expr = NULL;
     parser_cpdlist(mj, &expr, newast, should_loop);
     newast->left = create_ast(mj, in_list);

@@ -96,6 +96,9 @@ static struct token *get_token_operator_skip_newline(struct major *mj)
 {
     struct token *tk = get_token_operator(mj);
 
+    if (at_end(mj->file))
+        custom_getline(mj);
+
     while (get_char(mj->file, 0) == '\n')
     {
         mj->file->lexer_index++;

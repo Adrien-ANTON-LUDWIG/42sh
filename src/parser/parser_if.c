@@ -17,23 +17,23 @@ static int should_loop(enum words w)
     return 1;
 }
 
-static void parser_else(struct major *mj, struct ast *ast)
+static void parser_else(struct major *mj, struct ast *ast, struct token **expr)
 {
-    struct token *expr = NULL;
-
-    while (should_loop((expr = get_next_token(mj))->word))
+    do
     {
-        if (expr->word == WORD_EOF)
+        if ((*expr)->word == WORD_EOF)
             my_err(2, mj, "parser_else: unexpected EOF");
-        if (expr->data)
-            ast->middle = take_action(mj, ast->middle, expr);
+        if ((*expr)->data)
+            ast->middle = get_ast(mj, ast->middle, expr);
         else
-            token_free(expr);
-    }
-    token_free(expr);
+        {
+            token_free(*expr);
+            *expr = get_next_token(mj);
+        }
+    } while (should_loop((*expr)->word));
 }
 
-struct ast *parser_if(struct major *mj, struct ast *ast, struct token *tk)
+struct ast *parser_if(struct major *mj, struct ast *ast, struct token **tk)
 {
     if (ast && ast->data->word == WORD_COMMAND)
     {
@@ -41,10 +41,10 @@ struct ast *parser_if(struct major *mj, struct ast *ast, struct token *tk)
         ast = newast;
     }
     struct token *cond = get_next_token(mj);
-    struct ast *newast = create_ast(mj, tk);
+    struct ast *newast = create_ast(mj, *tk);
     newast->left = get_ast(mj, newast->left, &cond);
     struct token *then = cond;
-    struct token *expr = NULL;
+    struct token *expr = get_next_token(mj);
     parser_cpdlist(mj, &expr, newast, should_loop);
 
     if (then->word != WORD_THEN)
@@ -56,10 +56,26 @@ struct ast *parser_if(struct major *mj, struct ast *ast, struct token *tk)
     token_free(then);
 
     if (expr->word == WORD_ELSE)
-        parser_else(mj, newast);
-    if (expr->word == WORD_ELIF)
-        newast->middle = parser_if(mj, newast->middle, token_cpy(mj, tk));
-    token_free(expr);
+    {
+        token_free(expr);
+        expr = get_next_token(mj);
+        parser_else(mj, newast, &expr);
+    }
+    else if (expr->word == WORD_ELIF)
+    {
+        token_free(expr);
+        expr = token_cpy(mj, *tk);
+        newast->middle = parser_if(mj, newast->middle, &expr);
+    }
+
+    *tk = expr;
+
+    if (expr->word == WORD_FI) // Was already done by elif if there was one
+    {
+        token_free(expr);
+        *tk = get_next_token(mj);
+    }
+
     if (ast)
         ast->right = newast;
     else
