@@ -41,6 +41,11 @@ struct ast *take_action(struct major *mj, struct ast *ast, struct token **tk)
         ast = parser_while(mj, ast, tk);
     else if ((*tk)->word == WORD_FOR)
         ast = parser_for(mj, ast, tk);
+    else if ((*tk)->word == WORD_NEWLINE)
+    {
+        token_free(*tk);
+        *tk = get_next_token(mj);
+    }
     else
         my_err(2, mj, "parser: take_action: syntax error");
     return ast;

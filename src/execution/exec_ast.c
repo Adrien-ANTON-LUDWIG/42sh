@@ -76,8 +76,10 @@ int exec_ast(struct major *mj, struct ast *ast)
 int exec_for(struct major *mj, struct ast *ast)
 {
     int rvalue = 0;
-    struct token *start = ast->left->data;
-    for (size_t i = 0; i < start->data->size - 1; i++)
+    if (!ast->middle)
+        return 0;
+    struct token *start = ast->middle->data;
+    for (size_t i = 0; i < start->data->size; i++)
     {
         rvalue = exec_ast(mj, ast->right);
     }

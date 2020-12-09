@@ -9,6 +9,16 @@ static int should_loop(enum words w)
     return w != WORD_DONE;
 }
 
+static struct token *token_renew(struct major *mj, struct token *tk,
+                                 int skipline)
+{
+    token_free(tk);
+    tk = get_next_token(mj);
+    if (skipline && (tk->word == WORD_NEWLINE || tk->word == WORD_SEMIC))
+        return token_renew(mj, tk, 0);
+    return tk;
+}
+
 struct ast *parser_for(struct major *mj, struct ast *ast, struct token **tk)
 {
     if (ast && ast->data->word == WORD_COMMAND)
@@ -16,26 +26,33 @@ struct ast *parser_for(struct major *mj, struct ast *ast, struct token **tk)
         struct ast *newast = add_single_command(mj, ast, NULL);
         ast = newast;
     }
-    struct token *in_list = get_next_token(mj);
-    struct token *t_do = NULL;
-    if (in_list->word != WORD_IN)
-        t_do = in_list;
-    else
-        t_do = get_next_token(mj);
-    if (t_do->word != WORD_DO)
-    {
-        token_free(t_do);
-        my_err(2, mj, "parser_for: syntax error: unexpected EOF");
-    }
 
     struct ast *newast = create_ast(mj, *tk);
-    struct token *expr = NULL;
-    parser_cpdlist(mj, &expr, newast, should_loop);
-    newast->left = create_ast(mj, in_list);
-    token_free(t_do);
-    token_free(expr);
+    *tk = get_next_token(mj);
+    newast->left = create_ast(mj, *tk);
+
+    *tk = get_next_token(mj);
+    if ((*tk)->word == WORD_NEWLINE)
+        *tk = token_renew(mj, *tk, 1);
+    if ((*tk)->word == WORD_IN)
+    {
+        *tk = token_renew(mj, *tk, 0);
+        struct token *tk2 = get_next_token(mj); // I don't like it either
+        struct token *list = build_command(mj, tk, tk2);
+        newast->middle = create_ast(mj, list);
+        *tk = token_renew(mj, *tk, 1);
+    }
+    else if ((*tk)->word == WORD_SEMIC)
+        *tk = token_renew(mj, *tk, 1);
+    if ((*tk)->word != WORD_DO)
+        my_err(2, mj, "parser_for: expected ';' or '\\n'");
+
+    *tk = token_renew(mj, *tk, 1);
+    parser_cpdlist(mj, tk, newast, should_loop);
+
+    *tk = token_renew(mj, *tk, 1);
     if (ast)
-        ast->right = newast;
+        ast->right = ast;
     else
         ast = newast;
     return ast;
