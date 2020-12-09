@@ -113,5 +113,6 @@ char *token2string(struct token *tk);
  * @param tk Token to free
  */
 void token_free(struct token *tk);
+struct token *token_renew(struct major *mj, struct token *tk, int skipline);
 
 #endif /* TOKENS_H */

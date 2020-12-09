@@ -65,9 +65,8 @@ struct ast *build_command(struct major *mj, struct token **tk,
     if (pending_file)
     {
         struct ast *newast = create_ast(mj, pending_operator);
-        newast->left = ast;
-        newast->right = get_ast(mj, newast->right, &pending_file);
-        token_free(pending_file);
+        newast->left = create_ast(mj, pending_file);
+        newast->right = ast;
         return newast;
     }
     return ast;

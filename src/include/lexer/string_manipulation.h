@@ -5,7 +5,7 @@
 
 #define IS_NEWLINE "\n\r"
 #define MY_IS_SPACE " \t\v"
-#define IS_NOT_WORD " \t\v\n\r;&|<>()#"
+#define IS_NOT_WORD " \t\v\n\r;&|<>()"
 #define IS_OPERATOR "&|()<>;\n"
 #define IS_REDIR "<>&|"
 

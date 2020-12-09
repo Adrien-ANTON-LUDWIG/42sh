@@ -7,6 +7,7 @@
 #include "major.h"
 
 #define CUSTOM_FD -5
+#define BUFFER_SIZE 512
 /**
  * 42sh can be called with the -c option,
  * with a file as an argument or with stdin as the input.

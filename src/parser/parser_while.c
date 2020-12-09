@@ -30,10 +30,7 @@ struct ast *parser_while(struct major *mj, struct ast *ast, struct token **tk)
     if ((*tk)->word != WORD_DO)
         my_err(2, mj, "parser_while: expected 'do'");
 
-    token_free(*tk);
-    *tk = get_next_token(mj);
-    token_free(*tk);
-    *tk = get_next_token(mj);
+    *tk = token_renew(mj, *tk, 1);
 
     parser_cpdlist(mj, tk, newast, should_loop);
     token_free(*tk);

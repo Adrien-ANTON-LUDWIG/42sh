@@ -1,3 +1,5 @@
+#define _POSIX_C_SOURCE 200809L
+
 #include "lexer.h"
 
 #include <ctype.h>
@@ -6,89 +8,160 @@
 #include <string.h>
 
 #include "custom_descriptor.h"
-#include "lexer_cmd.h"
-#include "lexer_in.h"
-#include "lexer_redir.h"
-#include "lexer_utils.h"
-#include "my_err.h"
+#include "list.h"
 #include "my_xmalloc.h"
+#include "string_manipulation.h"
+#include "tokens.h"
 
-static struct token *get_token(struct major *mj)
+static struct token *get_token_redir(struct major *mj, char c)
 {
-    struct token *tk = token_init(mj);
-    tk->word = WORD_EOF;
+    char *tokens_strings_redir[] = TOKENS_STRINGS_REDIR;
+    char default_value[] = DEFAULT_REDIR_VALUE;
+    char s[] = { c, '\0', '\0', '\0' };
+    char n = '\0';
+    struct token *tk = token_init(mj, WORD_REDIR_LLM);
 
-    if (!mj->file->str)
-        return tk;
+    if (mj->file->lexer_index > 0)
+        n = mj->file->str[mj->file->lexer_index - 1];
 
-    if (mj->file->fd == CUSTOM_FD && mj->file->lexer_index >= mj->file->len)
-        return tk;
+    c = get_char(mj->file, 0);
+    if (is_in(c, IS_REDIR))
+    {
+        s[1] = get_char(mj->file, 1);
 
-    char *word = get_first_word(mj);
+        c = get_char(mj->file, 0);
+        if (c == '-')
+            s[2] = get_char(mj->file, 1);
+    }
 
-    if (!word)
-        return tk;
+    for (size_t i = 0; i < NUMBER_OF_REDIR; i++)
+    {
+        if (!strcmp(s, tokens_strings_redir[i]))
+        {
+            if (!isdigit(c))
+                n = default_value[i];
+            char *number = strndup(&n, 1);
+            tk->data = list_append(mj, tk->data, number);
+            tk->word = i + WORD_REDIR_LR;
+            return tk;
+        }
+    }
 
-    int i = word_type(mj, tk, word);
-    tk->word = i;
+    return tk;
+}
 
-    if (tk->word >= WORD_REDIR_LR && tk->word <= WORD_REDIR_R)
-        return lexer_redir(tk, word);
+static struct token *get_token_operator(struct major *mj)
+{
+    struct custom_FILE *f = mj->file;
+    char c = f->str[f->lexer_index++];
 
-    int is_next_in = next_is_in(mj);
+    if (c == ';')
+        return token_init(mj, WORD_SEMIC);
+    if (c == '\n')
+        return token_init(mj, WORD_NEWLINE);
+    if (c == '&')
+    {
+        if (get_char(f, 0) == '&')
+        {
+            f->lexer_index++;
+            return token_init(mj, WORD_AND);
+        }
+        return token_init(mj, WORD_SEMIC);
+    }
+    if (c == '|')
+    {
+        if (get_char(f, 0) == '|')
+        {
+            f->lexer_index++;
+            return token_init(mj, WORD_OR);
+        }
+        return token_init(mj, WORD_PIPE);
+    }
+    if (c == '(')
+    {
+        if (get_char(f, 0) == ')')
+        {
+            f->lexer_index++;
+            return token_init(mj, WORD_DPARENTHESIS);
+        }
+        return token_init(mj, WORD_LPARENTHESIS);
+    }
+    if (c == ')')
+        return token_init(mj, WORD_RPARENTHESIS);
+    // if (c == '<' || c == '>')
+    return get_token_redir(mj, c);
+    // return get__token_quote(mj, c);
+}
 
-    if (tk->word == WORD_COMMAND && !is_next_in)
-        return lexer_cmd(mj, tk, word);
+static struct token *get_token_operator_skip_newline(struct major *mj)
+{
+    struct token *tk = get_token_operator(mj);
 
-    if (is_next_in)
-        return lexer_in(mj, tk, word);
+    if (at_end(mj->file))
+        custom_getline(mj);
 
-    free(word);
+    while (get_char(mj->file, 0) == '\n')
+    {
+        mj->file->lexer_index++;
+
+        if (at_end(mj->file))
+            custom_getline(mj);
+    }
+
+    return tk;
+}
+
+static struct token *get_token_word(struct major *mj)
+{
+    struct custom_FILE *f = mj->file;
+    size_t start = f->lexer_index;
+    skip(f, is_not_in, IS_NOT_WORD);
+    size_t end = f->lexer_index;
+    size_t len = end - start;
+
+    if (len == 1 && '0' <= f->str[start] && f->str[start] <= '9'
+        && (f->str[end] == '>' || f->str[end] == '<'))
+        return get_token_redir(mj, f->str[end]);
+
+    struct token *tk = token_init(mj, WORD_WORD);
+    char *s = strndup(f->str + start, len);
+    tk->data = list_append(mj, tk->data, s);
+    char *tokens_strings[] = TOKENS_STRINGS;
+
+    for (size_t i = 0; i < WORD_AND; i++)
+        if (!strcmp(s, tokens_strings[i]))
+        {
+            tk->word = i;
+            return tk;
+        }
 
     return tk;
 }
 
 struct token *get_next_token(struct major *mj)
 {
-    struct custom_FILE *file = mj->file;
+    struct custom_FILE *f = mj->file;
+    if (!f->buffer_size || at_end(f))
+        if (!custom_getline(mj))
+            return token_init(mj, WORD_EOF);
 
-    if (!file)
-        my_err(1, mj, "get_next_token: file should not be NULL");
-
-    int from_file = file->fd != CUSTOM_FD;
-    char *s = NULL;
-
-    if (from_file && (!file->str || file->lexer_index >= file->len - 1))
+    while (!at_end(f)
+           && (!(is_in(get_char(f, 0), IS_OPERATOR)
+                 || is_not_in(get_char(f, 0), IS_NOT_WORD))
+               || get_char(f, 0) == '#'))
     {
-        if (!file->str)
-            file->str = my_xmalloc(mj, BUFFER_SIZE);
+        skip(f, is_in, MY_IS_SPACE);
 
-        char *tmp = custom_fgets(file->str, BUFFER_SIZE, file);
+        if (!at_end(f) && get_char(f, 0) == '#')
+            skip(f, is_not_in, IS_NEWLINE);
 
-        while (tmp && *tmp == '\n')
-            tmp = custom_fgets(file->str, BUFFER_SIZE, file);
-
-        if (!tmp)
-        {
-            free(file->str);
-            file->str = NULL;
-            return get_token(mj);
-        }
-        file->len = strlen(file->str);
-        file->lexer_index = 0;
-    }
-    else if (!from_file && !file->str)
-    {
-        s = my_xmalloc(mj, BUFFER_SIZE);
-        s = custom_fgets(s, BUFFER_SIZE, file);
+        if (at_end(f))
+            if (!(custom_getline(mj)))
+                return token_init(mj, WORD_EOF);
     }
 
-    if (!from_file)
-    {
-        while (file->lexer_index < file->len
-               && file->str[file->lexer_index] == '\n')
-            file->lexer_index++;
-    }
+    if (is_in(get_char(f, 0), IS_OPERATOR))
+        return get_token_operator_skip_newline(mj);
 
-    return get_token(mj);
+    return get_token_word(mj);
 }

@@ -19,8 +19,9 @@ set (SRC
     src/execution/exec_ast.c
     src/execution/pipe.c
     src/execution/redir.c
-    src/lexer/newlexer.c
+    src/lexer/lexer.c
     src/lexer/string_manipulation.c
+    src/lexer/lexer_utils.c
     src/parser/ast.c
     src/parser/parser.c
     src/parser/parser_cpdlist.c
