@@ -3,6 +3,6 @@
 
 #include "major.h"
 
-int echo(struct major *mj, char **argv);
+int b_echo(char **argv);
 
 #endif /* ECHO_H_ */

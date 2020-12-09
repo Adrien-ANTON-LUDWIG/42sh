@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #define NB_ESCAPE_SEQ 8
 #define CHAR_ESCAPE                                                            \
     {                                                                          \
-        'a', 'b', 'e', 'f', 'n', 'r', 't', 'v'                                 \
+        'a', 'b', /*'e', */ 'f', 'n', 'r', 't', 'v'                            \
     }
 #define STRING_ESCAPE                                                          \
     {                                                                          \
-        '\a', '\b', '\e', '\f', '\n', '\r', '\t', '\v'                         \
+        '\a', '\b', /*'\e', */ '\f', '\n', '\r', '\t', '\v'                    \
     }
 
 static int nb_to_read_oct(char *s, int i)
@@ -29,8 +30,8 @@ static int nb_to_read_hx(char *s, int i)
     int j = i + 1;
     for (; j < i + 3 && s[j]; j++)
     {
-        if ((s[j] < '0' || '9' < s[j])
-            && ((s[j] < 'A' || 'F' < s[j]) || (s[j] < 'a' || 'f' < s[j])))
+        if ((s[j] < '0' || '9' < s[j]) && (s[j] < 'A' || 'F' < s[j])
+            && (s[j] < 'a' || 'f' < s[j]))
         {
             break;
         }
@@ -58,10 +59,15 @@ static int str_oct_to_dec(char *s, int i, int to_read)
 
 static int get_hex_val(char *c)
 {
-    // convert c to uper case if needed
+    if ('a' <= *c && *c <= 'f')
+        *c -= 32;
     int ret = 0;
     if (*c >= '0' && '9' >= *c)
-        ret = atoi(c);
+    {
+        ret = 0;
+        for (char i = '0'; i < '9' && i != *c; i++)
+            ret++;
+    }
     else
     {
         ret = 10;
@@ -140,18 +146,10 @@ static void echo_display(char *argv, int e, int *n)
             }
             if (index == -2 || index == -3)
             {
-                int to_read = 0;
-                int ascii = 0;
-                if (index == -2)
-                {
-                    to_read = nb_to_read_oct(argv, i);
-                    ascii = str_oct_to_dec(argv + 1, i, to_read);
-                }
-                else
-                {
-                    to_read = nb_to_read_hx(argv, i);
-                    ascii = str_hx_to_dec(argv + 1, i, to_read);
-                }
+                int to_read = (index == -2) ? nb_to_read_oct(argv, i)
+                                            : nb_to_read_hx(argv, i);
+                int ascii = (index == -2) ? str_oct_to_dec(argv + 1, i, to_read)
+                                          : str_hx_to_dec(argv + 1, i, to_read);
                 printf("%c", ascii);
                 i += to_read;
             }
@@ -169,15 +167,6 @@ static void echo_display(char *argv, int e, int *n)
         }
     }
 }
-/*
-static int argv_len(char *argv[])
-{
-    int i = 0;
-    while (argv && argv[i])
-        i++;
-    return i;
-}
-*/
 
 /*
     -n do not output the trailing newline
@@ -187,8 +176,17 @@ static int argv_len(char *argv[])
     -E disable interpretation of backslash escapes (default)
 */
 
-int main(int argc, char **argv)
+static int argv_len(char *argv[])
 {
+    int i = 0;
+    while (argv && argv[i])
+        i++;
+    return i;
+}
+
+int b_echo(char **argv)
+{
+    int argc = argv_len(argv);
     if (argc < 2)
     {
         printf("\n");
@@ -200,20 +198,16 @@ int main(int argc, char **argv)
     int E = 0;
 
     int nb_opt = set_options(argv, &n, &e, &E);
-    // int len = argv_len(argv + 1);
 
     if (nb_opt == 0)
         E = 1;
+    else if (e && E)
+        e = 0;
 
-    /*
-        printf("len = %d\n", len);
-        printf("nb_opt: %d\n", nb_opt);
-        printf("n=%d\ne=%d\nE=%d\n", n, e, E);
-    */
     echo_display(argv[nb_opt + 1], e, &n);
 
     if (!n)
         printf("\n");
 
-    return nb_opt;
+    return 0;
 }
