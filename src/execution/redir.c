@@ -21,6 +21,7 @@ static int run_command(struct major *mj, int fd_new, int fd_old,
     fflush(stdout);
     close(fd_old);
     close(fd_new);
+    ast_free(ast);
     return rvalue;
 }
 

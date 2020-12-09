@@ -19,6 +19,7 @@ static struct token *token_renew(struct major *mj, struct token *tk,
     return tk;
 }
 
+// 26 Lignes !
 struct ast *parser_for(struct major *mj, struct ast *ast, struct token **tk)
 {
     if (ast && ast->data->word == WORD_COMMAND)
@@ -37,9 +38,8 @@ struct ast *parser_for(struct major *mj, struct ast *ast, struct token **tk)
     if ((*tk)->word == WORD_IN)
     {
         *tk = token_renew(mj, *tk, 0);
-        struct token *tk2 = get_next_token(mj); // I don't like it either
-        struct token *list = build_command(mj, tk, tk2);
-        newast->middle = create_ast(mj, list);
+        newast->middle =
+            build_command(mj, tk, get_next_token(mj), newast->middle);
         *tk = token_renew(mj, *tk, 1);
     }
     else if ((*tk)->word == WORD_SEMIC)
