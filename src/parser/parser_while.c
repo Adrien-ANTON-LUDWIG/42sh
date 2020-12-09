@@ -13,31 +13,32 @@ static int should_loop(enum words w)
     return 1;
 }
 
-struct ast *parser_while(struct major *mj, struct ast *ast, struct token *tk)
+struct ast *parser_while(struct major *mj, struct ast *ast, struct token **tk)
 {
     if (ast && ast->data->word == WORD_COMMAND)
     {
         struct ast *newast = add_single_command(mj, ast, NULL);
         ast = newast;
     }
-    struct token *cond = get_next_token(mj);
-    struct ast *newast = create_ast(mj, tk);
-    newast->left = get_ast(mj, ast, &cond);
-    struct token *t_do = cond;
-    struct token *expr = NULL;
-    parser_cpdlist(mj, &expr, newast, should_loop);
 
-    if (t_do->word != WORD_DO)
-    {
-        token_free(t_do);
-        my_err(2, mj, "parser_while: syntax error");
-    }
+    struct ast *newast = create_ast(mj, *tk);
+    *tk = get_next_token(mj);
+    parser_cpdlist(mj, tk, newast, should_loop);
+    newast->left = newast->right;
+    newast->right = NULL;
 
-    token_free(t_do);
-    token_free(expr);
+    if ((*tk)->word != WORD_DO)
+        my_err(2, mj, "parser_while: expected 'do'");
+
+    *tk = token_renew(mj, *tk, 1);
+
+    parser_cpdlist(mj, tk, newast, should_loop);
+    token_free(*tk);
+    *tk = get_next_token(mj);
+
     if (ast)
         ast->right = newast;
     else
-        ast = newast;
+        return newast;
     return ast;
 }

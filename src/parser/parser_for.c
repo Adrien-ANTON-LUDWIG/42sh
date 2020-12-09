@@ -9,34 +9,40 @@ static int should_loop(enum words w)
     return w != WORD_DONE;
 }
 
-struct ast *parser_for(struct major *mj, struct ast *ast, struct token *tk)
+// na = newast tkt c'est normal
+struct ast *parser_for(struct major *mj, struct ast *ast, struct token **tk)
 {
     if (ast && ast->data->word == WORD_COMMAND)
     {
-        struct ast *newast = add_single_command(mj, ast, NULL);
-        ast = newast;
-    }
-    struct token *in_list = get_next_token(mj);
-    struct token *t_do = NULL;
-    if (in_list->word != WORD_IN)
-        t_do = in_list;
-    else
-        t_do = get_next_token(mj);
-    if (t_do->word != WORD_DO)
-    {
-        token_free(t_do);
-        my_err(2, mj, "parser_for: syntax error: unexpected EOF");
+        struct ast *na = add_single_command(mj, ast, NULL);
+        ast = na;
     }
 
-    struct ast *newast = create_ast(mj, tk);
-    struct token *expr = NULL;
-    parser_cpdlist(mj, &expr, newast, should_loop);
-    newast->left = create_ast(mj, in_list);
-    token_free(t_do);
-    token_free(expr);
+    struct ast *na = create_ast(mj, *tk);
+    *tk = get_next_token(mj);
+    na->left = create_ast(mj, *tk);
+
+    *tk = get_next_token(mj);
+    if ((*tk)->word == WORD_NEWLINE)
+        *tk = token_renew(mj, *tk, 1);
+    if ((*tk)->word == WORD_IN)
+    {
+        *tk = token_renew(mj, *tk, 0);
+        na->middle = build_command(mj, tk, get_next_token(mj), na->middle);
+        *tk = token_renew(mj, *tk, 1);
+    }
+    else if ((*tk)->word == WORD_SEMIC)
+        *tk = token_renew(mj, *tk, 1);
+    if ((*tk)->word != WORD_DO)
+        my_err(2, mj, "parser_for: expected ';' or '\\n' or 'do'");
+
+    *tk = token_renew(mj, *tk, 1);
+    parser_cpdlist(mj, tk, na, should_loop);
+
+    *tk = token_renew(mj, *tk, 1);
     if (ast)
-        ast->right = newast;
+        ast->right = ast;
     else
-        ast = newast;
+        ast = na;
     return ast;
 }

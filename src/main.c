@@ -36,7 +36,7 @@ void shopt_options(int *i, char **argv)
 static int run_command_line(int argc, char *argv[], int from, struct major *mj)
 {
     char *args = merge_arguments(argc - from, argv + from);
-    mj->file = createfrom_string(args);
+    mj->file = createfrom_string(mj, args);
     mj->rvalue = 0;
     free(args);
     parser(mj);
@@ -73,10 +73,10 @@ int main(int argc, char **argv)
     {
         struct custom_FILE *file;
         if (argc >= 2)
-            file = custom_fopen(argv[from]);
+            file = custom_fopen(mj, argv[from]);
         else
         {
-            file = calloc(1, sizeof(struct custom_FILE));
+            file = my_xcalloc(mj, 1, sizeof(struct custom_FILE));
             file->file = stdin;
             file->fd = stdin->_fileno;
         }

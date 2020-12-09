@@ -7,6 +7,7 @@
 #include "major.h"
 
 #define CUSTOM_FD -5
+#define BUFFER_SIZE 512
 /**
  * 42sh can be called with the -c option,
  * with a file as an argument or with stdin as the input.
@@ -31,6 +32,7 @@ struct custom_FILE
     size_t lexer_index;
     char *str;
     size_t len;
+    size_t buffer_size;
 };
 
 /**
@@ -39,7 +41,7 @@ struct custom_FILE
  * @param path Can be NULL
  * @return struct custom_FILE*
  */
-struct custom_FILE *custom_fopen(const char *path);
+struct custom_FILE *custom_fopen(struct major *mj, const char *path);
 
 /**
  * @brief Creates a custom_FILE structure from a string
@@ -47,7 +49,7 @@ struct custom_FILE *custom_fopen(const char *path);
  * @param str
  * @return struct custom_FILE*
  */
-struct custom_FILE *createfrom_string(char *str);
+struct custom_FILE *createfrom_string(struct major *mj, char *str);
 
 /**
  * @brief If the custom_FILE is linked to a FILE structure
@@ -77,5 +79,36 @@ char *custom_fgets(char *s, size_t size, struct custom_FILE *f);
  */
 // char *custom_getfile(struct custom_FILE *f);
 void get_new_string(struct major *mj);
+
+/**
+ * @brief Same as getline but works with a custom_FILE.
+ *
+ *
+ * This function should be called when the buffer mj->file->str was entirely
+ * read.
+ * This function overrides the buffer.
+ * Therefore, this function should only be called when everything was read
+ * if the custom_FILE was created with a string. That's why it always returns 0
+ * in this case.
+ *
+ * @param mj Contains mj->file which is the custom_FILE to update.
+ * @return returns 1 upon succes, 0 otherwise
+ */
+int custom_getline(struct major *mj);
+
+/**
+ * @brief This function works as custom_getline() but it does not override the
+ * buffer, it expands it.
+ *
+ * This function should be called when the buffer mj->file->str was entirely
+ * read.
+ * Therefore, this function should only be called when everything was read
+ * if the custom_FILE was created with a string. That's why it always returns 0
+ * in this case.
+ *
+ * @param mj Contains mj->file which is the custom_FILE to update.
+ * @return returns 1 upon succes, 0 otherwise
+ */
+int custom_getline_same_buf(struct major *mj);
 
 #endif

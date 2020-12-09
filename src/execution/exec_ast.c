@@ -16,7 +16,10 @@ static int redir_execution(struct major *mj, struct ast *ast, struct token *tk)
         return mj->rvalue;
     }
     else if (WORD_PIPE < tk->word && tk->word < WORD_COMMAND)
-        return exec_redir(mj, ast);
+    {
+        mj->rvalue = exec_redir(mj, ast);
+        return mj->rvalue;
+    }
     else
         return -1;
 }
@@ -38,7 +41,7 @@ static int conditional_execution(struct major *mj, struct ast *ast,
         while ((tk->word == WORD_UNTIL) ^ (!err))
         {
             exec_ast(mj, ast->right);
-            exec_ast(mj, ast->left);
+            err = exec_ast(mj, ast->left);
         }
         mj->rvalue = 0;
         return 0;
@@ -76,8 +79,10 @@ int exec_ast(struct major *mj, struct ast *ast)
 int exec_for(struct major *mj, struct ast *ast)
 {
     int rvalue = 0;
-    struct token *start = ast->left->data;
-    for (size_t i = 0; i < start->data->size - 1; i++)
+    if (!ast->middle)
+        return 0;
+    struct token *start = ast->middle->data;
+    for (size_t i = 0; i < start->data->size; i++)
     {
         rvalue = exec_ast(mj, ast->right);
     }

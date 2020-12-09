@@ -19,12 +19,9 @@ set (SRC
     src/execution/exec_ast.c
     src/execution/pipe.c
     src/execution/redir.c
-    src/lexer/lexer_utils.c
-    src/lexer/lexer_cmd.c
-    src/lexer/lexer_redir.c
-    src/lexer/lexer_in.c
-    src/lexer/lexer_operator.c
     src/lexer/lexer.c
+    src/lexer/string_manipulation.c
+    src/lexer/lexer_utils.c
     src/parser/ast.c
     src/parser/parser.c
     src/parser/parser_cpdlist.c
@@ -32,6 +29,8 @@ set (SRC
     src/parser/parser_while.c
     src/parser/parser_for.c
     src/parser/parser_operator.c
+    src/parser/parser_function.c
+    src/parser/parser_word.c
     src/tokens/execution/command_execution.c
     src/tokens/tokens.c
     src/utils/list.c

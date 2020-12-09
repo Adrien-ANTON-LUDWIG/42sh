@@ -1,18 +1,17 @@
-#ifndef LEXER_H
-#define LEXER_H
-
-#define BUFFER_SIZE 512
+#ifndef NEWLEXER_H
+#define NEWLEXER_H
 
 #include "major.h"
-#include "tokens.h"
 
 /**
- * @brief Called by the parser. Pops the first token from the file in struct
- * major.
+ * @brief Get the word token
+ *
+ *
  *
  * @param mj
+ * @param tk
  * @return struct token*
  */
 struct token *get_next_token(struct major *mj);
 
-#endif /* LEXER_H */
+#endif

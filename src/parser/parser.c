@@ -4,20 +4,18 @@
 
 #include "ast.h"
 #include "exec_ast.h"
+#include "list.h"
 #include "my_err.h"
 #include "my_xmalloc.h"
-
-int is_operator(struct token *tk)
-{
-    return WORD_AND <= tk->word && tk->word < WORD_COMMAND;
-}
+#include "string_manipulation.h"
+#include "tokens.h"
 
 struct ast *add_single_command(struct major *mj, struct ast *ast,
-                               struct token *tk)
+                               struct token **tk)
 {
     if (!ast)
     {
-        ast = create_ast(mj, tk);
+        ast = create_ast(mj, *tk);
         return ast;
     }
     struct token *and = my_xcalloc(mj, 1, sizeof(struct token));
@@ -25,37 +23,44 @@ struct ast *add_single_command(struct major *mj, struct ast *ast,
     struct ast *newast = create_ast(mj, and);
     newast->left = ast;
     if (tk)
-        newast->right = create_ast(mj, tk);
+        newast->right = create_ast(mj, *tk);
     return newast;
 }
 
-struct ast *take_action(struct major *mj, struct ast *ast, struct token *tk)
+struct ast *take_action(struct major *mj, struct ast *ast, struct token **tk)
 {
-    if (tk->word == WORD_IF)
+    if ((*tk)->word == WORD_IF)
         ast = parser_if(mj, ast, tk);
-    else if (tk->word == WORD_COMMAND)
+    else if ((*tk)->word == WORD_WORD)
+        ast = parser_word(mj, ast, tk);
+    else if ((*tk)->word == WORD_COMMAND)
         ast = add_single_command(mj, ast, tk);
-    else if (tk->word == WORD_REDIR_R)
-        token_free(tk);
-    else if (tk->word == WORD_WHILE || tk->word == WORD_UNTIL)
+    else if ((*tk)->word == WORD_REDIR_R) // Ouais je suis con, ouais
+        token_free(*tk);
+    else if ((*tk)->word == WORD_WHILE || (*tk)->word == WORD_UNTIL)
         ast = parser_while(mj, ast, tk);
-    else if (tk->word == WORD_FOR)
+    else if ((*tk)->word == WORD_FOR)
         ast = parser_for(mj, ast, tk);
+    else if ((*tk)->word == WORD_NEWLINE)
+    {
+        token_free(*tk);
+        *tk = get_next_token(mj);
+    }
     else
-        my_err(2, mj, "parser: syntax error");
+        my_err(2, mj, "parser: take_action: syntax error");
     return ast;
 }
 
 struct ast *get_ast(struct major *mj, struct ast *ast, struct token **tk)
 {
-    ast = take_action(mj, ast, *tk);
-    struct token *pending = get_next_token(mj);
-    while (is_operator(pending))
+    ast = take_action(mj, ast, tk);
+    while (is_operator(*tk))
+        ast = parser_operator(mj, ast, tk);
+    if (!(*tk)->data)
     {
-        ast = parser_operator(mj, ast, pending);
-        pending = get_next_token(mj);
+        token_free(*tk);
+        *tk = get_next_token(mj);
     }
-    *tk = pending;
     return ast;
 }
 

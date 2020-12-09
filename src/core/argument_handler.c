@@ -19,7 +19,7 @@ char *merge_arguments(int argc, char **argv)
 {
     if (argc <= 0)
         return NULL;
-    int size = 512;
+    int size = 4096;
     char *result = malloc(size * sizeof(char));
     int index = 0;
     for (int i = 0; i < argc; i++)
