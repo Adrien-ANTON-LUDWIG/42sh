@@ -9,7 +9,13 @@
 #include <string.h>
 #include <sys/types.h>
 
-#include "b_utils.h"
+static int argv_len(char *argv[])
+{
+    int i = 0;
+    while (argv && argv[i])
+        i++;
+    return i;
+}
 
 static char *iter_dir(char *base_path, char *dest_path)
 {
@@ -25,7 +31,10 @@ static char *iter_dir(char *base_path, char *dest_path)
         {
             if (dp->d_type == DT_DIR)
             {
-                char *rec_path = base_path;
+                char *rec_path = strdup(base_path);
+                rec_path = realloc(
+                    rec_path,
+                    sizeof(char) * (strlen(rec_path) + strlen(dp->d_name) + 2));
                 strcpy(rec_path, base_path);
                 strcat(rec_path, "/");
                 strcat(rec_path, dp->d_name);
@@ -39,7 +48,9 @@ static char *iter_dir(char *base_path, char *dest_path)
 
             else if (!strcmp(dp->d_name, dest_path))
             {
-                char *ret = base_path;
+                char *ret = strdup(base_path);
+                ret = realloc(
+                    ret, sizeof(char) * (strlen(ret) + strlen(dp->d_name) + 2));
                 strcat(ret, "/");
                 strcat(ret, dp->d_name);
                 closedir(dir);
@@ -59,15 +70,21 @@ static char *get_path(char *str)
     char *PATH = getenv("PATH");
     char *index = PATH;
 
+    char *found = iter_dir(".", str);
+    if (found)
+        return found;
+
     while (index)
     {
         char *next_path = strstr(index, ":");
 
         char *actual_path = strndup(index, next_path - index);
         char *found = iter_dir(actual_path, str);
-
         if (found)
+        {
+            free(actual_path);
             return found;
+        }
 
         index = strstr(index, ":");
 
@@ -75,23 +92,23 @@ static char *get_path(char *str)
             index++;
 
         free(actual_path);
-        free(found);
         actual_path = NULL;
     }
+
     return NULL;
 }
 
-char *source(char *argv[])
+char **b_source(char *argv[])
 {
     int argc = argv_len(argv);
 
     if (argc < 2)
     {
         warnx("filename required");
-        return "2";
+        return NULL;
     }
 
     char *path = get_path(argv[1]);
-
-    return path;
+    argv[1] = path;
+    return argv + 1;
 }
