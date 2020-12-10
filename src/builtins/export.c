@@ -1,6 +1,8 @@
 #define _GNU_SOURCE
+
 #include "export.h"
 
+#include <errno.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,16 +11,10 @@
 
 #include "b_utils.h"
 
-/*
-    -f refer to shell functions
-    -n remove the export property from each NAME
-    -p display a list of all exported variables and functions
-*/
-
 static int set_options(char *argv[], int *p, int *n, int *f)
 {
     if (!argv)
-        return 1;
+        return 0;
 
     int nb_options = 0;
     int i = 1;
@@ -40,8 +36,35 @@ static int set_options(char *argv[], int *p, int *n, int *f)
 
 static void export_display(void)
 {
+    int len = 0;
+    char c = ' ';
     for (int i = 0; environ[i]; i++)
-        printf("declare -x %s\n", environ[i]);
+    {
+        printf("declare -x ");
+        int found_equal = 0;
+        len = strlen(environ[i]);
+        for (int j = 0; j < len; j++)
+        {
+            c = environ[i][j];
+            if (c == '=' && j < len - 1 && !found_equal)
+            {
+                found_equal = 1;
+                printf("=\"");
+            }
+            else if (j == len - 1)
+            {
+                if (environ[i][j] != '=')
+                    printf("%c", environ[i][j]);
+                if (found_equal)
+                    printf("\"");
+            }
+            else
+            {
+                printf("%c", environ[i][j]);
+            }
+        }
+        printf("\n");
+    }
 }
 
 static void export_remove(int len, int nb_opt, char *argv[])
@@ -55,16 +78,17 @@ static void export_remove(int len, int nb_opt, char *argv[])
 static void export_putenv(int len, int nb_opt, char *argv[])
 {
     for (int i = nb_opt + 1; i < len; i++)
-        putenv(argv[i]);
+    {
+        if (strstr(argv[i], "=") == NULL)
+            setenv(argv[i], "", 0);
+        else
+            putenv(argv[i]);
+    }
 }
 
-// Implement -f
-// When exporting stg vithou a value (toto vs toto=incredible), writes it
-// "toto=" and not "toto"
-
-int b_export(struct major *mj, char *argv[])
+int b_export(char *argv[])
 {
-    if (!mj || !argv)
+    if (!argv)
         return 1;
 
     int p = 0;
@@ -72,14 +96,14 @@ int b_export(struct major *mj, char *argv[])
     int f = 0;
 
     int len = argv_len(argv);
+
     int nb_opt = set_options(argv, &p, &n, &f);
 
-    if ((p && !f && nb_opt == len - 1) || len == 1)
+    if ((p && !f && nb_opt == len - 1) || !len)
         export_display();
     else if (n && !p && !f)
         export_remove(len, nb_opt, argv);
     else
         export_putenv(len, nb_opt, argv);
-
     return 0;
 }
