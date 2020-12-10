@@ -9,13 +9,7 @@
 #include <string.h>
 #include <sys/types.h>
 
-static int argv_len(char *argv[])
-{
-    int i = 0;
-    while (argv && argv[i])
-        i++;
-    return i;
-}
+#include "b_utils.h"
 
 static char *iter_dir(char *base_path, char *dest_path)
 {

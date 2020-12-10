@@ -18,7 +18,8 @@ set (SRC
     src/builtins/exit.c
     src/builtins/echo.c
     src/builtins/export.c
-    src/builtins/b_source.c
+    src/builtins/source.c
+    src/builtins/b_utils.c
     src/core/custom_descriptor.c
     src/core/argument_handler.c
     src/execution/execution.c

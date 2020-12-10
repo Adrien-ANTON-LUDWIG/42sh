@@ -5,20 +5,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "b_utils.h"
+
 static void argv_free(char *argv[])
 {
     int i = 0;
     while (argv && argv[i])
         free(argv[(i++)]);
     free(argv);
-}
-
-static int argv_len(char *argv[])
-{
-    int i = 0;
-    while (argv && argv[i])
-        i++;
-    return i;
 }
 
 int b_exit(struct major *mj, char *argv[])

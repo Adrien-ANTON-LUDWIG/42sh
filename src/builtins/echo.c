@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "b_utils.h"
+
 #define CHAR_ZERO 48
 #define TO_UPPER 32
 #define ESCAPE_CHAR 27
@@ -166,14 +168,6 @@ static void echo_display(char *argv, int e, int *n)
         else
             putchar(argv[i]);
     }
-}
-
-static int argv_len(char *argv[])
-{
-    int i = 0;
-    while (argv && argv[i])
-        i++;
-    return i;
 }
 
 /*

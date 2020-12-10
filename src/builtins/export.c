@@ -7,6 +7,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "b_utils.h"
+
 /*
     -f refer to shell functions
     -n remove the export property from each NAME
@@ -54,14 +56,6 @@ static void export_putenv(int len, int nb_opt, char *argv[])
 {
     for (int i = nb_opt + 1; i < len; i++)
         putenv(argv[i]);
-}
-
-static int argv_len(char *argv[])
-{
-    int i = 0;
-    while (argv && argv[i])
-        i++;
-    return i;
 }
 
 // Implement -f
