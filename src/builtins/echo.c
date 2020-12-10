@@ -1,17 +1,21 @@
+#include "echo.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define CHAR_ZERO 48
 #define TO_UPPER 32
+#define ESCAPE_CHAR 27
 #define NB_ESCAPE_SEQ 7
+
 #define CHAR_ESCAPE                                                            \
     {                                                                          \
-        'a', 'b', /*'e', */ 'f', 'n', 'r', 't', 'v'                            \
+        'a', 'b', 'f', 'n', 'r', 't', 'v'                                      \
     }
 #define STRING_ESCAPE                                                          \
     {                                                                          \
-        '\a', '\b', /*'\e', */ '\f', '\n', '\r', '\t', '\v'                    \
+        '\a', '\b', '\f', '\n', '\r', '\t', '\v'                               \
     }
 
 static int nb_to_read_oct(char *s, int i)
@@ -93,13 +97,17 @@ static int set_options(char *argv[], int *n, int *e, int *E)
         if (!strcmp(argv[i], "-n"))
             *n = 1;
         else if (!strcmp(argv[i], "-e"))
-            *e = 1;
+            *e = (*E == 0);
         else if (!strcmp(argv[i], "-E"))
+        {
             *E = 1;
+            *e = 0;
+        }
         else
             nb_options = i;
         i += (nb_options) ? 0 : 1;
     }
+
     nb_options = i - 1;
     return nb_options;
 }
@@ -113,12 +121,14 @@ static int get_escape_index(char c)
         return -2;
     if (c == 'x')
         return -3;
+    if (c == 'e')
+        return -4;
     for (int i = 0; i < NB_ESCAPE_SEQ; i++)
     {
         if (c == char_escape[i])
             return i;
     }
-    return -4;
+    return -5;
 }
 
 static void echo_display(char *argv, int e, int *n)
@@ -132,13 +142,9 @@ static void echo_display(char *argv, int e, int *n)
         {
             i++;
             int index = get_escape_index(argv[i]);
-
-            if (index == -1)
-            {
-                *n = 1;
+            if (index == -1 && (*n = 1))
                 return;
-            }
-            if (index == -2 || index == -3)
+            else if (index == -2 || index == -3)
             {
                 int to_read = (index == -2) ? nb_to_read_oct(argv, i)
                                             : nb_to_read_hx(argv, i);
@@ -147,18 +153,18 @@ static void echo_display(char *argv, int e, int *n)
                 printf("%c", ascii);
                 i += to_read;
             }
-            if (index == -4)
+            else if (index == -4)
+                printf("%c", ESCAPE_CHAR);
+            else if (index == -5)
             {
                 putchar(c);
                 putchar(argv[i]);
             }
             else
-                printf("%c", str_escape[index]);
+                printf("%c\n", str_escape[index]);
         }
         else
-        {
             putchar(argv[i]);
-        }
     }
 }
 
@@ -177,14 +183,14 @@ static int argv_len(char *argv[])
 
     -E disable interpretation of backslash escapes (default)
 */
-
 int b_echo(char **argv)
 {
     int argc = argv_len(argv);
+
     if (argc < 2)
     {
         printf("\n");
-        return 1;
+        return 0;
     }
 
     int n = 0;
@@ -192,12 +198,6 @@ int b_echo(char **argv)
     int E = 0;
 
     int nb_opt = set_options(argv, &n, &e, &E);
-
-    if (nb_opt == 0)
-        E = 1;
-    else if (e && E)
-        e = 0;
-
     echo_display(argv[nb_opt + 1], e, &n);
 
     if (!n)
