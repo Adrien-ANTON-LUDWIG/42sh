@@ -1,13 +1,13 @@
 #define _POSIX_C_SOURCE 200809L
 #define _DEFAULT_SOURCE
+#include "source.h"
+
 #include <dirent.h>
 #include <err.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
-
-#include "b_source.h"
 
 static int argv_len(char *argv[])
 {
@@ -71,6 +71,7 @@ static char *get_path(char *str)
 
         char *actual_path = strndup(index, next_path - index);
         char *found = iter_dir(actual_path, str);
+
         if (found)
             return found;
 
@@ -80,10 +81,10 @@ static char *get_path(char *str)
             index++;
 
         free(actual_path);
+        free(found);
         actual_path = NULL;
     }
-
-    return "test.txt";
+    return NULL;
 }
 
 char *source(char *argv[])
