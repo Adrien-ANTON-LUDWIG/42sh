@@ -193,7 +193,6 @@ int b_echo(char **argv)
     int E = 0;
     int nb_opt = set_options(argv, &n, &e, &E);
     char *str = merge_arguments(argc - nb_opt - 1, argv + nb_opt + 1);
-    //printf("#######%s######\n", str);
     echo_display(str, e, &n);
     free(str);
     if (!n)
