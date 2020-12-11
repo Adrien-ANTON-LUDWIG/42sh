@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -6,6 +7,7 @@
 #include "echo.h"
 #include "exec_ast.h"
 #include "execution.h"
+#include "exit.h"
 #include "export.h"
 #include "major.h"
 #include "my_err.h"
@@ -28,20 +30,45 @@ int exec_if_known(struct major *mj, char **command)
 {
     struct ast *func = search_funclist(mj, *command);
 
+    int known = 0;
+
     if (func)
     {
         exec_ast(mj, func->right);
-        free(command);
-        return 1;
+        known = 1;
     }
-
-    if (!strcmp(*command, "echo"))
+    else if (!strcmp(*command, "echo"))
     {
-        b_echo(command);
-        return 1;
+        mj->rvalue = b_echo(command);
+        fflush(stdout);
+        known = 1;
     }
+    else if (!strcmp(*command, "cd"))
+    {
+        mj->rvalue = b_cd(command);
+        known = 1;
+    }
+    else if (!strcmp(*command, "exit"))
+    {
+        mj->rvalue = b_exit(mj, command);
+        known = 1;
+    }
+    else if (!strcmp(*command, "export"))
+    {
+        mj->rvalue = b_exit(mj, command);
+        known = 1;
+    }
+    /*
+        if (!strcmp(*command, "source"))
+        {
+            mj->rvalue = b_source(command);
+            known = 1;
+        }
+    */
+    if (known)
+        free(command);
 
-    return 0;
+    return known;
 }
 
 int execution_command(struct major *mj, struct token *tk)

@@ -8,8 +8,6 @@
 #include "pipe.h"
 #include "redir.h"
 
-#include <stdio.h>
-
 static int redir_execution(struct major *mj, struct ast *ast, struct token *tk)
 {
     if (tk->word == WORD_PIPE)
@@ -54,8 +52,6 @@ static int conditional_execution(struct major *mj, struct ast *ast,
 
 int exec_ast(struct major *mj, struct ast *ast)
 {
-    fflush(stdout);
-
     if (!ast)
         return 0;
     int err = 0;
