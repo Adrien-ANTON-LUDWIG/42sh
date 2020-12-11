@@ -37,20 +37,6 @@ static void make_function_ast(struct major *mj, struct token **tk,
         newast->right = take_action(mj, newast->right, tk);
 }
 
-static int was_already_called(struct major *mj, struct ast *ast, char *funcname)
-{
-    if (!ast)
-        return 0;
-
-    int equal = 0;
-    if (ast->data && ast->data->word == WORD_COMMAND)
-        equal = !strcmp(ast->data->data->head->data, funcname);
-
-    return equal || was_already_called(mj, ast->left, funcname)
-        || was_already_called(mj, ast->middle, funcname)
-        || was_already_called(mj, ast->right, funcname);
-}
-
 /**
  * @brief Handles the parsing of an "function" token
  *
@@ -86,10 +72,6 @@ struct ast *parser_function(struct major *mj, struct ast *ast,
     *tk = token_renew(mj, *tk, 1);
     struct ast *newast = create_ast(mj, func_token);
     make_function_ast(mj, tk, newast);
-
-    if (was_already_called(mj, ast, func_token->data->head->data))
-        my_err(2, mj,
-               "parser_function: function was called before declaration");
 
     *tk = token_renew(mj, *tk, 0);
     return newast;
