@@ -73,6 +73,8 @@ int exec_ast(struct major *mj, struct ast *ast)
         return exec_ast(mj, ast->right);
     else if (tk->word == WORD_FOR)
         return exec_for(mj, ast);
+    else if (tk->word == WORD_FUNCTION)
+        return add_to_funclist(mj, ast);
     return err;
 }
 

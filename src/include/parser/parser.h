@@ -7,22 +7,12 @@
 #include "tokens.h"
 
 /**
- * @brief Parses and executes
- *
- * @param mj
- * @return struct ast*
- */
-void parser(struct major *mj);
-
-/**
- * @brief Decides which function to call depending on the kind of token
+ * @brief Takes care of implicit && beetween commands
  *
  * @param mj
  * @param ast
- * @param tk
- * @return struct ast*
  */
-struct ast *take_action(struct major *mj, struct ast *ast, struct token **tk);
+void superand_creator(struct major *mj, struct ast **ast);
 
 /**
  * @brief Adds a AND command with the ast as its left son and tk as its right
@@ -35,6 +25,24 @@ struct ast *take_action(struct major *mj, struct ast *ast, struct token **tk);
  */
 struct ast *add_single_command(struct major *mj, struct ast *ast,
                                struct token **tk);
+
+/**
+ * @brief Decides which function to call depending on the kind of token
+ *
+ * @param mj
+ * @param ast
+ * @param tk
+ * @return struct ast*
+ */
+struct ast *take_action(struct major *mj, struct ast *ast, struct token **tk);
+
+/**
+ * @brief Parses and executes
+ *
+ * @param mj
+ * @return struct ast*
+ */
+void parser(struct major *mj);
 
 /* PARSER_IF */
 

@@ -1,0 +1,1 @@
+function () { echo reserved? ; } && word

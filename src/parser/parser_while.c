@@ -15,11 +15,7 @@ static int should_loop(enum words w)
 
 struct ast *parser_while(struct major *mj, struct ast *ast, struct token **tk)
 {
-    if (ast && ast->data->word == WORD_COMMAND)
-    {
-        struct ast *newast = add_single_command(mj, ast, NULL);
-        ast = newast;
-    }
+    superand_creator(mj, &ast);
 
     struct ast *newast = create_ast(mj, *tk);
     *tk = get_next_token(mj);

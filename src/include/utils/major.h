@@ -1,6 +1,11 @@
 #ifndef MAJOR_H
 #define MAJOR_H
 
+/**
+ * @brief Stores the function declared inside this shell
+ * for later use
+ *
+ */
 struct funclist
 {
     struct funclist *next;
@@ -34,5 +39,13 @@ struct major *major_init(void);
  * @param mj
  */
 void major_free(struct major *mj);
+
+/**
+ * @brief Add a function ast to the list of functions
+ *
+ * @param mj
+ * @param func
+ */
+int add_to_funclist(struct major *mj, struct ast *func);
 
 #endif /* MAJOR_H_ */

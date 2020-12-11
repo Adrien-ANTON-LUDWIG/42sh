@@ -33,13 +33,11 @@ static void parser_else(struct major *mj, struct ast *ast, struct token **expr)
     } while (should_loop((*expr)->word));
 }
 
+// 30 lignes
 struct ast *parser_if(struct major *mj, struct ast *ast, struct token **tk)
 {
-    if (ast && ast->data->word == WORD_COMMAND)
-    {
-        struct ast *newast = add_single_command(mj, ast, NULL);
-        ast = newast;
-    }
+    superand_creator(mj, &ast);
+
     struct token *cond = get_next_token(mj);
     struct ast *newast = create_ast(mj, *tk);
     newast->left = get_ast(mj, newast->left, &cond);

@@ -10,6 +10,15 @@
 #include "string_manipulation.h"
 #include "tokens.h"
 
+void superand_creator(struct major *mj, struct ast **ast)
+{
+    if (*ast && (*ast)->data->word == WORD_COMMAND)
+    {
+        struct ast *newast = add_single_command(mj, *ast, NULL);
+        *ast = newast;
+    }
+}
+
 struct ast *add_single_command(struct major *mj, struct ast *ast,
                                struct token **tk)
 {
@@ -35,12 +44,12 @@ struct ast *take_action(struct major *mj, struct ast *ast, struct token **tk)
         ast = parser_word(mj, ast, tk);
     else if ((*tk)->word == WORD_COMMAND)
         ast = add_single_command(mj, ast, tk);
-    else if ((*tk)->word == WORD_REDIR_R) // Ouais je suis con, ouais
-        token_free(*tk);
     else if ((*tk)->word == WORD_WHILE || (*tk)->word == WORD_UNTIL)
         ast = parser_while(mj, ast, tk);
     else if ((*tk)->word == WORD_FOR)
         ast = parser_for(mj, ast, tk);
+    else if ((*tk)->word == WORD_FUNCTION)
+        ast = parser_function(mj, ast, tk, get_next_token(mj));
     else if ((*tk)->word == WORD_NEWLINE)
     {
         token_free(*tk);
@@ -56,7 +65,8 @@ struct ast *get_ast(struct major *mj, struct ast *ast, struct token **tk)
     ast = take_action(mj, ast, tk);
     while (is_operator(*tk))
         ast = parser_operator(mj, ast, tk);
-    if (!(*tk)->data)
+    if (!(*tk)->data && (*tk)->word != WORD_RPARENTHESIS
+        && (*tk)->word != WORD_LPARENTHESIS)
     {
         token_free(*tk);
         *tk = get_next_token(mj);
