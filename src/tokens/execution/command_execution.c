@@ -34,6 +34,13 @@ int exec_if_known(struct major *mj, char **command)
         free(command);
         return 1;
     }
+
+    if (!strcmp(*command, "echo"))
+    {
+        b_echo(command);
+        return 1;
+    }
+
     return 0;
 }
 
