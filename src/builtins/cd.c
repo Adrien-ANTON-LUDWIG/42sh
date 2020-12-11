@@ -6,14 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-/*
-Options:
-      -@	on systems that support it, present a file with extended
-            attributes as a directory containing the file attributes
-*/
 
-// Argv should have "cd" in first place in this implementation
-// main cd..
 char *update_path(char *path, char *section)
 {
     printf("path = %s, section = %s\n", path, section);
@@ -28,6 +21,14 @@ char *update_path(char *path, char *section)
     {
         new = strdup(getenv("HOME"));
     }
+    else if (!strcmp(section, "/"))
+    {
+        new = strdup("/");
+    }
+    else if (!strcmp(section, "-"))
+    {
+        new = strdup(getenv("OLDPWD"));
+    }
     else
     {
         new = strdup(path);
@@ -36,7 +37,8 @@ char *update_path(char *path, char *section)
             strcat(new, "/");
         strcat(new, section);
     }
-    printf("new = %s\n", new);
+    printf("[NEW] = %s\n", new);
+    free(path);
     return new;
 }
 
@@ -48,45 +50,24 @@ static int argv_len(char *argv[])
     return i;
 }
 
-static char *get_path_destination(char **argv, int i)
+static char *get_path_destination(int argc, char **argv)
 {
     char *path = strdup(getenv("PWD"));
-    char *index = argv[0];
 
-    if (i == 0)
+    if (!argc)
         path = update_path(path, "~");
 
-    printf("[get_path_dest] %s\n", index);
-    while (i == 1 && index)
+    else if (argv[0][0] == '/')
+        path = update_path(path, "/");
+
+    char *path_to_iter = argv[0];
+    char *next_section = NULL;
+
+    while ((next_section = strtok(path_to_iter, "/")))
     {
-        char *next_path = strstr(index, "/");
-
-        printf("[get_path_dest] len: %ld\n", next_path - index);
-        char *actual_path = strndup(index, next_path - index);
-        char *new_path = update_path(path, actual_path);
-
-        if (!new_path)
-        {
-            free(actual_path);
-            return strdup("/");
-        }
-
-        index = strstr(index, "/");
-
-        if (index)
-            index++;
-
-        printf("[get_path_dest] index after strstr: %s\n", index);
-        path = realloc(path, strlen(new_path) * sizeof(char) + 1);
-        path = strcpy(path, new_path);
-
-        free(actual_path);
-        free(new_path);
-
-        new_path = NULL;
-        actual_path = NULL;
+        path = update_path(path, next_section);
+        path_to_iter = NULL;
     }
-
     return path;
 }
 
@@ -100,43 +81,5 @@ char *b_cd(char **argv)
         errx(1, "cd: too many arguments");
     }
 
-    printf("i = %d\n", i);
-    return get_path_destination(argv + 1, i - 1);
-}
-
-int main(int argc, char *argv[])
-{
-    if (!argv || argc < 0)
-        return -1;
-
-    char *path = b_cd(argv);
-    printf("[main]path: %s\n", path);
-    printf("[main]PWD: %s\n", getenv("PWD"));
-    printf("[main]OLDPWD: %s\n", getenv("OLDPWD"));
-    int r_value = chdir(path);
-
-    if (r_value != 0)
-    {
-        free(path);
-        return r_value;
-    }
-
-    setenv("OLDPWD", getenv("PWD"), 1);
-    setenv("PWD", path, 1);
-
-    errno = 0;
-    FILE *file = fopen("filetest.h", "w+");
-
-    if (!file)
-        printf("[main]%s\n", strerror(errno));
-    else
-        fclose(file);
-
-    printf("After chdir\n");
-    printf("[main]PWD: %s\n", getenv("PWD"));
-    printf("[main]OLDPWD: %s\n", getenv("OLDPWD"));
-
-    free(path);
-
-    return r_value;
+    return get_path_destination(i - 1, argv + 1);
 }
