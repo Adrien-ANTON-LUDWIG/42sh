@@ -1,1 +1,1 @@
-echo -E '\\\n'
+echo -e \n

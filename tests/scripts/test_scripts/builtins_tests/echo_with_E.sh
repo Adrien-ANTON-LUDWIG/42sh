@@ -1,1 +1,1 @@
-echo -E 't\toto\n'
+echo -E t\toto\n

@@ -1,1 +1,1 @@
-echo -n 'no_new_line\\\n'
+echo -n no_new_line\n

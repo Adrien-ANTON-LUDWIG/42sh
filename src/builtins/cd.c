@@ -61,7 +61,7 @@ static char *get_path_destination(int argc, char **argv)
             path = strdup(getenv("PWD"));
         }
     }
-    
+
     else if (argv[0][0] == '/')
         path = update_path(path, "/");
 
@@ -73,6 +73,10 @@ static char *get_path_destination(int argc, char **argv)
         path = update_path(path, next_section);
         path_to_iter = NULL;
     }
+
+    setenv("OLDPWD", getenv("PWD"), 1);
+    setenv("PWD", path, 1);
+
     return path;
 }
 
