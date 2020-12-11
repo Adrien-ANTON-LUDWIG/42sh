@@ -7,10 +7,12 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "b_utils.h"
+
 char *update_path(char *path, char *section)
 {
-    printf("path = %s, section = %s\n", path, section);
     char *new = NULL;
+
     if (!strcmp(section, ".."))
     {
         char *last_slash = strrchr(path, '/');
@@ -18,17 +20,11 @@ char *update_path(char *path, char *section)
         new = strdup(path);
     }
     else if (!strcmp(section, "~"))
-    {
         new = strdup(getenv("HOME"));
-    }
     else if (!strcmp(section, "/"))
-    {
         new = strdup("/");
-    }
     else if (!strcmp(section, "-"))
-    {
         new = strdup(getenv("OLDPWD"));
-    }
     else
     {
         new = strdup(path);
@@ -37,17 +33,9 @@ char *update_path(char *path, char *section)
             strcat(new, "/");
         strcat(new, section);
     }
-    printf("[NEW] = %s\n", new);
+
     free(path);
     return new;
-}
-
-static int argv_len(char *argv[])
-{
-    int i = 0;
-    while (argv && argv[i])
-        i++;
-    return i;
 }
 
 static char *get_path_destination(int argc, char **argv)
@@ -76,10 +64,7 @@ int b_cd(char **argv)
     int i = argv_len(argv);
 
     if (i > 2)
-    {
-        printf("%d\n", i);
         errx(1, "cd: too many arguments");
-    }
 
     char *path = get_path_destination(i - 1, argv + 1);
 

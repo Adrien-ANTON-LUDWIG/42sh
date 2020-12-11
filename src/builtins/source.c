@@ -9,12 +9,22 @@
 #include <string.h>
 #include <sys/types.h>
 
-static int argv_len(char *argv[])
+#include "b_utils.h"
+
+static char *iter_dir(char *base_path, char *dest_path);
+
+static char *get_rec_path(char *base_path, char *dir_name, char *dest_path)
 {
-    int i = 0;
-    while (argv && argv[i])
-        i++;
-    return i;
+    char *rec_path = strdup(base_path);
+    rec_path = realloc(
+        rec_path, sizeof(char) * (strlen(rec_path) + strlen(dir_name) + 2));
+
+    strcpy(rec_path, base_path);
+    strcat(rec_path, "/");
+    strcat(rec_path, dir_name);
+
+    rec_path = iter_dir(rec_path, dest_path);
+    return rec_path;
 }
 
 static char *iter_dir(char *base_path, char *dest_path)
@@ -31,14 +41,7 @@ static char *iter_dir(char *base_path, char *dest_path)
         {
             if (dp->d_type == DT_DIR)
             {
-                char *rec_path = strdup(base_path);
-                rec_path = realloc(
-                    rec_path,
-                    sizeof(char) * (strlen(rec_path) + strlen(dp->d_name) + 2));
-                strcpy(rec_path, base_path);
-                strcat(rec_path, "/");
-                strcat(rec_path, dp->d_name);
-                rec_path = iter_dir(rec_path, dest_path);
+                char *rec_path = get_rec_path(base_path, dp->d_name, dest_path);
                 if (rec_path)
                 {
                     closedir(dir);
@@ -51,9 +54,8 @@ static char *iter_dir(char *base_path, char *dest_path)
                 char *ret = strdup(base_path);
                 ret = realloc(
                     ret, sizeof(char) * (strlen(ret) + strlen(dp->d_name) + 2));
-                strcat(ret, "/");
-                strcat(ret, dp->d_name);
-                closedir(dir);
+                if (strcat(ret, "/") && strcat(ret, dp->d_name))
+                    closedir(dir);
                 return ret;
             }
         }
