@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 project(42sh)
 
 include_directories("src/include/core"
+                    "src/include/builtins"
                     "src/include/execution"
                     "src/include/lexer"
                     "src/include/parser"
@@ -13,6 +14,12 @@ include_directories("src/include/core"
                     "src/include/utils")
 
 set (SRC
+    src/builtins/cd.c
+    src/builtins/exit.c
+    src/builtins/echo.c
+    src/builtins/export.c
+    src/builtins/source.c
+    src/builtins/b_utils.c
     src/core/custom_descriptor.c
     src/core/argument_handler.c
     src/execution/execution.c
