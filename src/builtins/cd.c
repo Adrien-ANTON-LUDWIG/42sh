@@ -71,7 +71,7 @@ static char *get_path_destination(int argc, char **argv)
     return path;
 }
 
-char *b_cd(char **argv)
+int b_cd(char **argv)
 {
     int i = argv_len(argv);
 
@@ -81,5 +81,14 @@ char *b_cd(char **argv)
         errx(1, "cd: too many arguments");
     }
 
-    return get_path_destination(i - 1, argv + 1);
+    char *path = get_path_destination(i - 1, argv + 1);
+
+    int r_value = chdir(path);
+    if (r_value != 0)
+    {
+        warnx("No such file or directory");
+        free(path);
+        return r_value;
+    }
+    return 0;
 }
