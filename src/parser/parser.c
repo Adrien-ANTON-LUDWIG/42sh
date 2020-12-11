@@ -65,12 +65,14 @@ struct ast *get_ast(struct major *mj, struct ast *ast, struct token **tk)
     ast = take_action(mj, ast, tk);
     while (is_operator(*tk))
         ast = parser_operator(mj, ast, tk);
+
     if (!(*tk)->data && (*tk)->word != WORD_RPARENTHESIS
         && (*tk)->word != WORD_LPARENTHESIS)
     {
         token_free(*tk);
         *tk = get_next_token(mj);
     }
+
     return ast;
 }
 

@@ -1,5 +1,7 @@
 #include "exec_ast.h"
 
+#include <stdio.h>
+
 #include "ast.h"
 #include "command_execution.h"
 #include "execution.h"
@@ -7,8 +9,6 @@
 #include "parser.h"
 #include "pipe.h"
 #include "redir.h"
-
-#include <stdio.h>
 
 static int redir_execution(struct major *mj, struct ast *ast, struct token *tk)
 {
@@ -54,8 +54,6 @@ static int conditional_execution(struct major *mj, struct ast *ast,
 
 int exec_ast(struct major *mj, struct ast *ast)
 {
-    fflush(stdout);
-
     if (!ast)
         return 0;
     int err = 0;

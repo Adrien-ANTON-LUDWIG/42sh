@@ -23,17 +23,14 @@ static int run_programs(struct major *mj, int pipefd[2], struct ast *left,
         close(pipefd[1]);
         dup2(pipefd[0], STDIN_FILENO);
         exit(exec_ast(mj, right));
-        close(pipefd[0]);
     }
     else
     {
         if (!(pid[1] = fork()))
         {
-            fclose(stdout);
             close(pipefd[0]);
             dup2(pipefd[1], STDOUT_FILENO);
             exit(exec_ast(mj, left));
-            close(pipefd[1]);
         }
         else
         {
