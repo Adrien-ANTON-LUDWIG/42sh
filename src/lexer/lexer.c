@@ -79,6 +79,7 @@ static struct token *get_token_operator(struct major *mj)
     }
     if (c == '(')
     {
+        skip(f, is_in, MY_IS_SPACE);
         if (get_char(f, 0) == ')')
         {
             f->lexer_index++;

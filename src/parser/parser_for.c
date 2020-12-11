@@ -12,11 +12,7 @@ static int should_loop(enum words w)
 // na = newast tkt c'est normal
 struct ast *parser_for(struct major *mj, struct ast *ast, struct token **tk)
 {
-    if (ast && ast->data->word == WORD_COMMAND)
-    {
-        struct ast *na = add_single_command(mj, ast, NULL);
-        ast = na;
-    }
+    superand_creator(mj, &ast);
 
     struct ast *na = create_ast(mj, *tk);
     *tk = get_next_token(mj);

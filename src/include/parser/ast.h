@@ -4,6 +4,11 @@
 #include "major.h"
 #include "tokens.h"
 
+/**
+ * @brief The ast contains all the commands
+ *
+ * declaration
+ */
 struct ast
 {
     struct ast *left;

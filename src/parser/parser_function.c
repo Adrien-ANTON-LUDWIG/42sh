@@ -1,6 +1,8 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "ast.h"
+#include "list.h"
 #include "my_err.h"
 #include "my_xmalloc.h"
 #include "parser.h"
@@ -13,22 +15,40 @@
  * @param w
  * @return int
  */
-static int should_loop(enum words w)
+static int should_loop_bracket(enum words w)
 {
-    return w == WORD_RBRACKET;
+    return w != WORD_RBRACKET;
 }
 
-void add_func_list(struct major *mj, struct ast *ast)
+static int should_loop_parenthesis(enum words w)
 {
-    struct funclist *head = mj->flist;
-    struct funclist *new = my_xcalloc(mj, 1, sizeof(struct funclist));
-    new->ast = ast;
-    while (head && head->next)
-        head = head->next;
-    if (head)
-        head->next = new;
+    return w != WORD_RPARENTHESIS;
+}
+
+static void make_function_ast(struct major *mj, struct token **tk,
+                              struct ast *newast)
+{
+    if ((*tk)->word == WORD_LBRACKET && (*tk = token_renew(mj, *tk, 1)))
+        parser_cpdlist(mj, tk, newast, should_loop_bracket);
+    else if ((*tk)->word == WORD_LPARENTHESIS
+             && (*tk = token_renew(mj, *tk, 1)))
+        parser_cpdlist(mj, tk, newast, should_loop_parenthesis);
     else
-        mj->flist = new;
+        newast->right = take_action(mj, newast->right, tk);
+}
+
+static int was_already_called(struct major *mj, struct ast *ast, char *funcname)
+{
+    if (!ast)
+        return 0;
+
+    int equal = 0;
+    if (ast->data && ast->data->word == WORD_COMMAND)
+        equal = !strcmp(ast->data->data->head->data, funcname);
+
+    return equal || was_already_called(mj, ast->left, funcname)
+        || was_already_called(mj, ast->middle, funcname)
+        || was_already_called(mj, ast->right, funcname);
 }
 
 /**
@@ -42,28 +62,35 @@ void add_func_list(struct major *mj, struct ast *ast)
 struct ast *parser_function(struct major *mj, struct ast *ast,
                             struct token **tk, struct token *tk2)
 {
-    if (ast)
-        my_err(2, mj, "Syntax error on function declaration");
-    struct token *fun_name = *tk;
-    if ((*tk)->word == WORD_FUNCTION)
+    superand_creator(mj, &ast);
+
+    struct token *func_token = *tk;
+
+    if (!((*tk)->word == WORD_FUNCTION))
     {
-        fun_name = tk2;
-        token_free(*tk);
-        struct token *parenthesis = get_next_token(mj);
-        if (parenthesis->word != WORD_DPARENTHESIS)
-            my_err(2, mj, "Syntax error on function declaration");
-        token_free(parenthesis);
+        (*tk)->word = WORD_FUNCTION;
+        *tk = tk2;
     }
     else
+    {
+        list_free(func_token->data);
+        func_token->data = tk2->data;
+        tk2->data = NULL;
         token_free(tk2);
-    fun_name->word = WORD_FUNCTION;
-    struct ast *newast = create_ast(mj, fun_name);
+        *tk = get_next_token(mj);
 
-    struct token *temp = get_next_token(mj);
-    if (temp->word == WORD_LBRACKET)
-        parser_cpdlist(mj, &temp, newast, should_loop);
-    else
-        ast->left = get_ast(mj, newast->left, &temp);
-    add_func_list(mj, newast);
+        if ((*tk)->word != WORD_DPARENTHESIS)
+            my_err(2, mj, "parser_function : need '()' after 'function'");
+    }
+
+    *tk = token_renew(mj, *tk, 1);
+    struct ast *newast = create_ast(mj, func_token);
+    make_function_ast(mj, tk, newast);
+
+    if (was_already_called(mj, ast, func_token->data->head->data))
+        my_err(2, mj,
+               "parser_function: function was called before declaration");
+
+    *tk = token_renew(mj, *tk, 0);
     return newast;
 }
