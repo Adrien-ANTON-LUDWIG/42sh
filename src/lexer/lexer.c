@@ -89,9 +89,8 @@ static struct token *get_token_operator(struct major *mj)
     }
     if (c == ')')
         return token_init(mj, WORD_RPARENTHESIS);
-    // if (c == '<' || c == '>')
     return get_token_redir(mj, c);
-    // return get__token_quote(mj, c);
+    // TODO Add quote
 }
 
 static struct token *get_token_operator_skip_newline(struct major *mj)

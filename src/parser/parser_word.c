@@ -31,6 +31,15 @@ struct list *add_to_list(struct major *mj, struct list *list, char *str)
     return list;
 }
 
+static struct token *init_token_with_data(struct major *mj, struct list *list)
+{
+    struct token *newtoken = my_xcalloc(mj, 1, sizeof(struct token));
+    newtoken->data = list;
+    newtoken->word = WORD_COMMAND;
+
+    return newtoken;
+}
+
 struct ast *build_command(struct major *mj, struct token **tk,
                           struct token *tk2, struct ast *ast)
 {
@@ -39,11 +48,12 @@ struct ast *build_command(struct major *mj, struct token **tk,
     struct token *pending_operator = NULL;
     struct token *pending_file = NULL;
     *tk = tk2;
+
     while ((*tk)->data)
     {
         if (is_operator(*tk))
         {
-            if (pending_operator) // FIXME
+            if (pending_operator) // FIXME Multiple redirections
             {
                 token_free(pending_operator);
                 token_free(pending_file);
@@ -58,10 +68,9 @@ struct ast *build_command(struct major *mj, struct token **tk,
         *tk = get_next_token(mj);
     }
 
-    struct token *newtoken = my_xcalloc(mj, 1, sizeof(struct token));
-    newtoken->data = list;
-    newtoken->word = WORD_COMMAND;
+    struct token *newtoken = init_token_with_data(mj, list);
     ast = take_action(mj, ast, &newtoken);
+
     if (pending_file)
     {
         struct ast *newast = create_ast(mj, pending_operator);
@@ -69,6 +78,7 @@ struct ast *build_command(struct major *mj, struct token **tk,
         newast->right = ast;
         return newast;
     }
+
     return ast;
 }
 

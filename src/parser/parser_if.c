@@ -33,26 +33,9 @@ static void parser_else(struct major *mj, struct ast *ast, struct token **expr)
     } while (should_loop((*expr)->word));
 }
 
-// 30 lignes
-struct ast *parser_if(struct major *mj, struct ast *ast, struct token **tk)
+static void parser_end_if(struct major *mj, struct token **tk,
+                          struct token *expr, struct ast *newast)
 {
-    superand_creator(mj, &ast);
-
-    struct token *cond = get_next_token(mj);
-    struct ast *newast = create_ast(mj, *tk);
-    newast->left = get_ast(mj, newast->left, &cond);
-    struct token *then = cond;
-    struct token *expr = get_next_token(mj);
-    parser_cpdlist(mj, &expr, newast, should_loop);
-
-    if (then->word != WORD_THEN)
-    {
-        token_free(then);
-        my_err(2, mj, "parser_if: syntax error");
-    }
-
-    token_free(then);
-
     if (expr->word == WORD_ELSE)
     {
         token_free(expr);
@@ -73,6 +56,28 @@ struct ast *parser_if(struct major *mj, struct ast *ast, struct token **tk)
         token_free(expr);
         *tk = get_next_token(mj);
     }
+}
+
+struct ast *parser_if(struct major *mj, struct ast *ast, struct token **tk)
+{
+    superand_creator(mj, &ast);
+
+    struct token *cond = get_next_token(mj);
+    struct ast *newast = create_ast(mj, *tk);
+    newast->left = get_ast(mj, newast->left, &cond);
+    struct token *then = cond;
+    struct token *expr = get_next_token(mj);
+    parser_cpdlist(mj, &expr, newast, should_loop);
+
+    if (then->word != WORD_THEN)
+    {
+        token_free(then);
+        my_err(2, mj, "parser_if: syntax error");
+    }
+
+    token_free(then);
+
+    parser_end_if(mj, tk, expr, newast);
 
     if (ast)
         ast->right = newast;

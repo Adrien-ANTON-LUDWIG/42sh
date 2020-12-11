@@ -2,10 +2,14 @@
 #include <string.h>
 
 #include "ast.h"
+#include "cd.h"
+#include "echo.h"
 #include "exec_ast.h"
 #include "execution.h"
+#include "export.h"
 #include "major.h"
 #include "my_err.h"
+#include "source.h"
 #include "tokens.h"
 
 struct ast *search_funclist(struct major *mj, char *name)
@@ -30,7 +34,6 @@ int exec_if_known(struct major *mj, char **command)
         free(command);
         return 1;
     }
-
     return 0;
 }
 

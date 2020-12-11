@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "argument_handler.h"
 #include "b_utils.h"
 
 #define CHAR_ZERO 48
@@ -190,10 +191,10 @@ int b_echo(char **argv)
     int n = 0;
     int e = 0;
     int E = 0;
-
     int nb_opt = set_options(argv, &n, &e, &E);
-    echo_display(argv[nb_opt + 1], e, &n);
-
+    char *str = merge_arguments(argc - nb_opt - 1, argv + nb_opt + 1);
+    echo_display(str, e, &n);
+    free(str);
     if (!n)
         printf("\n");
 
