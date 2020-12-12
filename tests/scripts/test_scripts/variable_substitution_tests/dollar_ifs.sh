@@ -1,1 +1,3 @@
-echo $IFS
+echo "$IFS"
+IFS='|'
+echo "$IFS"

@@ -7,19 +7,35 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "argument_handler.h"
 #include "b_utils.h"
 #include "my_xmalloc.h"
 
+#define MAX_RANDOM 32767
 #define NUMBER_OF_SPECIAL_VARIABLES 9
 #define SPECIAL_VARIABLES                                                      \
     {                                                                          \
         "$@", "$*", "$?", "$#", "$$", "$RANDOM", "$UID", "$OLDPWD", "$IFS"     \
     }
 
+static int first_time = 0;
+
 static char *dollar_at(struct major *mj, int *len_var)
+{
+    *len_var = 2;
+    int argc = argv_len(mj->arguments);
+    char *str = merge_arguments(argc, mj->arguments);
+
+    if (!str)
+        str = strdup("");
+
+    return str;
+}
+
+static char *dollar_star(struct major *mj, int *len_var)
 {
     *len_var = 2;
     int argc = argv_len(mj->arguments);
@@ -34,9 +50,18 @@ static char *dollar_at(struct major *mj, int *len_var)
 static char *dollar_interrogation(struct major *mj, int *len_var)
 {
     *len_var = 2;
-    char *str = my_xcalloc(mj, 1, sizeof(char) * sizeof(int));
+    char *str = my_xcalloc(mj, 1, sizeof(char) * sizeof(int) + 1);
 
     sprintf(str, "%d", mj->rvalue);
+
+    return str;
+}
+
+static char *dollar_sharp(struct major *mj, int *len_var)
+{
+    *len_var = 2;
+    char *str = my_xcalloc(mj, 1, sizeof(char) * sizeof(int) + 1);
+    sprintf(str, "%d", argv_len(mj->arguments));
 
     return str;
 }
@@ -47,7 +72,7 @@ static char *dollar_dollar(struct major *mj, int *len_var)
         printf("struct major should exist at this point");
 
     *len_var = 2;
-    char *str = my_xcalloc(mj, 1, sizeof(char) * sizeof(long int));
+    char *str = my_xcalloc(mj, 1, sizeof(char) * sizeof(long int) + 1);
 
     int pid = getpid();
 
@@ -56,8 +81,65 @@ static char *dollar_dollar(struct major *mj, int *len_var)
     return str;
 }
 
-char *(*substitution[5])() = { dollar_at, NULL, dollar_interrogation, NULL,
-                               dollar_dollar };
+static char *dollar_random(struct major *mj, int *len_var)
+{
+    if (!mj)
+        printf("struct major should exist at this point");
+
+    *len_var = 7;
+
+    if (!first_time)
+    {
+        first_time = 1;
+        srand(time(NULL));
+    }
+
+    int random = rand() % MAX_RANDOM;
+
+    char *str = my_xcalloc(mj, 1, sizeof(char) * sizeof(int) + 10);
+
+    sprintf(str, "%d", random);
+
+    return str;
+}
+
+static char *dollar_uid(struct major *mj, int *len_var)
+{
+    *len_var = 4;
+    if (!mj)
+        printf("struct major should exist at this point");
+
+    int pid = getuid();
+
+    char *str = my_xcalloc(mj, 1, sizeof(char) * sizeof(int) + 1);
+    sprintf(str, "%d", pid);
+    return str;
+}
+
+static char *dollar_oldpwd(struct major *mj, int *len_var)
+{
+    if (!mj)
+        printf("struct major should exist at this point");
+    *len_var = 7;
+    char *str = strdup(getenv("OLDPWD"));
+    return str;
+}
+
+static char *dollar_ifs(struct major *mj, int *len_var)
+{
+    if (!mj)
+        printf("struct major should exist at this point");
+
+    *len_var = 4;
+    char *str = strdup(" \t\n");
+    return str;
+}
+
+char *(*substitution[9])() = {
+    dollar_at,    dollar_star,   dollar_interrogation,
+    dollar_sharp, dollar_dollar, dollar_random,
+    dollar_uid,   dollar_oldpwd, dollar_ifs
+};
 
 static char *manage_string(struct major *mj, char *str, size_t index,
                            char *(*predicate)(struct major *mj, int *len_var))
@@ -83,9 +165,17 @@ static char *var_subs_in_string(struct major *mj, char *str)
     char *temp = str;
     char *str_saved_for_free = str;
     char *spec_var[] = SPECIAL_VARIABLES;
+
     substitution[0] = dollar_at;
+    substitution[1] = dollar_star;
     substitution[2] = dollar_interrogation;
+    substitution[3] = dollar_sharp;
     substitution[4] = dollar_dollar;
+    substitution[5] = dollar_random;
+    substitution[6] = dollar_uid;
+    substitution[7] = dollar_oldpwd;
+    substitution[8] = dollar_ifs;
+
     while (temp && (temp = strstr(temp, "$")))
     {
         for (int i = 0; i < NUMBER_OF_SPECIAL_VARIABLES; i++)
