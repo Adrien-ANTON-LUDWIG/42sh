@@ -7,7 +7,7 @@
 #include "parser.h"
 #include "pipe.h"
 #include "redir.h"
-//#include "variables_substitution.h"
+#include "variables_substitution.h"
 
 static int redir_execution(struct major *mj, struct ast *ast, struct token *tk)
 {
@@ -57,7 +57,7 @@ int exec_ast(struct major *mj, struct ast *ast)
         return 0;
     int err = 0;
     struct token *tk = ast->data;
-    //tk->data = variables_substitution(mj, tk->data);
+    tk->data = variables_substitution(mj, tk->data);
     if (redir_execution(mj, ast, tk) == -1)
         err = exec_ast(mj, ast->left);
     else

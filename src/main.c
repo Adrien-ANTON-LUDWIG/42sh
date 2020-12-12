@@ -61,6 +61,7 @@ int main(int argc, char **argv)
 
     struct major *mj = major_init();
     int from = get_index_command_string(i, argc, argv);
+    mj->arguments = argv + from + 1;
 
     if (strcmp(argv[i], "-c") == 0)
     {

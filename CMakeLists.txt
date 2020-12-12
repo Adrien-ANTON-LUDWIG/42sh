@@ -26,6 +26,7 @@ set (SRC
     src/execution/exec_ast.c
     src/execution/pipe.c
     src/execution/redir.c
+    src/execution/variables_substitution.c
     src/lexer/lexer.c
     src/lexer/string_manipulation.c
     src/lexer/lexer_utils.c

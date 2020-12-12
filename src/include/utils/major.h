@@ -24,6 +24,7 @@ struct major
     struct custom_FILE *file;
     struct list *variables;
     struct funclist *flist;
+    char **arguments;
 };
 
 /**
