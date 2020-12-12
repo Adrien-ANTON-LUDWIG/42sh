@@ -68,7 +68,7 @@ int execution_command(struct major *mj, struct token *tk)
 
     if (!(exec_if_known(mj, command)))
         mj->rvalue = run_command(mj, command);
-    
+
     free(command);
     return mj->rvalue;
 }
