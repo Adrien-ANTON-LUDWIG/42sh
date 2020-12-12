@@ -1,5 +1,6 @@
 #include "ast.h"
 #include "major.h"
+#include "my_err.h"
 #include "parser.h"
 
 int is_operator(struct token *tk)
@@ -14,6 +15,22 @@ struct ast *parser_operator(struct major *mj, struct ast *ast,
     newast->left = ast;
     *tk = get_next_token(mj);
     newast->right = get_ast(mj, newast->right, tk);
+
+    return newast;
+}
+
+struct ast *parser_redir(struct major *mj,
+                         /*struct ast *ast,*/ struct token **tk)
+{
+    struct ast *newast = create_ast(mj, *tk);
+    *tk = get_next_token(mj);
+
+    if ((*tk)->word != WORD_WORD)
+        my_err(1, mj, "parser_redir: filename needed after redirection");
+
+    newast->left = create_ast(mj, *tk);
+
+    *tk = get_next_token(mj);
 
     return newast;
 }

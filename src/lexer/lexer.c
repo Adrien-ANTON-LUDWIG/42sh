@@ -21,8 +21,8 @@ static struct token *get_token_redir(struct major *mj, char c)
     char n = '\0';
     struct token *tk = token_init(mj, WORD_REDIR_LLM);
 
-    if (mj->file->lexer_index > 0)
-        n = mj->file->str[mj->file->lexer_index - 1];
+    if (mj->file->lexer_index - 1 > 0)
+        n = mj->file->str[mj->file->lexer_index - 2];
 
     c = get_char(mj->file, 0);
     if (is_in(c, IS_REDIR))
@@ -30,7 +30,7 @@ static struct token *get_token_redir(struct major *mj, char c)
         s[1] = get_char(mj->file, 1);
 
         c = get_char(mj->file, 0);
-        if (c == '-')
+        if (s[1] == '<' && c == '-')
             s[2] = get_char(mj->file, 1);
     }
 
@@ -38,7 +38,7 @@ static struct token *get_token_redir(struct major *mj, char c)
     {
         if (!strcmp(s, tokens_strings_redir[i]))
         {
-            if (!isdigit(c))
+            if (!isdigit(n))
                 n = default_value[i];
             char *number = strndup(&n, 1);
             tk->data = list_append(mj, tk->data, number);
@@ -121,7 +121,10 @@ static struct token *get_token_word(struct major *mj)
 
     if (len == 1 && '0' <= f->str[start] && f->str[start] <= '9'
         && (f->str[end] == '>' || f->str[end] == '<'))
+    {
+        f->lexer_index++;
         return get_token_redir(mj, f->str[end]);
+    }
 
     struct token *tk = token_init(mj, WORD_WORD);
     char *s = strndup(f->str + start, len);

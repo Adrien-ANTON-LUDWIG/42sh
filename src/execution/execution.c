@@ -34,6 +34,7 @@ int run_command(struct major *mj, char **args)
     int rvalue = 0;
     waitpid(pid, &rvalue, 0);
     rvalue = WEXITSTATUS(rvalue);
+    mj->rvalue = rvalue;
     if (rvalue == 127)
         fprintf(stderr, "Command not found : %s\n", args[0]);
     return rvalue;
