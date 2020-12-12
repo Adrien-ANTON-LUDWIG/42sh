@@ -30,6 +30,15 @@ void major_free(struct major *mj)
     free(mj);
 }
 
+static int replace_function(struct funclist *current, struct funclist *new,
+                            struct ast *newast)
+{
+    ast_free(current->ast);
+    free(new);
+    current->ast = newast;
+    return 0;
+}
+
 int add_to_funclist(struct major *mj, struct ast *func)
 {
     struct funclist *new = my_xcalloc(mj, 1, sizeof(struct funclist));
@@ -48,12 +57,7 @@ int add_to_funclist(struct major *mj, struct ast *func)
     while (current && current->next)
     {
         if (!strcmp(current->ast->data->data->head->data, funcname))
-        {
-            ast_free(current->ast);
-            free(new);
-            current->ast = newast;
-            return 0;
-        }
+            return replace_function(current, new, newast);
 
         current = current->next;
     }
@@ -62,13 +66,10 @@ int add_to_funclist(struct major *mj, struct ast *func)
     else
     {
         if (!strcmp(current->ast->data->data->head->data, funcname))
-        {
-            ast_free(current->ast);
-            free(new);
-            current->ast = newast;
-            return 0;
-        }
+            return replace_function(current, new, newast);
+
         current->next = new;
     }
+
     return 0;
 }
