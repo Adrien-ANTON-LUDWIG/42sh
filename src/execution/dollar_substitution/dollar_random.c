@@ -3,7 +3,7 @@
 
 #include "dollar.h"
 
-#define MAX_RANDOM 32767
+#define MAX_RANDOM 32768
 
 static int first_time = 0;
 
