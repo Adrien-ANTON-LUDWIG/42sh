@@ -66,6 +66,8 @@ target_link_libraries(42sh 42)
 add_executable(testsuite EXCLUDE_FROM_ALL ${HEADERS} tests/main.c)
 target_link_libraries(testsuite PUBLIC criterion 42)
 
+add_executable(lexer_test EXCLUDE_FROM_ALL tests/printer.c tests/lexer_tests/lexer_test.c ${HEADERS})
+
 target_link_libraries(lexer_test 42)
 
 add_custom_target(debug
@@ -90,9 +92,6 @@ add_custom_target(script_test
     COMMAND cp -r ${CMAKE_SOURCE_DIR}/tests/scripts ./
     COMMAND bash ./scripts/tests_script.sh
     BYPRODUCTS ./scripts/ actual expected)
-
-add_executable(ast_printer EXCLUDE_FROM_ALL tests/printer.c tests/ast_printer.c ${HEADERS})
-target_link_libraries(ast_printer 42)
 
 add_custom_target(ap
     DEPENDS ast_printer)
