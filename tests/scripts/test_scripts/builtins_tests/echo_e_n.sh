@@ -1,1 +1,1 @@
-echo -e -n \tno_new_line\n
+echo -e -n \tno_new_line\n 

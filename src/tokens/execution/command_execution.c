@@ -40,7 +40,6 @@ int exec_if_known(struct major *mj, char **command)
     else if (!strcmp(*command, "echo"))
     {
         mj->rvalue = b_echo(command);
-        fflush(stdout);
         known = 1;
     }
     else if (!strcmp(*command, "cd"))
