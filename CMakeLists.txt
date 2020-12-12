@@ -66,7 +66,6 @@ target_link_libraries(42sh 42)
 add_executable(testsuite EXCLUDE_FROM_ALL ${HEADERS} tests/main.c)
 target_link_libraries(testsuite PUBLIC criterion 42)
 
-add_executable(lexer_test EXCLUDE_FROM_ALL tests/printer.c tests/lexer_tests/lexer_test.c ${HEADERS})
 target_link_libraries(lexer_test 42)
 
 add_custom_target(debug
