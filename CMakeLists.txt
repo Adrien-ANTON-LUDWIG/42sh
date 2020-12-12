@@ -27,6 +27,15 @@ set (SRC
     src/execution/pipe.c
     src/execution/redir.c
     src/execution/variables_substitution.c
+    src/execution/dollar_substitution/dollar_at.c
+    src/execution/dollar_substitution/dollar_star.c
+    src/execution/dollar_substitution/dollar_interrogation.c
+    src/execution/dollar_substitution/dollar_ifs.c
+    src/execution/dollar_substitution/dollar_random.c
+    src/execution/dollar_substitution/dollar_oldpwd.c
+    src/execution/dollar_substitution/dollar_sharp.c
+    src/execution/dollar_substitution/dollar_uid.c
+    src/execution/dollar_substitution/dollar_dollar.c
     src/lexer/lexer.c
     src/lexer/string_manipulation.c
     src/lexer/lexer_utils.c

@@ -1,139 +1,13 @@
-#define _POSIX_C_SOURCE 200809
 #include "variables_substitution.h"
 
-#include <limits.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <time.h>
-#include <unistd.h>
-
-#include "argument_handler.h"
-#include "b_utils.h"
+#include "dollar.h"
 #include "my_xmalloc.h"
 
-#define MAX_RANDOM 32767
 #define NUMBER_OF_SPECIAL_VARIABLES 9
 #define SPECIAL_VARIABLES                                                      \
     {                                                                          \
         "$@", "$*", "$?", "$#", "$$", "$RANDOM", "$UID", "$OLDPWD", "$IFS"     \
     }
-
-static int first_time = 0;
-
-static char *dollar_at(struct major *mj, int *len_var)
-{
-    *len_var = 2;
-    int argc = argv_len(mj->arguments);
-    char *str = merge_arguments(argc, mj->arguments);
-
-    if (!str)
-        str = strdup("");
-
-    return str;
-}
-
-static char *dollar_star(struct major *mj, int *len_var)
-{
-    *len_var = 2;
-    int argc = argv_len(mj->arguments);
-    char *str = merge_arguments(argc, mj->arguments);
-
-    if (!str)
-        str = strdup("");
-
-    return str;
-}
-
-static char *dollar_interrogation(struct major *mj, int *len_var)
-{
-    *len_var = 2;
-    char *str = my_xcalloc(mj, 1, sizeof(char) * sizeof(int) + 1);
-
-    sprintf(str, "%d", mj->rvalue);
-
-    return str;
-}
-
-static char *dollar_sharp(struct major *mj, int *len_var)
-{
-    *len_var = 2;
-    char *str = my_xcalloc(mj, 1, sizeof(char) * sizeof(int) + 1);
-    sprintf(str, "%d", argv_len(mj->arguments));
-
-    return str;
-}
-
-static char *dollar_dollar(struct major *mj, int *len_var)
-{
-    if (!mj)
-        printf("struct major should exist at this point");
-
-    *len_var = 2;
-    char *str = my_xcalloc(mj, 1, sizeof(char) * sizeof(long int) + 1);
-
-    int pid = getpid();
-
-    sprintf(str, "%d", pid);
-
-    return str;
-}
-
-static char *dollar_random(struct major *mj, int *len_var)
-{
-    if (!mj)
-        printf("struct major should exist at this point");
-
-    *len_var = 7;
-
-    if (!first_time)
-    {
-        first_time = 1;
-        srand(time(NULL));
-    }
-
-    int random = rand() % MAX_RANDOM;
-
-    char *str = my_xcalloc(mj, 1, sizeof(char) * sizeof(int) + 10);
-
-    sprintf(str, "%d", random);
-
-    return str;
-}
-
-static char *dollar_uid(struct major *mj, int *len_var)
-{
-    *len_var = 4;
-    if (!mj)
-        printf("struct major should exist at this point");
-
-    int pid = getuid();
-
-    char *str = my_xcalloc(mj, 1, sizeof(char) * sizeof(int) + 1);
-    sprintf(str, "%d", pid);
-    return str;
-}
-
-static char *dollar_oldpwd(struct major *mj, int *len_var)
-{
-    if (!mj)
-        printf("struct major should exist at this point");
-    *len_var = 7;
-    char *str = strdup(getenv("OLDPWD"));
-    return str;
-}
-
-static char *dollar_ifs(struct major *mj, int *len_var)
-{
-    if (!mj)
-        printf("struct major should exist at this point");
-
-    *len_var = 4;
-    char *str = strdup(" \t\n");
-    return str;
-}
 
 char *(*substitution[9])() = {
     dollar_at,    dollar_star,   dollar_interrogation,
@@ -198,14 +72,18 @@ struct list *variables_substitution(struct major *mj, struct list *list)
     if (!list)
         return list;
 
-    struct list_item *temp = list->head;
+    if (!mj)
+    {
+        printf("struct major should exist at this point");
+        return list;
+    }
 
-    while (mj && temp && list)
+    struct list_item *temp = list->head;
+    while (temp)
     {
         if (strstr(temp->data, "$"))
             temp->data = var_subs_in_string(mj, temp->data);
         temp = temp->next;
     }
-
     return list;
 }
