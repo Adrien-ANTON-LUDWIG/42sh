@@ -54,7 +54,7 @@ int exec_if_known(struct major *mj, char **command)
     }
     else if (!strcmp(*command, "export"))
     {
-        mj->rvalue = b_exit(mj, command);
+        mj->rvalue = b_export(command);
         known = 1;
     }
     /*
