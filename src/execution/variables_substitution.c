@@ -37,7 +37,6 @@ static char *manage_string(struct major *mj, char *str, size_t index,
 static char *var_subs_in_string(struct major *mj, char *str)
 {
     char *temp = str;
-    char *str_saved_for_free = str;
     char *spec_var[] = SPECIAL_VARIABLES;
 
     substitution[0] = dollar_at;
@@ -52,18 +51,20 @@ static char *var_subs_in_string(struct major *mj, char *str)
 
     while (temp && (temp = strstr(temp, "$")))
     {
+        char *str_saved_for_free = str;
         for (int i = 0; i < NUMBER_OF_SPECIAL_VARIABLES; i++)
         {
             if (!strncmp(spec_var[i], temp, strlen(spec_var[i])))
             {
-                str = manage_string(mj, str, temp - str, *(substitution[i]));
+                size_t index = temp - str;
+                str = manage_string(mj, str, index, *(substitution[i]));
+                temp = str + index;
+                free(str_saved_for_free);
                 break;
             }
         }
         temp++;
     }
-
-    free(str_saved_for_free);
     return str;
 }
 
