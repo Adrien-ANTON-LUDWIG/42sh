@@ -1,0 +1,2 @@
+cd ../zFzz/home
+ls

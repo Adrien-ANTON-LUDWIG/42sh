@@ -1,6 +1,6 @@
 #ifndef _SOURCE_H_
 #define _SOURCE_H_
 
-char *source(char *argv[]);
+char **b_source(char *argv[]);
 
 #endif /* _SOURCE_H_ */

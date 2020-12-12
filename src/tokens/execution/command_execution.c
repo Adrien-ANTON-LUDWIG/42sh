@@ -7,6 +7,7 @@
 #include "echo.h"
 #include "exec_ast.h"
 #include "execution.h"
+#include "exit.h"
 #include "export.h"
 #include "major.h"
 #include "my_err.h"
@@ -32,15 +33,26 @@ int exec_if_known(struct major *mj, char **command)
     if (func)
     {
         exec_ast(mj, func->right);
-        free(command);
         return 1;
     }
-
-    if (!strcmp(*command, "echo"))
+    else if (!strcmp(*command, "echo"))
     {
         mj->rvalue = b_echo(command);
-        fflush(stdout);
-        free(command);
+        return 1;
+    }
+    else if (!strcmp(*command, "cd"))
+    {
+        mj->rvalue = b_cd(command);
+        return 1;
+    }
+    else if (!strcmp(*command, "exit"))
+    {
+        mj->rvalue = b_exit(mj, command);
+        return 1;
+    }
+    else if (!strcmp(*command, "export"))
+    {
+        mj->rvalue = b_export(command);
         return 1;
     }
 
@@ -54,10 +66,9 @@ int execution_command(struct major *mj, struct token *tk)
 
     char **command = token_list_to_char_array(tk->data);
 
-    if ((exec_if_known(mj, command)))
-        return mj->rvalue;
-
-    mj->rvalue = run_command(mj, command);
+    if (!(exec_if_known(mj, command)))
+        mj->rvalue = run_command(mj, command);
+    
     free(command);
     return mj->rvalue;
 }

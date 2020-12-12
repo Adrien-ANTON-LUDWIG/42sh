@@ -1,0 +1,1 @@
+echo -n no_new_line\n

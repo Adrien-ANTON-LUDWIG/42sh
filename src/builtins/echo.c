@@ -65,7 +65,7 @@ static int str_oct_to_dec(char *s, int i, int to_read)
     int n = 0;
     for (int j = 0; j < to_read; j++)
     {
-        n += (((int)(s[i + j]) - CHAR_ZERO) * my_pow(8, to_read - j - 1));
+        n += (((s[i + j]) - CHAR_ZERO) * my_pow(8, to_read - j - 1));
     }
     return n;
 }
@@ -145,7 +145,7 @@ static void echo_display(char *argv, int e, int *n)
     for (size_t i = 0; i < strlen(argv); i++)
     {
         c = argv[i];
-        if (e && c == '\\')
+        if (e && c == '\\' && i++ && argv[i] == '\\')
         {
             i++;
             int index = get_escape_index(argv[i]);
@@ -168,9 +168,9 @@ static void echo_display(char *argv, int e, int *n)
                 putchar(argv[i]);
             }
             else
-                printf("%c\n", str_escape[index]);
+                printf("%c", str_escape[index]);
         }
-        else
+        else if (argv[i] != '\\')
             putchar(argv[i]);
     }
 }
@@ -187,6 +187,7 @@ int b_echo(char **argv)
     struct stat statbuff;
     if (fstat(STDOUT_FILENO, &statbuff) == -1)
         return 1;
+    fflush(stdout);
     int argc = argv_len(argv);
 
     if (argc < 2)
@@ -200,10 +201,12 @@ int b_echo(char **argv)
     int E = 0;
     int nb_opt = set_options(argv, &n, &e, &E);
     char *str = merge_arguments(argc - nb_opt - 1, argv + nb_opt + 1);
+    
     echo_display(str, e, &n);
     free(str);
     if (!n)
         printf("\n");
 
+    fflush(stdout);
     return 0;
 }

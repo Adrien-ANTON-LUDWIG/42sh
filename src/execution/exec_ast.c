@@ -58,6 +58,7 @@ int exec_ast(struct major *mj, struct ast *ast)
         return 0;
     int err = 0;
     struct token *tk = ast->data;
+    //tk->data = variables_substitution(mj, tk->data);
     if (redir_execution(mj, ast, tk) == -1)
         err = exec_ast(mj, ast->left);
     else
