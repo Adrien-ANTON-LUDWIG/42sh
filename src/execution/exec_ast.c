@@ -7,7 +7,7 @@
 #include "parser.h"
 #include "pipe.h"
 #include "redir.h"
-#include "variables_substitution.h"
+//#include "variables_substitution.h"
 
 static int redir_execution(struct major *mj, struct ast *ast, struct token *tk)
 {
