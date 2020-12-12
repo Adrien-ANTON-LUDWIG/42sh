@@ -3,9 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "argument_handler.h"
 #include "b_utils.h"
+#include "my_err.h"
 
 #define CHAR_ZERO 48
 #define TO_UPPER 32
@@ -153,7 +157,8 @@ static void echo_display(char *argv, int e, int *n)
                                             : nb_to_read_hx(argv, i);
                 int ascii = (index == -2) ? str_oct_to_dec(argv + 1, i, to_read)
                                           : str_hx_to_dec(argv + 1, i, to_read);
-                printf("%c", ascii);
+                if (printf("%c", ascii) == -1)
+                    my_err(1, NULL, "HO POV CON");
                 i += to_read;
             }
             else if (index == -4)
@@ -180,6 +185,9 @@ static void echo_display(char *argv, int e, int *n)
 */
 int b_echo(char **argv)
 {
+    struct stat statbuff;
+    if (fstat(STDOUT_FILENO, &statbuff) == -1)
+        return 1;
     int argc = argv_len(argv);
 
     if (argc < 2)

@@ -38,10 +38,9 @@ int exec_if_known(struct major *mj, char **command)
 
     if (!strcmp(*command, "echo"))
     {
-        b_echo(command);
+        mj->rvalue = b_echo(command);
         fflush(stdout);
         free(command);
-        mj->rvalue = 0;
         return 1;
     }
 

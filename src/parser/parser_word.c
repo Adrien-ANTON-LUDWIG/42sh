@@ -7,6 +7,7 @@
 #include "list.h"
 #include "my_xmalloc.h"
 #include "parser.h"
+#include "stack.h"
 #include "string_manipulation.h"
 #include "tokens.h"
 
@@ -40,27 +41,32 @@ static struct token *init_token_with_data(struct major *mj, struct list *list)
     return newtoken;
 }
 
+static struct ast *handle_redirs(struct major *mj, struct stack *q,
+                                 struct ast *ast)
+{
+    struct ast *redir = NULL;
+    while ((redir = stack_pop(mj, &q)))
+    {
+        redir->right = ast;
+        ast = redir;
+    }
+    return ast;
+}
+
 struct ast *build_command(struct major *mj, struct token **tk,
                           struct token *tk2, struct ast *ast)
 {
     struct list *list = add_to_list(mj, NULL, (*tk)->data->head->data);
     token_free(*tk);
-    struct token *pending_operator = NULL;
-    struct token *pending_file = NULL;
+    struct stack *redir_stack = NULL;
     *tk = tk2;
 
     while ((*tk)->data)
     {
-        if (is_operator(*tk))
+        if (is_operator(*tk)) // Redir is the only operator with data
         {
-            if (pending_operator) // FIXME Multiple redirections
-            {
-                token_free(pending_operator);
-                token_free(pending_file);
-            }
-            pending_operator = *tk;
-            pending_file = get_next_token(mj);
-            *tk = get_next_token(mj);
+            struct ast *redir = parser_redir(mj, tk);
+            redir_stack = stack_add(mj, redir_stack, redir);
             continue;
         }
         list = add_to_list(mj, list, (*tk)->data->head->data);
@@ -71,13 +77,7 @@ struct ast *build_command(struct major *mj, struct token **tk,
     struct token *newtoken = init_token_with_data(mj, list);
     ast = take_action(mj, ast, &newtoken);
 
-    if (pending_file)
-    {
-        struct ast *newast = create_ast(mj, pending_operator);
-        newast->left = create_ast(mj, pending_file);
-        newast->right = ast;
-        return newast;
-    }
+    ast = handle_redirs(mj, redir_stack, ast);
 
     return ast;
 }

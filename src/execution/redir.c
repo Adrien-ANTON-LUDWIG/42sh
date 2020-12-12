@@ -21,7 +21,12 @@ static int run(struct major *mj, int fd_old, int fd_new, struct ast *ast)
     int save_old = dup(fd_old);
     if (fd_old == 0)
         fclose(stdin);
-    dup2(fd_new, fd_old);
+    int err = dup2(fd_new, fd_old);
+    if (err == -1)
+    {
+        mj->rvalue = 1;
+        return 1;
+    }
     close(fd_new);
     mj->rvalue = exec_ast(mj, ast);
     dup2(save_old, fd_old);
@@ -87,7 +92,7 @@ static int exec_redir_la(struct major *mj, struct ast *ast)
         if (new_fd == -1)
             my_err(1, mj, "exec_redir: Couldn't open the file !");
 
-        run(mj, old_fd, new_fd, ast->right);
+        return run(mj, old_fd, new_fd, ast->right);
     }
 
     my_err(1, mj, "exec_redir_la: redirection ambigue");
@@ -112,8 +117,8 @@ static int exec_redir_r(struct major *mj, struct ast *ast)
 static int exec_redir_ll(struct major *mj, struct ast *ast)
 {
     if (!mj || !ast)
-        return 1;
-    return 1;
+        exit(42);
+    exit(42);
 }
 
 int exec_redir(struct major *mj, struct ast *ast)
