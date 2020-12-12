@@ -51,44 +51,6 @@ void custom_fclose(struct custom_FILE *f)
     free(f);
 }
 
-char *custom_fgets(char *s, size_t size, struct custom_FILE *f)
-{
-    if (f->fd != CUSTOM_FD)
-        return fgets(s, size, f->file);
-
-    if (f->index >= f->len)
-        return NULL;
-
-    size_t i = 0;
-
-    for (i = 0; i < size && f->index < f->len; i++)
-    {
-        s[i] = f->str[f->index];
-        if (f->str[f->index] == '\n' || f->str[f->index] == 0)
-        {
-            f->index += 1;
-            s[i + 1] = 0;
-            return s;
-        }
-        f->index += 1;
-    }
-    s[i] = 0;
-    return s;
-}
-
-void get_new_string(struct major *mj)
-{
-    if (!mj || mj->file->fd == CUSTOM_FD)
-        return;
-
-    mj->file->str = custom_fgets(mj->file->str, BUFFER_SIZE, mj->file);
-    mj->file->lexer_index = 0;
-    if (mj->file->str)
-        mj->file->len = strlen(mj->file->str);
-    else
-        mj->file->len = 0;
-}
-
 int custom_getline(struct major *mj)
 {
     struct custom_FILE *f = mj->file;
