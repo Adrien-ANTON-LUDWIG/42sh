@@ -24,7 +24,10 @@ char *update_path(char *path, char *section)
     else if (!strcmp(section, "/"))
         new = strdup("/");
     else if (!strcmp(section, "-"))
+    {
+        printf("%s\n", getenv("OLDPWD"));
         new = strdup(getenv("OLDPWD"));
+    }
     else
     {
         new = strdup(path);
@@ -42,8 +45,22 @@ static char *get_path_destination(int argc, char **argv)
 {
     char *path = strdup(getenv("PWD"));
 
-    if (!argc)
+    if (!argc || argv[0][0] == '~')
         path = update_path(path, "~");
+    else if (strstr(argv[0], "-"))
+    {
+        argc = 0;
+        if (strlen(argv[0]) == 1)
+
+            path = update_path(path, "-");
+
+        else
+        {
+            warnx("No such file or directory");
+            free(path);
+            path = strdup(getenv("PWD"));
+        }
+    }
 
     else if (argv[0][0] == '/')
         path = update_path(path, "/");
@@ -51,11 +68,15 @@ static char *get_path_destination(int argc, char **argv)
     char *path_to_iter = argv[0];
     char *next_section = NULL;
 
-    while ((next_section = strtok(path_to_iter, "/")))
+    while (argc && (next_section = strtok(path_to_iter, "/")) != NULL)
     {
         path = update_path(path, next_section);
         path_to_iter = NULL;
     }
+
+    setenv("OLDPWD", getenv("PWD"), 1);
+    setenv("PWD", path, 1);
+
     return path;
 }
 
@@ -69,10 +90,11 @@ int b_cd(char **argv)
     char *path = get_path_destination(i - 1, argv + 1);
 
     int r_value = chdir(path);
+    free(path);
+    fflush(stdout);
     if (r_value != 0)
     {
         warnx("No such file or directory");
-        free(path);
         return r_value;
     }
     return 0;

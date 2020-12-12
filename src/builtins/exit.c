@@ -6,6 +6,7 @@
 #include <stdlib.h>
 
 #include "b_utils.h"
+#include "my_err.h"
 
 static void argv_free(char *argv[])
 {
@@ -24,17 +25,20 @@ int b_exit(struct major *mj, char *argv[])
 
     if (len > 2)
     {
-        warnx("too many arguments\n");
+        warnx("too many arguments");
         return 1;
     }
 
     int rvalue = 0;
+    char *endptr = NULL;
 
     if (argv && *(argv + 1))
-        rvalue = atoi(*(argv + 1));
+        rvalue = strtol(*(argv + 1), &endptr, 10);
 
-    major_free(mj);
+    if (endptr && *endptr != '\0')
+        my_err(2, mj, "exit: numeric argument required");
+
     argv_free(argv);
-
+    major_free(mj);
     exit(rvalue);
 }
