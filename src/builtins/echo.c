@@ -61,7 +61,7 @@ static int str_oct_to_dec(char *s, int i, int to_read)
     int n = 0;
     for (int j = 0; j < to_read; j++)
     {
-        n += (((int)(s[i + j]) - CHAR_ZERO) * my_pow(8, to_read - j - 1));
+        n += (((s[i + j]) - CHAR_ZERO) * my_pow(8, to_read - j - 1));
     }
     return n;
 }
@@ -166,7 +166,7 @@ static void echo_display(char *argv, int e, int *n)
             else
                 printf("%c", str_escape[index]);
         }
-        else
+        else if (argv[i] != '\\')
             putchar(argv[i]);
     }
 }
