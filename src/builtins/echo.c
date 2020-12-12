@@ -157,8 +157,7 @@ static void echo_display(char *argv, int e, int *n)
                                             : nb_to_read_hx(argv, i);
                 int ascii = (index == -2) ? str_oct_to_dec(argv + 1, i, to_read)
                                           : str_hx_to_dec(argv + 1, i, to_read);
-                if (printf("%c", ascii) == -1)
-                    my_err(1, NULL, "HO POV CON");
+                printf("%c", ascii);
                 i += to_read;
             }
             else if (index == -4)
