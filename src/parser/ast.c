@@ -16,16 +16,6 @@ struct ast *create_ast(struct major *mj, struct token *tk)
     return ast;
 }
 
-void ast_printer(struct ast *ast)
-{
-    if (!ast)
-        return;
-    ast_printer(ast->left);
-    print_token(ast->data);
-    ast_printer(ast->middle);
-    ast_printer(ast->right);
-}
-
 void ast_free(struct ast *ast)
 {
     if (!ast)

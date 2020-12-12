@@ -45,7 +45,6 @@ set (SRC
     src/utils/my_err.c
     src/utils/my_xmalloc.c
     src/utils/stack.c
-    tests/printer.c
 )
 
 file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/include/*.h")
@@ -55,8 +54,8 @@ if (DEFINED ENV{DBG})
     add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99 -fsanitize=address -g)
     add_link_options(-Wall -Wextra -pedantic -Werror -std=c99 -fsanitize=address -g)
 else()
-    add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99)
-    add_link_options(-Wall -Wextra -pedantic -Werror -std=c99)
+    add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99 -g)
+    add_link_options(-Wall -Wextra -pedantic -Werror -std=c99 -g)
 endif()
 
 add_library(42 STATIC ${SRC})
@@ -67,7 +66,7 @@ target_link_libraries(42sh 42)
 add_executable(testsuite EXCLUDE_FROM_ALL ${HEADERS} tests/main.c)
 target_link_libraries(testsuite PUBLIC criterion 42)
 
-add_executable(lexer_test EXCLUDE_FROM_ALL tests/lexer_tests/lexer_test.c ${HEADERS})
+add_executable(lexer_test EXCLUDE_FROM_ALL tests/printer.c tests/lexer_tests/lexer_test.c ${HEADERS})
 target_link_libraries(lexer_test 42)
 
 add_custom_target(debug
@@ -92,3 +91,9 @@ add_custom_target(script_test
     COMMAND cp -r ${CMAKE_SOURCE_DIR}/tests/scripts ./
     COMMAND bash ./scripts/tests_script.sh
     BYPRODUCTS ./scripts/ actual expected)
+
+add_executable(ast_printer EXCLUDE_FROM_ALL tests/printer.c tests/ast_printer.c ${HEADERS})
+target_link_libraries(ast_printer 42)
+
+add_custom_target(ap
+    DEPENDS ast_printer)

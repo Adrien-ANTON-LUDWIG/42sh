@@ -12,7 +12,7 @@
 
 void superand_creator(struct major *mj, struct ast **ast)
 {
-    if (*ast && (*ast)->data->word == WORD_COMMAND)
+    if (*ast)
     {
         struct ast *newast = add_single_command(mj, *ast, NULL);
         *ast = newast;

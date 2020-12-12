@@ -33,11 +33,4 @@ struct ast *create_ast(struct major *mj, struct token *tk);
  */
 void ast_free(struct ast *ast);
 
-/**
- * @brief Print the ast's infix traversal
- *
- * @param ast
- */
-void ast_printer(struct ast *ast);
-
 #endif /* AST_H */
