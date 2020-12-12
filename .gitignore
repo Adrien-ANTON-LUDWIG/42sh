@@ -16,3 +16,4 @@ scripts/superfile
 scripts/ininin
 out
 bar
+tests/ast_printer.c

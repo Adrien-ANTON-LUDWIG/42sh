@@ -1,0 +1,1 @@
+> scripts/file echo foo; echo bar;

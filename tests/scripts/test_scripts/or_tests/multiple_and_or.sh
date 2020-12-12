@@ -1,0 +1,1 @@
+false || echo bar && false && echo bar || echo foo
