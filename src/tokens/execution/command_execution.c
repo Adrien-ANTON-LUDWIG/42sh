@@ -30,44 +30,33 @@ int exec_if_known(struct major *mj, char **command)
 {
     struct ast *func = search_funclist(mj, *command);
 
-    int known = 0;
-
     if (func)
     {
         exec_ast(mj, func->right);
-        known = 1;
+        return 1;
     }
     else if (!strcmp(*command, "echo"))
     {
         mj->rvalue = b_echo(command);
-        known = 1;
+        return 1;
     }
     else if (!strcmp(*command, "cd"))
     {
         mj->rvalue = b_cd(command);
-        known = 1;
+        return 1;
     }
     else if (!strcmp(*command, "exit"))
     {
         mj->rvalue = b_exit(mj, command);
-        known = 1;
+        return 1;
     }
     else if (!strcmp(*command, "export"))
     {
         mj->rvalue = b_export(command);
-        known = 1;
+        return 1;
     }
-    /*
-        if (!strcmp(*command, "source"))
-        {
-            mj->rvalue = b_source(command);
-            known = 1;
-        }
-    */
-    if (known)
-        free(command);
 
-    return known;
+    return 0;
 }
 
 int execution_command(struct major *mj, struct token *tk)
@@ -77,10 +66,9 @@ int execution_command(struct major *mj, struct token *tk)
 
     char **command = token_list_to_char_array(tk->data);
 
-    if ((exec_if_known(mj, command)))
-        return mj->rvalue;
-
-    mj->rvalue = run_command(mj, command);
+    if (!(exec_if_known(mj, command)))
+        mj->rvalue = run_command(mj, command);
+    
     free(command);
     return mj->rvalue;
 }
