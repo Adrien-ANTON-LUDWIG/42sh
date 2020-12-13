@@ -49,21 +49,29 @@ static char *var_subs_in_string(struct major *mj, char *str)
     substitution[7] = dollar_oldpwd;
     substitution[8] = dollar_ifs;
 
-    while (temp && (temp = strstr(temp, "$")))
+    while (temp && (temp = strstr(temp, "$")) != NULL)
     {
         char *str_saved_for_free = str;
-        for (int i = 0; i < NUMBER_OF_SPECIAL_VARIABLES; i++)
+        int i = 0;
+        size_t index = 0;
+        for (; i < NUMBER_OF_SPECIAL_VARIABLES; i++)
         {
             if (!strncmp(spec_var[i], temp, strlen(spec_var[i])))
             {
-                size_t index = temp - str;
+                index = temp - str;
                 str = manage_string(mj, str, index, *(substitution[i]));
-                temp = str + index;
+                temp = str;
                 free(str_saved_for_free);
                 break;
             }
         }
-        temp++;
+        if (i == NUMBER_OF_SPECIAL_VARIABLES)
+        {
+            index = temp - str;
+            str = dollar_unknown(mj, str, index);
+            temp = str;
+            free(str_saved_for_free);
+        }
     }
     return str;
 }

@@ -36,6 +36,7 @@ set (SRC
     src/execution/dollar_substitution/dollar_sharp.c
     src/execution/dollar_substitution/dollar_uid.c
     src/execution/dollar_substitution/dollar_dollar.c
+    src/execution/dollar_substitution/dollar_unknown.c
     src/lexer/lexer.c
     src/lexer/string_manipulation.c
     src/lexer/lexer_utils.c

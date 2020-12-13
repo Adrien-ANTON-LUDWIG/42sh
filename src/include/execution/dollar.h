@@ -21,4 +21,6 @@ char *dollar_interrogation(struct major *mj, int *len_var);
 char *dollar_star(struct major *mj, int *len_var);
 char *dollar_at(struct major *mj, int *len_var);
 
+char *dollar_unknown(struct major *mj, char *str, int index);
+
 #endif /* DOLLAR_H_ */

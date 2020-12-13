@@ -5,7 +5,7 @@
 char *dollar_at(struct major *mj, int *len_var)
 {
     if (!mj)
-        my_err(1, mj, "dollar_sharp: struct major should exist at this point");
+        my_err(1, mj, "dollar_at: struct major should exist at this point");
 
     *len_var = 2;
     int argc = argv_len(mj->arguments);
