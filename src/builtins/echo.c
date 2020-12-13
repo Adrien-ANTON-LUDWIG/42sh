@@ -103,19 +103,11 @@ static void echo_display(char *argv, int e, int *n)
     }
 }
 
-/*
-    -n do not output the trailing newline
-
-    -e enable interpretation of backslash escapes
-
-    -E disable interpretation of backslash escapes (default)
-*/
 int b_echo(char **argv)
 {
     struct stat statbuff;
     if (fstat(STDOUT_FILENO, &statbuff) == -1)
         return 1;
-    fflush(stdout);
     int argc = argv_len(argv);
 
     if (argc < 2)
