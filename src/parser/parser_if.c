@@ -19,6 +19,8 @@ static int should_loop(enum words w)
 
 static void parser_else(struct major *mj, struct ast *ast, struct token **expr)
 {
+    if ((*expr)->word == WORD_NEWLINE)
+        *expr = token_renew(mj, *expr, 0);
     do
     {
         if ((*expr)->word == WORD_EOF)
@@ -26,58 +28,46 @@ static void parser_else(struct major *mj, struct ast *ast, struct token **expr)
         if ((*expr)->data)
             ast->middle = get_ast(mj, ast->middle, expr);
         else
-        {
-            token_free(*expr);
-            *expr = get_next_token(mj);
-        }
+            *expr = token_renew(mj, *expr, 0);
     } while (should_loop((*expr)->word));
 }
 
 static void parser_end_if(struct major *mj, struct token **tk,
-                          struct token *expr, struct ast *newast)
+                          struct ast *newast)
 {
-    if (expr->word == WORD_ELSE)
+    if ((*tk)->word == WORD_ELSE)
     {
-        token_free(expr);
-        expr = get_next_token(mj);
-        parser_else(mj, newast, &expr);
+        *tk = token_renew(mj, *tk, 1);
+        parser_else(mj, newast, tk);
     }
-    else if (expr->word == WORD_ELIF)
+    else if ((*tk)->word == WORD_ELIF)
     {
-        token_free(expr);
-        expr = token_cpy(mj, *tk);
-        newast->middle = parser_if(mj, newast->middle, &expr);
+        (*tk)->word = WORD_IF;
+        newast->middle = parser_if(mj, newast->middle, tk);
     }
 
-    *tk = expr;
-
-    if (expr->word == WORD_FI) // Was already done by elif if there was one
-    {
-        token_free(expr);
-        *tk = get_next_token(mj);
-    }
+    if ((*tk)->word == WORD_FI) // Was already done by elif if there was one
+        *tk = token_renew(mj, *tk, 0);
 }
 
 struct ast *parser_if(struct major *mj, struct ast *ast, struct token **tk)
 {
     superand_creator(mj, &ast);
 
-    struct token *cond = get_next_token(mj);
     struct ast *newast = create_ast(mj, *tk);
-    newast->left = get_ast(mj, newast->left, &cond);
-    struct token *then = cond;
-    struct token *expr = get_next_token(mj);
-    parser_cpdlist(mj, &expr, newast, should_loop);
+    *tk = get_next_token(mj);
 
-    if (then->word != WORD_THEN)
-    {
-        token_free(then);
-        my_err(2, mj, "parser_if: syntax error");
-    }
+    parser_cpdlist(mj, tk, newast, should_loop);
+    newast->left = newast->right;
+    newast->right = NULL;
 
-    token_free(then);
+    if ((*tk)->word != WORD_THEN)
+        my_err(2, mj, "parser_if: expected 'then'");
 
-    parser_end_if(mj, tk, expr, newast);
+    *tk = token_renew(mj, *tk, 1);
+    parser_cpdlist(mj, tk, newast, should_loop);
+
+    parser_end_if(mj, tk, newast);
 
     if (ast)
         ast->right = newast;

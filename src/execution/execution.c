@@ -24,6 +24,7 @@ char **token_list_to_char_array(struct list *l)
 
 int run_command(struct major *mj, char **args)
 {
+    fflush(stdout);
     int pid = fork();
     if (!pid)
     {

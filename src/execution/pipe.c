@@ -17,6 +17,7 @@ static int run_programs(struct major *mj, int pipefd[2], struct ast *left,
                         struct ast *right)
 {
     int pid[2];
+    fflush(stdout);
     if (!(pid[0] = fork()))
     {
         fclose(stdin);
@@ -51,7 +52,7 @@ int exec_pipe(struct major *mj, struct ast *ast)
         my_err(2, mj, "Unexpected EOF");
     int pipefd[2];
     if (pipe(pipefd) == -1)
-        my_err(1, mj, "Failed to create pipe");
+        return my_soft_err(mj, 1, "exec_pipe: Cannot create pipe");
     int rvalue = run_programs(mj, pipefd, ast->left, ast->right);
 
     return WEXITSTATUS(rvalue);

@@ -14,8 +14,7 @@ struct ast *parser_operator(struct major *mj, struct ast *ast,
     struct ast *newast = create_ast(mj, *tk);
     newast->left = ast;
     *tk = get_next_token(mj);
-    newast->right = get_ast(mj, newast->right, tk);
-
+    newast->right = take_action(mj, newast->right, tk);
     return newast;
 }
 

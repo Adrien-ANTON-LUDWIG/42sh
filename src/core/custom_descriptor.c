@@ -94,7 +94,7 @@ int custom_getline_same_buf(struct major *mj)
     }
 
     strcpy(f->str + f->lexer_index, buffer);
-    f->len = f->buffer_size - 1;
+    f->len += ret;
 
     free(buffer);
 

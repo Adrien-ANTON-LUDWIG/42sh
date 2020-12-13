@@ -17,7 +17,7 @@
             "WORD_REDIR_RP", "WORD_REDIR_LA", "WORD_REDIR_RA",                 \
             "WORD_REDIR_LLM", "WORD_REDIR_LL", "WORD_REDIR_RR",                \
             "WORD_REDIR_L", "WORD_REDIR_R", "WORD_COMMAND", "WORD_EOF",        \
-            "WORD_SUPERAND", "WORD_SEMIC", "WORD_NEWLINE", "WORD_QUOTE",       \
+            "WORD_SUPERAND", "WORD_SEMIC", "WORD_NEWLINE",                     \
             "WORD_LPARENTHESIS", "WORD_RPARENTHESIS", "WORD_DPARENTHESIS",     \
             "WORD_WORD"                                                        \
     }
