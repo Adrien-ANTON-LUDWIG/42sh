@@ -102,9 +102,9 @@ static struct token *get_token_quote(struct major *mj, char c)
     while (c != quote || lastchar == '\\')
     {
         lastchar = quote;
-        quote = get_char(f, 1);
+        c = get_char(f, 1);
 
-        if (at_end(f))
+        if (at_end(f) && c != '\"')
             if (!custom_getline_same_buf(mj))
                 my_err(2, mj, "get_token_quote: unexpected EOF");
     }
