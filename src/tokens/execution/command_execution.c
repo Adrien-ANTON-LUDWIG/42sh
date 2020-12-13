@@ -11,6 +11,7 @@
 #include "export.h"
 #include "major.h"
 #include "my_err.h"
+#include "shopt.h"
 #include "source.h"
 #include "tokens.h"
 
@@ -53,6 +54,11 @@ int exec_if_known(struct major *mj, char **command)
     else if (!strcmp(*command, "export"))
     {
         mj->rvalue = b_export(command);
+        return 1;
+    }
+    else if (!strcmp(*command, "shopt"))
+    {
+        mj->rvalue = b_shopt_options(mj, command);
         return 1;
     }
 
