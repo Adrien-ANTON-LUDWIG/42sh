@@ -45,8 +45,9 @@ struct custom_FILE *createfrom_string(struct major *mj, char *str)
 
 void custom_fclose(struct custom_FILE *f)
 {
-    free(f->str);
-    if (f->fd != CUSTOM_FD)
+    if (f)
+        free(f->str);
+    if (f && f->fd != CUSTOM_FD)
         fclose(f->file);
     free(f);
 }

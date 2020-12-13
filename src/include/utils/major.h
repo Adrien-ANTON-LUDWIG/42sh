@@ -11,6 +11,17 @@ struct funclist
     struct funclist *next;
     struct ast *ast;
 };
+
+/**
+ * @brief Shopt options list
+ *
+ */
+struct shopt_opt_list
+{
+    struct shopt_opt_list *next;
+    char *name;
+    int value;
+};
 /**
  * @brief Majors stores the important structures we use all along the project.
  * It also allows us to exit and free those structures whenever we need it
@@ -24,6 +35,7 @@ struct major
     struct custom_FILE *file;
     struct list *variables;
     struct funclist *flist;
+    struct shopt_opt_list *shopt_opt;
     char **arguments;
 };
 
