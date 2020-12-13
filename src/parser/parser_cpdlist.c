@@ -5,6 +5,8 @@
 void parser_cpdlist(struct major *mj, struct token **expr, struct ast *newast,
                     int (*should_loop)(enum words))
 {
+    if ((*expr)->word == WORD_NEWLINE)
+        *expr = token_renew(mj, *expr, 0);
     do
     {
         if ((*expr)->word == WORD_EOF)

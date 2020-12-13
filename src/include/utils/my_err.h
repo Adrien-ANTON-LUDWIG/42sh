@@ -17,4 +17,13 @@
  */
 void my_err(int err_code, struct major *mj, char *message);
 
+/**
+ * @brief Displays an error message and returns
+ *
+ * @param mj
+ * @param err_code
+ * @param message
+ */
+int my_soft_err(struct major *mj, int err_code, char *message);
+
 #endif /* UTILS_H */

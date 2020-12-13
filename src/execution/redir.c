@@ -58,7 +58,7 @@ static int exec_redir_l(struct major *mj, struct ast *ast)
     int new_fd = open(out, flags, 0644);
 
     if (new_fd == -1)
-        my_err(1, mj, "exec_redir_l: Couldn't open the file !");
+        return my_soft_err(mj, 1, "Could not open file");
 
     int old_fd = *(tk->data->head->data) - '0';
 
@@ -90,12 +90,12 @@ static int exec_redir_la(struct major *mj, struct ast *ast)
         int new_fd = open(out, O_TRUNC | O_CREAT | O_WRONLY, 0644);
 
         if (new_fd == -1)
-            my_err(1, mj, "exec_redir: Couldn't open the file !");
+            return my_soft_err(mj, 1, "Could not open file");
 
         return run(mj, old_fd, new_fd, ast->right);
     }
 
-    my_err(1, mj, "exec_redir_la: redirection ambigue");
+    my_soft_err(mj, 1, "Ambiguious redirection");
     return 1;
 }
 
@@ -107,7 +107,7 @@ static int exec_redir_r(struct major *mj, struct ast *ast)
     int new_fd = open(out, flags | O_CREAT | O_WRONLY, 0644);
 
     if (new_fd == -1)
-        my_err(1, mj, "exec_redir: Couldn't open the file !");
+        return my_soft_err(mj, 1, "Could not open file");
 
     int old_fd = *(tk->data->head->data) - '0';
 
