@@ -38,6 +38,7 @@ static char *var_subs_in_string(struct major *mj, char *str)
 {
     char *temp = str;
     char *spec_var[] = SPECIAL_VARIABLES;
+    int strong_quote = 0;
 
     substitution[0] = dollar_at;
     substitution[1] = dollar_star;
@@ -49,11 +50,23 @@ static char *var_subs_in_string(struct major *mj, char *str)
     substitution[7] = dollar_oldpwd;
     substitution[8] = dollar_ifs;
 
-    while (temp && (temp = strstr(temp, "$")) != NULL)
+    while (temp && *temp)
     {
-        char *str_saved_for_free = str;
+        if (*temp == '\'')
+        {
+            strong_quote = !strong_quote;
+            temp++;
+            continue;
+        }
+        if (*temp != '$' || (*temp == '$' && strong_quote))
+        {
+            temp++;
+            continue;
+        }
+
         int i = 0;
         size_t index = 0;
+        char *str_saved_for_free = str;
         for (; i < NUMBER_OF_SPECIAL_VARIABLES; i++)
         {
             if (!strncmp(spec_var[i], temp, strlen(spec_var[i])))
@@ -70,8 +83,9 @@ static char *var_subs_in_string(struct major *mj, char *str)
             index = temp - str;
             str = dollar_unknown(mj, str, index);
             temp = str;
-            free(str_saved_for_free);
+            free(str_saved_for_free);   
         }
+        
     }
     return str;
 }

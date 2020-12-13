@@ -9,10 +9,9 @@
 
 #include "argument_handler.h"
 #include "b_utils.h"
+#include "echo_utils.h"
 #include "my_err.h"
 
-#define CHAR_ZERO 48
-#define TO_UPPER 32
 #define ESCAPE_CHAR 27
 #define NB_ESCAPE_SEQ 7
 
@@ -24,100 +23,6 @@
     {                                                                          \
         '\a', '\b', '\f', '\n', '\r', '\t', '\v'                               \
     }
-
-static int nb_to_read_oct(char *s, int i)
-{
-    int j = i + 1;
-    for (; j < i + 4 && s[j]; j++)
-    {
-        if (s[j] < '0' || '7' < s[j])
-        {
-            break;
-        }
-    }
-    return j - i - 1;
-}
-
-static int nb_to_read_hx(char *s, int i)
-{
-    int j = i + 1;
-    for (; j < i + 3 && s[j]; j++)
-    {
-        if ((s[j] < '0' || '9' < s[j]) && (s[j] < 'A' || 'F' < s[j])
-            && (s[j] < 'a' || 'f' < s[j]))
-        {
-            break;
-        }
-    }
-    return j - i - 1;
-}
-
-static int my_pow(int a, int b)
-{
-    int res = 1;
-    for (int i = 0; i < b; i++)
-        res *= a;
-    return res;
-}
-
-static int str_oct_to_dec(char *s, int i, int to_read)
-{
-    int n = 0;
-    for (int j = 0; j < to_read; j++)
-    {
-        n += (((s[i + j]) - CHAR_ZERO) * my_pow(8, to_read - j - 1));
-    }
-    return n;
-}
-
-static int get_hex_val(char *c)
-{
-    if ('a' <= *c && *c <= 'f')
-        *c -= TO_UPPER;
-    int ret = 0;
-    if (*c >= '0' && '9' >= *c)
-        ret = *c - '0';
-    else
-        ret = *c - 'A' + 10;
-    return ret;
-}
-
-static int str_hx_to_dec(char *s, int i, int to_read)
-{
-    int n = 0;
-    for (int j = 0; j < to_read; j++)
-    {
-        n += (get_hex_val(s + i + j)) * my_pow(16, to_read - j - 1);
-    }
-    return n;
-}
-
-static int set_options(char *argv[], int *n, int *e, int *E)
-{
-    if (!argv)
-        return 1;
-
-    int nb_options = 0;
-    int i = 1;
-    while (argv[i] && !nb_options)
-    {
-        if (!strcmp(argv[i], "-n"))
-            *n = 1;
-        else if (!strcmp(argv[i], "-e"))
-            *e = (*E == 0);
-        else if (!strcmp(argv[i], "-E"))
-        {
-            *E = 1;
-            *e = 0;
-        }
-        else
-            nb_options = i;
-        i += (nb_options) ? 0 : 1;
-    }
-
-    nb_options = i - 1;
-    return nb_options;
-}
 
 static int get_escape_index(char c)
 {
@@ -138,39 +43,62 @@ static int get_escape_index(char c)
     return -5;
 }
 
+static size_t set_hard_quoting(int *hard_quoting, int i, char c, int e)
+{
+    if (c == '\'')
+    {
+        *hard_quoting = e ? 0 : !*hard_quoting;
+        i++;
+    }
+    return i;
+}
+
+static int get_ascii_conversion(char *argv, size_t *i, int index)
+{
+    int to_read = 0;
+    if (index == -2)
+    {
+        to_read = (nb_to_read_oct(argv, *i));
+        *i += to_read;
+        return str_oct_to_dec(argv + 1, *i, to_read);
+    }
+    else
+    {
+        to_read = nb_to_read_hx(argv, *i);
+        *i += to_read;
+        return str_hx_to_dec(argv + 1, *i, to_read);
+    }
+    return 42;
+}
+
 static void echo_display(char *argv, int e, int *n)
 {
     char str_escape[] = STRING_ESCAPE;
     char c = ' ';
-    for (size_t i = 0; i < strlen(argv); i++)
+    int hard_quoting = 0;
+    size_t len = strlen(argv);
+    for (size_t i = 0; i < len; i++)
     {
         c = argv[i];
-        if (e && c == '\\' && i++ && argv[i] == '\\')
+        i = set_hard_quoting(&hard_quoting, i, c, e);
+
+        if (!hard_quoting && e && c == '\\' && argv[++i] == '\\' && i++)
         {
-            i++;
             int index = get_escape_index(argv[i]);
             if (index == -1 && (*n = 1))
                 return;
             else if (index == -2 || index == -3)
-            {
-                int to_read = (index == -2) ? nb_to_read_oct(argv, i)
-                                            : nb_to_read_hx(argv, i);
-                int ascii = (index == -2) ? str_oct_to_dec(argv + 1, i, to_read)
-                                          : str_hx_to_dec(argv + 1, i, to_read);
-                printf("%c", ascii);
-                i += to_read;
-            }
+                printf("%c", get_ascii_conversion(argv, &i, index));
             else if (index == -4)
                 printf("%c", ESCAPE_CHAR);
             else if (index == -5)
-            {
-                putchar(c);
-                putchar(argv[i]);
-            }
+                printf("%c%c", c, argv[i]);
             else
                 printf("%c", str_escape[index]);
         }
-        else if (argv[i] != '\\')
+        else if ((i < len)
+                 && ((!hard_quoting && argv[i] != '\\' && argv[i] != '\'')
+                     || (hard_quoting && argv[i] != '\'')))
             putchar(argv[i]);
     }
 }
@@ -201,7 +129,7 @@ int b_echo(char **argv)
     int E = 0;
     int nb_opt = set_options(argv, &n, &e, &E);
     char *str = merge_arguments(argc - nb_opt - 1, argv + nb_opt + 1);
-    
+
     echo_display(str, e, &n);
     free(str);
     if (!n)
