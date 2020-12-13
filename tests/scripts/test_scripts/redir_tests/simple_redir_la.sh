@@ -1,2 +1,1 @@
-echo ikea <& scripts/bestPlaceEver
-cat <& scripts/bestPlaceEver
+cat <& scripts/tests_script.sh

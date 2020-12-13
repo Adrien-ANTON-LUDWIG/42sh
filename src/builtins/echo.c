@@ -3,9 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "argument_handler.h"
 #include "b_utils.h"
+#include "my_err.h"
 
 #define CHAR_ZERO 48
 #define TO_UPPER 32
@@ -180,6 +184,9 @@ static void echo_display(char *argv, int e, int *n)
 */
 int b_echo(char **argv)
 {
+    struct stat statbuff;
+    if (fstat(STDOUT_FILENO, &statbuff) == -1)
+        return 1;
     fflush(stdout);
     int argc = argv_len(argv);
 
@@ -194,7 +201,7 @@ int b_echo(char **argv)
     int E = 0;
     int nb_opt = set_options(argv, &n, &e, &E);
     char *str = merge_arguments(argc - nb_opt - 1, argv + nb_opt + 1);
-
+    
     echo_display(str, e, &n);
     free(str);
     if (!n)

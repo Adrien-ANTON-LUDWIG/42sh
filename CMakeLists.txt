@@ -55,6 +55,7 @@ set (SRC
     src/utils/major.c
     src/utils/my_err.c
     src/utils/my_xmalloc.c
+    src/utils/stack.c
     tests/printer.c
 )
 

@@ -1,5 +1,7 @@
 #include "exec_ast.h"
 
+#include <stdio.h>
+
 #include "ast.h"
 #include "command_execution.h"
 #include "execution.h"

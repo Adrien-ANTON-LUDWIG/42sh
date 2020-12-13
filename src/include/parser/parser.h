@@ -81,6 +81,8 @@ struct ast *parser_while(struct major *mj, struct ast *ast, struct token **tk);
 struct ast *parser_for(struct major *mj, struct ast *ast, struct token **tk);
 struct ast *parser_operator(struct major *mj, struct ast *ast,
                             struct token **tk);
+struct ast *parser_redir(struct major *mj,
+                         /*struct ast *ast,*/ struct token **tk);
 
 struct ast *get_ast(struct major *mj, struct ast *ast, struct token **tk);
 
