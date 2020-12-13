@@ -17,6 +17,7 @@ set (SRC
     src/builtins/cd.c
     src/builtins/exit.c
     src/builtins/echo.c
+    src/builtins/echo_utils.c
     src/builtins/export.c
     src/builtins/source.c
     src/builtins/b_utils.c
