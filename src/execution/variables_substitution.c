@@ -34,10 +34,30 @@ static char *manage_string(struct major *mj, char *str, size_t index,
     return new_str;
 }
 
+static int predicate(char c, int strong_quote)
+{
+    return (c == '\'') || (c != '$' || (c == '$' && strong_quote));
+}
+
+static void set_quotes(int *strong_quote, char **temp)
+{
+    *strong_quote = **temp == '\'' ? !*strong_quote : *strong_quote;
+}
+
+static int get_index_func(char *temp)
+{
+    char *spec_var[] = SPECIAL_VARIABLES;
+
+    int i = 0;
+    for (; i < NUMBER_OF_SPECIAL_VARIABLES; i++)
+        if (!strncmp(spec_var[i], temp, strlen(spec_var[i])))
+            return i;
+    return i;
+}
+
 static char *var_subs_in_string(struct major *mj, char *str)
 {
     char *temp = str;
-    char *spec_var[] = SPECIAL_VARIABLES;
     int strong_quote = 0;
 
     substitution[0] = dollar_at;
@@ -52,40 +72,22 @@ static char *var_subs_in_string(struct major *mj, char *str)
 
     while (temp && *temp)
     {
-        if (*temp == '\'')
+        if (predicate(*temp, strong_quote))
         {
-            strong_quote = !strong_quote;
-            temp++;
-            continue;
-        }
-        if (*temp != '$' || (*temp == '$' && strong_quote))
-        {
+            set_quotes(&strong_quote, &temp);
             temp++;
             continue;
         }
 
-        int i = 0;
-        size_t index = 0;
         char *str_saved_for_free = str;
-        for (; i < NUMBER_OF_SPECIAL_VARIABLES; i++)
-        {
-            if (!strncmp(spec_var[i], temp, strlen(spec_var[i])))
-            {
-                index = temp - str;
-                str = manage_string(mj, str, index, *(substitution[i]));
-                temp = str;
-                free(str_saved_for_free);
-                break;
-            }
-        }
-        if (i == NUMBER_OF_SPECIAL_VARIABLES)
-        {
-            index = temp - str;
-            str = dollar_unknown(mj, str, index);
-            temp = str;
-            free(str_saved_for_free);   
-        }
-        
+        int i = get_index_func(temp);
+        size_t index = temp - str;
+
+        str = (i < NUMBER_OF_SPECIAL_VARIABLES)
+            ? manage_string(mj, str, index, *(substitution[i]))
+            : dollar_unknown(mj, str, index);
+        temp = str;
+        free(str_saved_for_free);
     }
     return str;
 }
