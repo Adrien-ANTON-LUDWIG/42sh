@@ -1,0 +1,6 @@
+echo foo &&
+
+
+
+
+echo bar

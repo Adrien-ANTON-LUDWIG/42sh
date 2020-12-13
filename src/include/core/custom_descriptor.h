@@ -61,26 +61,6 @@ struct custom_FILE *createfrom_string(struct major *mj, char *str);
 void custom_fclose(struct custom_FILE *f);
 
 /**
- * @brief Same as fgets but works with strings
- *
- * @param s buffer
- * @param size amount of bytes to read
- * @param f
- * @return char* pointer to s
- */
-char *custom_fgets(char *s, size_t size, struct custom_FILE *f);
-
-/**
- * @brief Takes a custom file and returns a single
- * string whith all its data.
- *
- * @param f custom_FILE
- * @return char*
- */
-// char *custom_getfile(struct custom_FILE *f);
-void get_new_string(struct major *mj);
-
-/**
  * @brief Same as getline but works with a custom_FILE.
  *
  *
