@@ -7,6 +7,7 @@
 #include "custom_descriptor.h"
 #include "list.h"
 #include "my_xmalloc.h"
+#include "shopt.h"
 
 struct major *major_init(void)
 {
@@ -15,6 +16,9 @@ struct major *major_init(void)
 
 void major_free(struct major *mj)
 {
+    if (mj->shopt_opt)
+        free_shopt_opt_list(mj);
+
     struct funclist *fl = mj->flist;
 
     while (fl)

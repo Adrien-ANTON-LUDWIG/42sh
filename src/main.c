@@ -12,26 +12,7 @@
 #include "my_xmalloc.h"
 #include "parser.h"
 #include "printer.h"
-
-/**
- * @brief Does nothing... yet
- *
- * @param i
- * @param argv
- */
-void shopt_options(int *i, char **argv)
-{
-    if (!argv[*i])
-        return;
-    while (!strcmp(argv[*i], "-O") || !strcmp(argv[*i], "+O"))
-    {
-        if (argv[*i][0] == '-')
-            *i += 1;
-        else
-            *i += 1;
-        *i += 1;
-    }
-}
+#include "shopt.h"
 
 static int run_command_line(char *argv[], int from, struct major *mj)
 {
@@ -58,17 +39,18 @@ int main(int argc, char **argv)
         i = 1;
 
     struct major *mj = major_init();
+    i += shopt_options_argv(mj, argv + i);
     int from = get_index_command_string(i, argc, argv);
     mj->arguments = argv + from + 1;
 
-    if (strcmp(argv[i], "-c") == 0)
+    if (i < argc && strcmp(argv[i], "-c") == 0)
     {
         if (i + 1 == argc)
             errx(2, "-c: option requires an argument");
 
         return run_command_line(argv, from, mj);
     }
-    else
+    else if (i < argc)
     {
         struct custom_FILE *file;
         if (argc >= 2)

@@ -20,6 +20,8 @@ set (SRC
     src/builtins/export.c
     src/builtins/source.c
     src/builtins/b_utils.c
+    src/builtins/shopt.c
+    src/builtins/shopt_list.c
     src/core/custom_descriptor.c
     src/core/argument_handler.c
     src/execution/execution.c
