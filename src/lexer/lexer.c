@@ -9,6 +9,7 @@
 
 #include "custom_descriptor.h"
 #include "list.h"
+#include "my_err.h"
 #include "my_xmalloc.h"
 #include "string_manipulation.h"
 #include "tokens.h"
@@ -50,6 +51,74 @@ static struct token *get_token_redir(struct major *mj, char c)
     return tk;
 }
 
+static struct token *get_token_and(struct major *mj)
+{
+    struct custom_FILE *f = mj->file;
+
+    if (get_char(f, 0) == '&')
+    {
+        f->lexer_index++;
+        return token_init(mj, WORD_AND);
+    }
+
+    return token_init(mj, WORD_SEMIC);
+}
+
+static struct token *get_token_pipe(struct major *mj)
+{
+    struct custom_FILE *f = mj->file;
+
+    if (get_char(f, 0) == '|')
+    {
+        f->lexer_index++;
+        return token_init(mj, WORD_OR);
+    }
+
+    return token_init(mj, WORD_PIPE);
+}
+
+static struct token *get_token_parenthesis(struct major *mj)
+{
+    struct custom_FILE *f = mj->file;
+    skip(f, is_in, MY_IS_SPACE);
+
+    if (get_char(f, 0) == ')')
+    {
+        f->lexer_index++;
+        return token_init(mj, WORD_DPARENTHESIS);
+    }
+
+    return token_init(mj, WORD_LPARENTHESIS);
+}
+
+static struct token *get_token_quote(struct major *mj, char c)
+{
+    struct custom_FILE *f = mj->file;
+
+    size_t start = f->lexer_index - 1;
+    char quote = c;
+    char lastchar = '\\';
+
+    while (c != quote || lastchar == '\\')
+    {
+        lastchar = quote;
+        quote = get_char(f, 1);
+
+        if (at_end(f))
+            if (!custom_getline_same_buf(mj))
+                my_err(2, mj, "get_token_quote: unexpected EOF");
+    }
+
+    size_t end = f->lexer_index;
+    size_t len = end - start;
+
+    struct token *tk = token_init(mj, WORD_WORD);
+    char *s = strndup(f->str + start, len);
+    tk->data = list_append(mj, tk->data, s);
+
+    return tk;
+}
+
 static struct token *get_token_operator(struct major *mj)
 {
     struct custom_FILE *f = mj->file;
@@ -60,37 +129,16 @@ static struct token *get_token_operator(struct major *mj)
     if (c == '\n')
         return token_init(mj, WORD_NEWLINE);
     if (c == '&')
-    {
-        if (get_char(f, 0) == '&')
-        {
-            f->lexer_index++;
-            return token_init(mj, WORD_AND);
-        }
-        return token_init(mj, WORD_SEMIC);
-    }
+        return get_token_and(mj);
     if (c == '|')
-    {
-        if (get_char(f, 0) == '|')
-        {
-            f->lexer_index++;
-            return token_init(mj, WORD_OR);
-        }
-        return token_init(mj, WORD_PIPE);
-    }
+        return get_token_pipe(mj);
     if (c == '(')
-    {
-        skip(f, is_in, MY_IS_SPACE);
-        if (get_char(f, 0) == ')')
-        {
-            f->lexer_index++;
-            return token_init(mj, WORD_DPARENTHESIS);
-        }
-        return token_init(mj, WORD_LPARENTHESIS);
-    }
+        return get_token_parenthesis(mj);
     if (c == ')')
         return token_init(mj, WORD_RPARENTHESIS);
+    if (c == '"' || c == '\'')
+        return get_token_quote(mj, c);
     return get_token_redir(mj, c);
-    // TODO Add quote
 }
 
 static struct token *get_token_operator_skip_newline(struct major *mj)
@@ -110,12 +158,21 @@ static struct token *get_token_operator_skip_newline(struct major *mj)
 
     return tk;
 }
-
 static struct token *get_token_word(struct major *mj)
 {
     struct custom_FILE *f = mj->file;
     size_t start = f->lexer_index;
-    skip(f, is_not_in, IS_NOT_WORD);
+    char c = '"';
+
+    while (is_not_in(get_char(f, 0), IS_NOT_WORD) && (c == '"' || c == '\''))
+    {
+        skip(f, is_not_in, IS_NOT_WORD);
+        c = get_char(f, 0);
+
+        if ((c == '"' || c == '\'') && f->str[f->lexer_index - 1] == '\\')
+            f->lexer_index++;
+    }
+
     size_t end = f->lexer_index;
     size_t len = end - start;
 

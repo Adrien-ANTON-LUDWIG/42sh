@@ -33,7 +33,7 @@ void print_token(struct token *tk)
 {
     printf("%s", token2string(tk));
 
-    if (tk->word == WORD_COMMAND)
+    if (tk->word == WORD_COMMAND || tk->word == WORD_WORD)
     {
         struct list_item *li = tk->data->head;
         for (size_t i = 0; i < tk->data->size; i++)

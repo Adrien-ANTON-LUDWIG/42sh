@@ -83,7 +83,8 @@ struct list *variables_substitution(struct major *mj, struct list *list)
 
     if (!mj)
     {
-        printf("struct major should exist at this point");
+        my_soft_err(mj, 1,
+                    "Variable_substitution: Major should exist at this point");
         return list;
     }
 
