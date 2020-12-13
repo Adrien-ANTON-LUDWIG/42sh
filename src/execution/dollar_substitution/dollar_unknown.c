@@ -19,7 +19,7 @@ char *dollar_unknown(struct major *mj, char *str, int index)
         stop = " $\t\n";
     }
 
-    while (is_not_in(str[index + len_var], stop))
+    while (str[index + len_var] && is_not_in(str[index + len_var], stop))
         len_var++;
 
     char *str_after_var = str + index + len_var;
