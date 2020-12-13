@@ -80,12 +80,6 @@ target_link_libraries(testsuite PUBLIC criterion 42)
 add_executable(lexer_test EXCLUDE_FROM_ALL tests/printer.c tests/lexer_tests/lexer_test.c ${HEADERS})
 target_link_libraries(lexer_test 42)
 
-add_executable(ast_printer EXCLUDE_FROM_ALL tests/ast_printer.c ${HEADERS})
-target_link_libraries(ast_printer 42)
-
-add_custom_target(ap
-    DEPENDS ast_printer)
-
 add_custom_target(debug
     COMMAND export DBG=DEBUG && cmake .. && make)
 
