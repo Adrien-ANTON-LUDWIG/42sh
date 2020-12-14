@@ -17,54 +17,34 @@
             "sourcepath", "xpg_echo"                                           \
     }
 
-static void print_shopt_opt_plus(struct major *mj)
+static void print_shopt_opt(struct major *mj, int is_minus, int value)
 {
     struct shopt_opt_list *temp = mj->shopt_opt;
 
     while (temp)
     {
-        printf("shopt -%s %s\n", (temp->value) ? "u" : "s", temp->name);
-        temp = temp->next;
-    }
-}
-
-static void print_shopt_opt_minus(struct major *mj)
-{
-    struct shopt_opt_list *temp = mj->shopt_opt;
-
-    while (temp)
-    {
-        printf("%s %s\n", temp->name, (temp->value) ? "yes" : "no");
-        temp = temp->next;
-    }
-}
-
-static void print_shopt_opt_same_value(struct major *mj, int value)
-{
-    struct shopt_opt_list *temp = mj->shopt_opt;
-
-    while (temp)
-    {
-        if (temp->value == value)
+        if (!is_minus)
+            printf("shopt -%s %s\n", (temp->value) ? "u" : "s", temp->name);
+        else if (value < 0 || temp->value == value)
             printf("%s %s\n", temp->name, (temp->value) ? "yes" : "no");
         temp = temp->next;
     }
 }
 
-static int print_shopt_opt(struct major *mj, char *arg, int should_print)
+static int shopt_opt_print(struct major *mj, char *arg, int should_print)
 {
     int rvalue = 0;
 
     if (!arg && should_print && (rvalue = 1))
-        print_shopt_opt_minus(mj);
+        print_shopt_opt(mj, 1, -1);
     else if (!strcmp(arg, "+O") && (rvalue = 1))
-        print_shopt_opt_plus(mj);
+        print_shopt_opt(mj, 0, -1);
     else if (!strcmp(arg, "-O") && (rvalue = 1))
-        print_shopt_opt_minus(mj);
+        print_shopt_opt(mj, 1, -1);
     else if (!strcmp(arg, "-s"))
-        print_shopt_opt_same_value(mj, 1);
+        print_shopt_opt(mj, 1, 1);
     else if (!strcmp(arg, "-u"))
-        print_shopt_opt_same_value(mj, 0);
+        print_shopt_opt(mj, 1, 0);
     else
         rvalue = 0;
     return rvalue;
@@ -83,10 +63,12 @@ static int get_shopt_index(char *name)
     return -1;
 }
 
-static int shopt_opt_set(struct major *mj, char **argv)
+static int shopt_opt_manage(struct major *mj, char **argv, int should_set,
+                            int one_time)
 {
     if (!argv || !*argv)
-        return print_shopt_opt(mj, "-s", 0);
+        return (should_set) ? shopt_opt_print(mj, "-s", 0)
+                            : shopt_opt_print(mj, "-u", 0);
 
     char *shopt_names[] = SHOPT_OPT;
 
@@ -95,35 +77,12 @@ static int shopt_opt_set(struct major *mj, char **argv)
         int name_index = get_shopt_index(argv[i]);
 
         if (name_index < 0)
-        {
-            warnx("shopt: %s: invalid shell option name", argv[i]);
-            return 1;
-        }
+            my_err(2, mj, "shopt: invalid shell option name");
 
-        set_shopt_opt(mj->shopt_opt, shopt_names[i], 1);
-    }
+        set_shopt_opt(mj->shopt_opt, shopt_names[name_index], should_set);
 
-    return 0;
-}
-
-static int shopt_opt_unset(struct major *mj, char **argv)
-{
-    if (!argv || !*argv)
-        return print_shopt_opt(mj, "-u", 0);
-
-    char *shopt_names[] = SHOPT_OPT;
-
-    for (int i = 0; i < argv_len(argv); i++)
-    {
-        int name_index = get_shopt_index(argv[i]);
-
-        if (name_index < 0)
-        {
-            warnx("shopt: %s: invalid shell option name", argv[i]);
-            return 1;
-        }
-
-        set_shopt_opt(mj->shopt_opt, shopt_names[i], 0);
+        if (one_time)
+            break;
     }
 
     return 0;
@@ -149,13 +108,18 @@ int shopt_options_argv(struct major *mj, char **argv)
     if (!argv || (strcmp(argv[0], "+O") != 0 && strcmp(argv[0], "-O") != 0))
         return 0;
 
-    if (argv_len(argv) > 1)
+    int len = argv_len(argv);
+
+    if (len > 1 && strcmp(argv[0], "+O"))
         my_err(2, mj, "invalid shell option name");
 
     if (!mj->shopt_opt)
         init_shopt_opt_list(mj);
 
-    return print_shopt_opt(mj, argv[0], 0);
+    if (len > 1 && !strcmp(argv[0], "-O"))
+        return shopt_opt_manage(mj, argv + 1, 1, 1) + 2;
+
+    return shopt_opt_print(mj, argv[0], 0);
 }
 
 int b_shopt_options(struct major *mj, char **argv)
@@ -169,13 +133,13 @@ int b_shopt_options(struct major *mj, char **argv)
     int len = argv_len(argv);
 
     if (len == 1)
-        return print_shopt_opt(mj, NULL, 1);
+        return shopt_opt_print(mj, NULL, 1);
 
     if (!strcmp(argv[1], "-s"))
-        return shopt_opt_set(mj, argv + 2);
+        return shopt_opt_manage(mj, argv + 2, 1, 0);
 
     if (!strcmp(argv[1], "-u"))
-        return shopt_opt_unset(mj, argv + 2);
+        return shopt_opt_manage(mj, argv + 2, 0, 0);
 
     return 0;
 }
