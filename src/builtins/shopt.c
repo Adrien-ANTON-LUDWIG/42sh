@@ -11,6 +11,12 @@
 #include "my_xmalloc.h"
 
 #define SHOPT_OPT_LEN 7
+#define UNSET 0
+#define SET 1
+#define MULTIPLE_TIME 0
+#define ONE_TIME 1
+#define SHOULD_NOT_PRINT 0
+#define SHOULD_PRINT 1
 #define SHOPT_OPT                                                              \
     {                                                                          \
         "dotglob", "expand_aliases", "extglob", "nocaseglob", "nullglob",      \
@@ -50,7 +56,7 @@ static int shopt_opt_print(struct major *mj, char *arg, int should_print)
     return rvalue;
 }
 
-static int get_shopt_index(char *name)
+static int shopt_get_index(char *name)
 {
     if (!name)
         return -1;
@@ -74,7 +80,7 @@ static int shopt_opt_manage(struct major *mj, char **argv, int should_set,
 
     for (int i = 0; i < argv_len(argv); i++)
     {
-        int name_index = get_shopt_index(argv[i]);
+        int name_index = shopt_get_index(argv[i]);
 
         if (name_index < 0)
             my_err(2, mj, "shopt: invalid shell option name");
@@ -90,6 +96,9 @@ static int shopt_opt_manage(struct major *mj, char **argv, int should_set,
 
 int shopt_opt_is_set(struct major *mj, char *opt_name)
 {
+    if (!mj->shopt_opt)
+        init_shopt_opt_list(mj);
+
     struct shopt_opt_list *temp = mj->shopt_opt;
 
     while (temp && strcmp(temp->name, opt_name) != 0)
@@ -110,14 +119,17 @@ int shopt_options_argv(struct major *mj, char **argv)
 
     int len = argv_len(argv);
 
-    if (len > 1 && strcmp(argv[0], "+O"))
-        my_err(2, mj, "invalid shell option name");
-
     if (!mj->shopt_opt)
         init_shopt_opt_list(mj);
 
-    if (len > 1 && !strcmp(argv[0], "-O"))
-        return shopt_opt_manage(mj, argv + 1, 1, 1) + 2;
+    if (len > 1)
+    {
+        if (!strcmp(argv[0], "-O"))
+            shopt_opt_manage(mj, argv + 1, SET, ONE_TIME);
+        else
+            shopt_opt_manage(mj, argv + 1, UNSET, ONE_TIME);
+        return 2;
+    }
 
     return shopt_opt_print(mj, argv[0], 0);
 }
@@ -133,13 +145,13 @@ int b_shopt_options(struct major *mj, char **argv)
     int len = argv_len(argv);
 
     if (len == 1)
-        return shopt_opt_print(mj, NULL, 1);
+        return shopt_opt_print(mj, NULL, SHOULD_PRINT);
 
     if (!strcmp(argv[1], "-s"))
-        return shopt_opt_manage(mj, argv + 2, 1, 0);
+        return shopt_opt_manage(mj, argv + 2, SET, MULTIPLE_TIME);
 
     if (!strcmp(argv[1], "-u"))
-        return shopt_opt_manage(mj, argv + 2, 0, 0);
+        return shopt_opt_manage(mj, argv + 2, UNSET, MULTIPLE_TIME);
 
     return 0;
 }
