@@ -23,15 +23,18 @@
             "sourcepath", "xpg_echo"                                           \
     }
 
-static void print_shopt_opt(struct major *mj, int is_minus, int value)
+static void print_shopt_opt(struct major *mj, int is_minus, int value,
+                            char *name)
 {
     struct shopt_opt_list *temp = mj->shopt_opt;
 
     while (temp)
     {
-        if (!is_minus)
+        if (!name && !is_minus)
             printf("shopt -%s %s\n", (temp->value) ? "u" : "s", temp->name);
-        else if (value < 0 || temp->value == value)
+        else if (!name && (value < 0 || temp->value == value))
+            printf("%s %s\n", temp->name, (temp->value) ? "yes" : "no");
+        else if (name && !strcmp(temp->name, name))
             printf("%s %s\n", temp->name, (temp->value) ? "yes" : "no");
         temp = temp->next;
     }
@@ -42,15 +45,15 @@ static int shopt_opt_print(struct major *mj, char *arg, int should_print)
     int rvalue = 0;
 
     if (!arg && should_print && (rvalue = 1))
-        print_shopt_opt(mj, 1, -1);
+        print_shopt_opt(mj, 1, -1, NULL);
     else if (!strcmp(arg, "+O") && (rvalue = 1))
-        print_shopt_opt(mj, 0, -1);
+        print_shopt_opt(mj, 0, -1, NULL);
     else if (!strcmp(arg, "-O") && (rvalue = 1))
-        print_shopt_opt(mj, 1, -1);
+        print_shopt_opt(mj, 1, -1, NULL);
     else if (!strcmp(arg, "-s"))
-        print_shopt_opt(mj, 1, 1);
+        print_shopt_opt(mj, 1, 1, NULL);
     else if (!strcmp(arg, "-u"))
-        print_shopt_opt(mj, 1, 0);
+        print_shopt_opt(mj, 1, 0, NULL);
     else
         rvalue = 0;
     return rvalue;
@@ -152,6 +155,11 @@ int b_shopt_options(struct major *mj, char **argv)
 
     if (!strcmp(argv[1], "-u"))
         return shopt_opt_manage(mj, argv + 2, UNSET, MULTIPLE_TIME);
+
+    int index = shopt_get_index(argv[1]);
+
+    if (index >= 0)
+        print_shopt_opt(mj, 1, -1, argv[1]);
 
     return 0;
 }
