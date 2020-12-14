@@ -71,8 +71,27 @@ static int get_ascii_conversion(char *argv, size_t *i, int index)
     return 42;
 }
 
+static int should_print_argvi(char argvi, int hard_quoting)
+{
+    if (!hard_quoting && argvi == '\"')
+    {
+        return 0;
+    }
+
+    if (!hard_quoting && argvi != '\\' && argvi != '\'')
+    {
+        return 1;
+    }
+
+    if (hard_quoting && argvi != '\'')
+    {
+        return 1;
+    }
+    return 0;
+}
 static void echo_display(char *argv, int e, int *n)
 {
+    // printf("str = %s\n", argv);
     char str_escape[] = STRING_ESCAPE;
     char c = ' ';
     int hard_quoting = 0;
@@ -96,9 +115,13 @@ static void echo_display(char *argv, int e, int *n)
             else
                 printf("%c", str_escape[index]);
         }
-        else if ((i < len)
-                 && ((!hard_quoting && argv[i] != '\\' && argv[i] != '\'')
-                     || (hard_quoting && argv[i] != '\'')))
+
+        if (!hard_quoting&& i + 1 < len && argv[i] == '\\' && argv[i] == argv[i + 1])
+        {
+            putchar('\\');
+            i++;   
+        }
+        else if ((i < len) && should_print_argvi(argv[i], hard_quoting))
             putchar(argv[i]);
     }
 }
