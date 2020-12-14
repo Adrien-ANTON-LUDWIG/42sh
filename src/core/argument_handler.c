@@ -25,7 +25,7 @@ char *merge_arguments(int argc, char **argv)
     for (int i = 0; i < argc; i++)
     {
         int len = strlen(argv[i]);
-        if (index + len + 1 >= size)
+        while (index + len + 1 >= size)
         {
             result = realloc(result, size * 2);
             size *= 2;
