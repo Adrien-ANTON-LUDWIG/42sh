@@ -11,6 +11,7 @@
 #include "b_utils.h"
 #include "echo_utils.h"
 #include "my_err.h"
+#include "string_manipulation.h"
 
 #define ESCAPE_CHAR 27
 #define NB_ESCAPE_SEQ 7
@@ -23,6 +24,7 @@
     {                                                                          \
         '\a', '\b', '\f', '\n', '\r', '\t', '\v'                               \
     }
+
 
 static int get_escape_index(char c)
 {
@@ -43,16 +45,6 @@ static int get_escape_index(char c)
     return -5;
 }
 
-static size_t set_hard_quoting(int *hard_quoting, int i, char c, int e)
-{
-    if (c == '\'')
-    {
-        *hard_quoting = e ? 0 : !*hard_quoting;
-        i++;
-    }
-    return i;
-}
-
 static int get_ascii_conversion(char *argv, size_t *i, int index)
 {
     int to_read = 0;
@@ -70,59 +62,73 @@ static int get_ascii_conversion(char *argv, size_t *i, int index)
     }
     return 42;
 }
-
-static int should_print_argvi(char argvi, int hard_quoting)
+/*
+static int weak_quotes(char *argv, int i, int len)
 {
-    if (!hard_quoting && argvi == '\"')
+    char c;
+    int to_interpret = 0;
+    while (i < len)
     {
-        return 0;
-    }
+        char c = argv[i];
+        if (c == '\"')
+            return i + 1;
 
-    if (!hard_quoting && argvi != '\\' && argvi != '\'')
-    {
-        return 1;
     }
-
-    if (hard_quoting && argvi != '\'')
-    {
-        return 1;
-    }
-    return 0;
 }
+*/
+static int strong_quotes(char *argv, size_t i, size_t len)
+{
+    while (i < len)
+    {
+        char c = argv[i];
+        if (c == '\'')
+            return i + 1;
+        else
+        {
+            printf("%c", argv[i]);
+            i++;
+        }
+        
+    }
+    return i;
+}
+
 static void echo_display(char *argv, int e, int *n)
 {
-    // printf("str = %s\n", argv);
     char str_escape[] = STRING_ESCAPE;
-    char c = ' ';
-    int hard_quoting = 0;
     size_t len = strlen(argv);
-    for (size_t i = 0; i < len; i++)
-    {
-        c = argv[i];
-        i = set_hard_quoting(&hard_quoting, i, c, e);
+    int index = 0;
+    size_t i = 0;
+    int escape = 0;
 
-        if (!hard_quoting && e && c == '\\' && argv[++i] == '\\' && i++)
+    while (i < len)
+    {
+        char c = argv[i];
+
+        if (c == '\'')
+            i = strong_quotes(argv, i + 1, len);
+        else if (c == '\"')
+            i++;
+        else if (e && c == '\\' && (c = argv[++i]) == '\\' && i++)
         {
-            int index = get_escape_index(argv[i]);
-            if (index == -1 && (*n = 1))
+            escape = get_escape_index(c);
+            if (escape == -1 && (*n = 1))
                 return;
-            else if (index == -2 || index == -3)
-                printf("%c", get_ascii_conversion(argv, &i, index));
-            else if (index == -4)
+            else if (escape == -2 || escape == -3)
+                printf("%c", get_ascii_conversion(argv, &i, escape));
+            else if (escape == -4)
                 printf("%c", ESCAPE_CHAR);
-            else if (index == -5)
-                printf("%c%c", c, argv[i]);
+            else if (escape == -5)
+                printf("/%c", c);
             else
                 printf("%c", str_escape[index]);
+            i++;
         }
-
-        if (!hard_quoting&& i + 1 < len && argv[i] == '\\' && argv[i] == argv[i + 1])
+        else
         {
-            putchar('\\');
-            i++;   
+            printf("%c", c);
+            i++;
         }
-        else if ((i < len) && should_print_argvi(argv[i], hard_quoting))
-            putchar(argv[i]);
     }
 }
 
