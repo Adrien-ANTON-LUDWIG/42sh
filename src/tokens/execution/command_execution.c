@@ -1,20 +1,19 @@
-#include <stdio.h>
+#include "command_execution.h"
+
 #include <stdlib.h>
 #include <string.h>
 
 #include "ast.h"
 #include "cd.h"
+#include "char_array_op.h"
 #include "echo.h"
 #include "exec_ast.h"
 #include "execution.h"
 #include "exit.h"
 #include "export.h"
-#include "major.h"
 #include "my_err.h"
 #include "shopt.h"
-#include "source.h"
-#include "tokens.h"
-#include "variables.h"
+#include "variables_substitution.h"
 
 struct ast *search_funclist(struct major *mj, char *name)
 {
@@ -73,13 +72,10 @@ int execution_command(struct major *mj, struct token *tk)
 {
     if (!tk)
         my_err(1, mj, "execution command: no token found");
-
-    char **command = token_list_to_char_array(tk->data);
-    command = replace_variables(mj, command);
-    if (!(exec_if_known(mj, command)))
-        mj->rvalue = run_command(mj, command);
-
-    free(command);
+    char **argv = variables_substitution(mj, tk->data);
+    if (!(exec_if_known(mj, argv)))
+        mj->rvalue = run_command(mj, argv);
+    char_array_free(argv);
     return mj->rvalue;
 }
 
