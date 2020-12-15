@@ -5,9 +5,11 @@
 
 #define IS_NEWLINE "\n\r"
 #define MY_IS_SPACE " \t\v"
-#define IS_NOT_WORD " \t\v\n\r;&|<>()\"'"
-#define IS_OPERATOR ";\n\"'&|()<>"
+#define IS_NOT_WORD " \t\v\n\r;&|<>()"
+#define IS_NOT_WORD_OR_QUOTE "'\" \t\v\n\r;&|<>()"
+#define IS_OPERATOR ";\n&|()<>"
 #define IS_REDIR "<>&|"
+#define IS_QUOTE "'\""
 
 int is_in(char c, char *s);
 int is_not_in(char c, char *s);
