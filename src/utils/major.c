@@ -77,3 +77,10 @@ int add_to_funclist(struct major *mj, struct ast *func)
 
     return 0;
 }
+
+struct major *major_copy(struct major *mj)
+{
+    struct major *newmajor = my_xmalloc(mj, sizeof(struct major));
+    memcpy(newmajor, mj, sizeof(struct major));
+    return newmajor;
+}
