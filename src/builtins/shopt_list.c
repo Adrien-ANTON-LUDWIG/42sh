@@ -16,7 +16,7 @@
         0, 0, 0, 0, 0, 1, 0                                                    \
     }
 
-static void add_shopt_opt(struct major *mj, char *opt_name, int value)
+static void shopt_add_opt(struct major *mj, char *opt_name, int value)
 {
     struct shopt_opt_list *sol =
         my_xcalloc(mj, 1, sizeof(struct shopt_opt_list));
@@ -36,17 +36,17 @@ static void add_shopt_opt(struct major *mj, char *opt_name, int value)
     }
 }
 
-void init_shopt_opt_list(struct major *mj)
+void shopt_init_list(struct major *mj)
 {
     char *shopt_name[] = SHOPT_OPT;
     int default_value[] = SHOPT_OPT_DEFAULT_VALUE;
     for (int i = 0; i < SHOPT_OPT_LEN; i++)
     {
-        add_shopt_opt(mj, shopt_name[i], default_value[i]);
+        shopt_add_opt(mj, shopt_name[i], default_value[i]);
     }
 }
 
-void free_shopt_opt_list(struct major *mj)
+void shopt_free_list(struct major *mj)
 {
     struct shopt_opt_list *sol = mj->shopt_opt;
 
@@ -59,9 +59,12 @@ void free_shopt_opt_list(struct major *mj)
     free(mj->shopt_opt);
 }
 
-void set_shopt_opt(struct shopt_opt_list *sol, char *opt_name, int value)
+void shopt_set_opt(struct major *mj, char *opt_name, int value)
 {
-    struct shopt_opt_list *temp = sol;
+    if (!mj->shopt_opt)
+        shopt_init_list(mj);
+
+    struct shopt_opt_list *temp = mj->shopt_opt;
 
     while (temp)
     {

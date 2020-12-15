@@ -11,66 +11,62 @@
 #include "my_xmalloc.h"
 
 #define SHOPT_OPT_LEN 7
+
+#define UNSET 0
+#define SET 1
+
+#define MULTIPLE_TIME 0
+#define ONE_TIME 1
+
+#define SHOULD_NOT_PRINT 0
+#define SHOULD_PRINT 1
+
+#define IS_PLUS 0
+#define IS_MINUS 1
+
 #define SHOPT_OPT                                                              \
     {                                                                          \
         "dotglob", "expand_aliases", "extglob", "nocaseglob", "nullglob",      \
             "sourcepath", "xpg_echo"                                           \
     }
 
-static void print_shopt_opt_plus(struct major *mj)
+static void print_shopt_opt(struct major *mj, int is_minus, int value,
+                            char *name)
 {
     struct shopt_opt_list *temp = mj->shopt_opt;
 
     while (temp)
     {
-        printf("shopt -%s %s\n", (temp->value) ? "u" : "s", temp->name);
-        temp = temp->next;
-    }
-}
-
-static void print_shopt_opt_minus(struct major *mj)
-{
-    struct shopt_opt_list *temp = mj->shopt_opt;
-
-    while (temp)
-    {
-        printf("%s %s\n", temp->name, (temp->value) ? "yes" : "no");
-        temp = temp->next;
-    }
-}
-
-static void print_shopt_opt_same_value(struct major *mj, int value)
-{
-    struct shopt_opt_list *temp = mj->shopt_opt;
-
-    while (temp)
-    {
-        if (temp->value == value)
+        if (!name && !is_minus)
+            printf("shopt -%s %s\n", (temp->value) ? "u" : "s", temp->name);
+        else if (!name && (value < 0 || temp->value == value))
+            printf("%s %s\n", temp->name, (temp->value) ? "yes" : "no");
+        else if (name && !strcmp(temp->name, name))
             printf("%s %s\n", temp->name, (temp->value) ? "yes" : "no");
         temp = temp->next;
     }
 }
 
-static int print_shopt_opt(struct major *mj, char *arg, int should_print)
+static int shopt_opt_print(struct major *mj, char *arg, int should_print)
 {
     int rvalue = 0;
 
     if (!arg && should_print && (rvalue = 1))
-        print_shopt_opt_minus(mj);
+        print_shopt_opt(mj, IS_MINUS, -1, NULL);
     else if (!strcmp(arg, "+O") && (rvalue = 1))
-        print_shopt_opt_plus(mj);
+        print_shopt_opt(mj, IS_PLUS, -1, NULL);
     else if (!strcmp(arg, "-O") && (rvalue = 1))
-        print_shopt_opt_minus(mj);
+        print_shopt_opt(mj, IS_MINUS, -1, NULL);
     else if (!strcmp(arg, "-s"))
-        print_shopt_opt_same_value(mj, 1);
+        print_shopt_opt(mj, IS_MINUS, 1, NULL);
     else if (!strcmp(arg, "-u"))
-        print_shopt_opt_same_value(mj, 0);
+        print_shopt_opt(mj, IS_MINUS, 0, NULL);
     else
         rvalue = 0;
     return rvalue;
 }
 
-static int get_shopt_index(char *name)
+static int shopt_get_index(char *name)
 {
     if (!name)
         return -1;
@@ -83,47 +79,26 @@ static int get_shopt_index(char *name)
     return -1;
 }
 
-static int shopt_opt_set(struct major *mj, char **argv)
+static int shopt_opt_manage(struct major *mj, char **argv, int should_set,
+                            int one_time)
 {
     if (!argv || !*argv)
-        return print_shopt_opt(mj, "-s", 0);
+        return (should_set) ? shopt_opt_print(mj, "-s", SHOULD_NOT_PRINT)
+                            : shopt_opt_print(mj, "-u", SHOULD_NOT_PRINT);
 
     char *shopt_names[] = SHOPT_OPT;
 
     for (int i = 0; i < argv_len(argv); i++)
     {
-        int name_index = get_shopt_index(argv[i]);
+        int name_index = shopt_get_index(argv[i]);
 
         if (name_index < 0)
-        {
-            warnx("shopt: %s: invalid shell option name", argv[i]);
-            return 1;
-        }
+            my_err(2, mj, "shopt: invalid shell option name");
 
-        set_shopt_opt(mj->shopt_opt, shopt_names[i], 1);
-    }
+        shopt_set_opt(mj, shopt_names[name_index], should_set);
 
-    return 0;
-}
-
-static int shopt_opt_unset(struct major *mj, char **argv)
-{
-    if (!argv || !*argv)
-        return print_shopt_opt(mj, "-u", 0);
-
-    char *shopt_names[] = SHOPT_OPT;
-
-    for (int i = 0; i < argv_len(argv); i++)
-    {
-        int name_index = get_shopt_index(argv[i]);
-
-        if (name_index < 0)
-        {
-            warnx("shopt: %s: invalid shell option name", argv[i]);
-            return 1;
-        }
-
-        set_shopt_opt(mj->shopt_opt, shopt_names[i], 0);
+        if (one_time)
+            break;
     }
 
     return 0;
@@ -131,14 +106,15 @@ static int shopt_opt_unset(struct major *mj, char **argv)
 
 int shopt_opt_is_set(struct major *mj, char *opt_name)
 {
+    if (!mj->shopt_opt)
+        shopt_init_list(mj);
+
     struct shopt_opt_list *temp = mj->shopt_opt;
 
     while (temp && strcmp(temp->name, opt_name) != 0)
-    {
         temp = temp->next;
-    }
 
-    if (!temp)
+    if (!temp && my_soft_err(mj, 2, "shopt: invalid shell option name"))
         return 0;
 
     return temp->value;
@@ -149,13 +125,21 @@ int shopt_options_argv(struct major *mj, char **argv)
     if (!argv || (strcmp(argv[0], "+O") != 0 && strcmp(argv[0], "-O") != 0))
         return 0;
 
-    if (argv_len(argv) > 1)
-        my_err(2, mj, "invalid shell option name");
+    int len = argv_len(argv);
 
     if (!mj->shopt_opt)
-        init_shopt_opt_list(mj);
+        shopt_init_list(mj);
 
-    return print_shopt_opt(mj, argv[0], 0);
+    if (len > 1)
+    {
+        if (!strcmp(argv[0], "-O"))
+            shopt_opt_manage(mj, argv + 1, SET, ONE_TIME);
+        else
+            shopt_opt_manage(mj, argv + 1, UNSET, ONE_TIME);
+        return 2;
+    }
+
+    return shopt_opt_print(mj, argv[0], SHOULD_NOT_PRINT);
 }
 
 int b_shopt_options(struct major *mj, char **argv)
@@ -164,18 +148,23 @@ int b_shopt_options(struct major *mj, char **argv)
         return 0;
 
     if (!mj->shopt_opt)
-        init_shopt_opt_list(mj);
+        shopt_init_list(mj);
 
     int len = argv_len(argv);
 
     if (len == 1)
-        return print_shopt_opt(mj, NULL, 1);
+        return shopt_opt_print(mj, NULL, SHOULD_PRINT);
 
     if (!strcmp(argv[1], "-s"))
-        return shopt_opt_set(mj, argv + 2);
+        return shopt_opt_manage(mj, argv + 2, SET, MULTIPLE_TIME);
 
     if (!strcmp(argv[1], "-u"))
-        return shopt_opt_unset(mj, argv + 2);
+        return shopt_opt_manage(mj, argv + 2, UNSET, MULTIPLE_TIME);
+
+    int index = shopt_get_index(argv[1]);
+
+    if (index >= 0)
+        print_shopt_opt(mj, IS_MINUS, -1, argv[1]);
 
     return 0;
 }

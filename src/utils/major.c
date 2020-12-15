@@ -17,7 +17,7 @@ struct major *major_init(void)
 void major_free(struct major *mj)
 {
     if (mj->shopt_opt)
-        free_shopt_opt_list(mj);
+        shopt_free_list(mj);
 
     struct funclist *fl = mj->flist;
 
