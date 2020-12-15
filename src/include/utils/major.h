@@ -72,4 +72,13 @@ void major_free(struct major *mj);
  */
 int add_to_funclist(struct major *mj, struct ast *func);
 
+/**
+ * @brief Creates a copy of the major structure to simulate multiple instances
+ * of the shell while keeping access to most variables
+ *
+ * @param mj
+ * @return struct major*
+ */
+struct major *major_copy(struct major *mj);
+
 #endif /* MAJOR_H_ */

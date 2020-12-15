@@ -34,7 +34,10 @@ int exec_if_known(struct major *mj, char **command)
 
     if (func)
     {
-        exec_ast(mj, func->right);
+        struct major *newmajor = major_copy(mj);
+        newmajor->arguments = command + 1;
+        exec_ast(newmajor, func->right);
+        free(newmajor);
         return 1;
     }
     else if (!strcmp(*command, "echo"))
