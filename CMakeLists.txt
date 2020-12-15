@@ -61,6 +61,7 @@ set (SRC
     src/utils/my_err.c
     src/utils/my_xmalloc.c
     src/utils/stack.c
+    src/utils/char_array_op.c
     src/variables/variable_declaration.c
     src/variables/variables.c
 )

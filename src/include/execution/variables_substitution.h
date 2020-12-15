@@ -4,6 +4,6 @@
 #include "list.h"
 #include "major.h"
 
-struct list *variables_substitution(struct major *mj, struct list *list);
+char **variables_substitution(struct major *mj, struct list *list);
 
 #endif /* VARIABLES_SUBSTITUTION_H_ */

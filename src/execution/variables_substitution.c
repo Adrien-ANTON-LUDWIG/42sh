@@ -1,5 +1,7 @@
 #include "variables_substitution.h"
 
+#include "b_utils.h"
+#include "char_array_op.h"
 #include "dollar.h"
 #include "my_xmalloc.h"
 
@@ -11,7 +13,7 @@
 
 typedef char *(*predicate)(struct major *, int *);
 
- static  predicate substitution[] = {
+static predicate substitution[] = {
     dollar_at,    dollar_star,   dollar_interrogation,
     dollar_sharp, dollar_dollar, dollar_random,
     dollar_uid,   dollar_oldpwd, dollar_ifs
@@ -32,6 +34,7 @@ static char *manage_string(struct major *mj, char *str, size_t index,
     new_str = strcat(new_str, str_after_var);
     new_str[strlen(new_str)] = '\0';
     free(str_to_append);
+    free(str);
 
     return new_str;
 }
@@ -62,7 +65,6 @@ static char *var_subs_in_string(struct major *mj, char *str)
 
         else if (c == '$' && !strong_quote)
         {
-            char *str_saved_for_free = str;
             int i = get_index_func(temp);
             size_t index = temp - str;
 
@@ -70,33 +72,33 @@ static char *var_subs_in_string(struct major *mj, char *str)
                 ? manage_string(mj, str, index, *(substitution[i]))
                 : dollar_unknown(mj, str, index);
             temp = str;
-            free(str_saved_for_free);
         }
         else
             temp++;
-        
     }
     return str;
 }
 
-struct list *variables_substitution(struct major *mj, struct list *list)
+char **variables_substitution(struct major *mj, struct list *list)
 {
     if (!list)
-        return list;
+        return NULL;
 
+    char **argv = token_list_to_char_array(list);
     if (!mj)
     {
         my_soft_err(mj, 1,
                     "Variable_substitution: Major should exist at this point");
-        return list;
+        return argv;
     }
 
-    struct list_item *temp = list->head;
-    while (temp)
+    char **cmd = char_array_dup(mj, argv);
+    int len = argv_len(cmd + 1);
+    for (int i = 0; i <= len; i++)
     {
-        if (strstr(temp->data, "$"))
-            temp->data = var_subs_in_string(mj, temp->data);
-        temp = temp->next;
+        if (strstr(cmd[i], "$"))
+            cmd[i] = var_subs_in_string(mj, cmd[i]);
     }
-    return list;
+    free(argv);
+    return cmd;
 }
