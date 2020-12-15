@@ -8,6 +8,7 @@
 #include "list.h"
 #include "my_xmalloc.h"
 #include "shopt.h"
+#include "variables.h"
 
 struct major *major_init(void)
 {
@@ -28,9 +29,8 @@ void major_free(struct major *mj)
         free(fl);
         fl = next;
     }
-
+    variable_list_free(mj);
     custom_fclose(mj->file);
-    list_free(mj->variables);
     free(mj);
 }
 

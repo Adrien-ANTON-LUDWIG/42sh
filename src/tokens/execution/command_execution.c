@@ -14,6 +14,7 @@
 #include "shopt.h"
 #include "source.h"
 #include "tokens.h"
+#include "variables.h"
 
 struct ast *search_funclist(struct major *mj, char *name)
 {
@@ -71,7 +72,7 @@ int execution_command(struct major *mj, struct token *tk)
         my_err(1, mj, "execution command: no token found");
 
     char **command = token_list_to_char_array(tk->data);
-
+    command = replace_variables(mj, command);
     if (!(exec_if_known(mj, command)))
         mj->rvalue = run_command(mj, command);
 

@@ -9,6 +9,7 @@
 #include "parser.h"
 #include "pipe.h"
 #include "redir.h"
+#include "variable_assignment_exec.h"
 #include "variables_substitution.h"
 
 static int redir_execution(struct major *mj, struct ast *ast, struct token *tk)
@@ -79,6 +80,8 @@ int exec_ast(struct major *mj, struct ast *ast)
         return exec_for(mj, ast);
     else if (tk->word == WORD_FUNCTION)
         return add_to_funclist(mj, ast);
+    else if (tk->word == WORD_ASSIGNMENT)
+        return assign_variable(mj, ast);
     return err;
 }
 
