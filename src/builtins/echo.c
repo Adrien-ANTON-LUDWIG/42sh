@@ -25,7 +25,6 @@
         '\a', '\b', '\f', '\n', '\r', '\t', '\v'                               \
     }
 
-
 static int get_escape_index(char c)
 {
     char char_escape[] = CHAR_ESCAPE;
@@ -62,33 +61,39 @@ static int get_ascii_conversion(char *argv, size_t *i, int index)
     }
     return 42;
 }
-/*
-static int weak_quotes(char *argv, int i, int len)
-{
-    char c;
-    int to_interpret = 0;
-    while (i < len)
-    {
-        char c = argv[i];
-        if (c == '\"')
-            return i + 1;
 
-    }
+static int should_interpret(char c)
+{
+    if (is_in(c, "abfrtv"))
+        return 2;
+    else if (c == 'n')
+        return 1;
+    else
+        return 0;
 }
-*/
+
 static int strong_quotes(char *argv, size_t i, size_t len)
 {
+    int to_interpret = 0;
+
     while (i < len)
     {
         char c = argv[i];
         if (c == '\'')
             return i + 1;
-        else
+
+        else if (c == '\\' && i++ < len)
         {
-            printf("%c", argv[i]);
-            i++;
+            c = argv[i];
+            to_interpret = should_interpret(c);
+            if (to_interpret == 1)
+                printf("\n");
+            else if (!to_interpret)
+                printf("\\%c", c);
         }
-        
+        else
+            printf("%c", argv[i]);
+        i++;
     }
     return i;
 }
@@ -109,7 +114,7 @@ static void echo_display(char *argv, int e, int *n)
             i = strong_quotes(argv, i + 1, len);
         else if (c == '\"')
             i++;
-        else if (e && c == '\\' && (c = argv[++i]) == '\\' && i++)
+        else if (c == '\\' && (c = argv[++i]) && e && c == '\\' && i++)
         {
             escape = get_escape_index(c);
             if (escape == -1 && (*n = 1))
