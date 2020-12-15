@@ -40,7 +40,7 @@ static void export_display(void)
     char c = ' ';
     for (int i = 0; environ[i]; i++)
     {
-        printf("declare -x ");
+        printf("export ");
         int found_equal = 0;
         len = strlen(environ[i]);
         for (int j = 0; j < len; j++)
