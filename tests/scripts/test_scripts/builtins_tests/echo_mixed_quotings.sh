@@ -1,0 +1,1 @@
+echo -e abcd $# aka\n "taratat $# dke \0"  \ttaboum ' kekl $#$#$#$@ \t\n\p\a\n '

@@ -1,0 +1,1 @@
+echo bonjour la popul ' $@ace $# tatat$# \t\n   \c ' kaboum$#

@@ -1,0 +1,1 @@
+echo 'toto ta\nta t\a\t\ziti'
