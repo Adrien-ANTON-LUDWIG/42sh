@@ -11,7 +11,8 @@ include_directories("src/include/core"
                     "src/include/"
                     "src/include/tokens/execution"
                     "src/include/tests"
-                    "src/include/utils")
+                    "src/include/utils"
+                    "src/include/variables")
 
 set (SRC
     src/builtins/cd.c
@@ -40,6 +41,7 @@ set (SRC
     src/execution/dollar_substitution/dollar_uid.c
     src/execution/dollar_substitution/dollar_dollar.c
     src/execution/dollar_substitution/dollar_unknown.c
+    src/execution/variable_assignment.c
     src/lexer/lexer.c
     src/lexer/string_manipulation.c
     src/lexer/lexer_utils.c
@@ -59,6 +61,8 @@ set (SRC
     src/utils/my_err.c
     src/utils/my_xmalloc.c
     src/utils/stack.c
+    src/variables/variable_declaration.c
+    src/variables/variables.c
 )
 
 file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/include/*.h")

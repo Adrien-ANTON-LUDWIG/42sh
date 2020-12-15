@@ -25,6 +25,8 @@ struct ast *add_single_command(struct major *mj, struct ast *ast,
     if (!ast)
     {
         ast = create_ast(mj, *tk);
+        if ((*tk)->word != WORD_COMMAND)
+            *tk = get_next_token(mj);
         return ast;
     }
     struct token *and = my_xcalloc(mj, 1, sizeof(struct token));
@@ -33,6 +35,8 @@ struct ast *add_single_command(struct major *mj, struct ast *ast,
     newast->left = ast;
     if (tk)
         newast->right = create_ast(mj, *tk);
+    if ((*tk)->word != WORD_COMMAND)
+        *tk = get_next_token(mj);
     return newast;
 }
 
@@ -50,6 +54,8 @@ struct ast *take_action(struct major *mj, struct ast *ast, struct token **tk)
         ast = parser_for(mj, ast, tk);
     else if ((*tk)->word == WORD_FUNCTION)
         ast = parser_function(mj, ast, tk, get_next_token(mj));
+    else if ((*tk)->word == WORD_ASSIGNMENT)
+        ast = add_single_command(mj, ast, tk);
     else if ((*tk)->word == WORD_NEWLINE)
     {
         token_free(*tk);

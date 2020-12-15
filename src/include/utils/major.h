@@ -23,6 +23,17 @@ struct shopt_opt_list
     int value;
 };
 /**
+ * @brief Contains all the declared variables and their value
+ *
+ */
+struct varlist
+{
+    struct varlist *next;
+    char *name;
+    char *value;
+};
+
+/**
  * @brief Majors stores the important structures we use all along the project.
  * It also allows us to exit and free those structures whenever we need it
  * during the execution.
@@ -33,7 +44,7 @@ struct major
     int rvalue;
     int options;
     struct custom_FILE *file;
-    struct list *variables;
+    struct varlist *variables;
     struct funclist *flist;
     struct shopt_opt_list *shopt_opt;
     char **arguments;
