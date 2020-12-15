@@ -31,6 +31,7 @@ void variable_declare(struct major *mj, char *name, char *value)
                 current->value = value;
                 return;
             }
+            current = current->next;
         }
         current->next = varlist_init(mj, name, value);
     }

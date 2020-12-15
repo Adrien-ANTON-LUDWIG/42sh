@@ -35,7 +35,7 @@ struct ast *add_single_command(struct major *mj, struct ast *ast,
     newast->left = ast;
     if (tk)
         newast->right = create_ast(mj, *tk);
-    if ((*tk)->word != WORD_COMMAND)
+    if (tk && (*tk)->word != WORD_COMMAND)
         *tk = get_next_token(mj);
     return newast;
 }
