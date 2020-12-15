@@ -148,19 +148,20 @@ static void skip_quote(struct major *mj, char c)
         lastchar = c;
         c = get_char(f, 1);
 
-        if (at_end(f) && lastchar != quote)
+        if (at_end(f) && c != quote)
             if (!custom_getline_same_buf(mj))
                 my_err(2, mj, "get_token_quote: unexpected EOF");
     }
 }
 
+// /!\ 25 lignes
 static struct token *get_token_word(struct major *mj)
 {
     struct custom_FILE *f = mj->file;
     size_t start = f->lexer_index;
     char c = get_char(f, 0);
 
-    while (is_not_in(c, IS_NOT_WORD))
+    while (!at_end(f) && is_not_in(c, IS_NOT_WORD))
     {
         if (is_in(c, "'\""))
         {
@@ -197,6 +198,25 @@ static struct token *get_token_word(struct major *mj)
     return tk;
 }
 
+static void set_if_assignment(struct token *tk)
+{
+    char *s = tk->data->head->data;
+
+    if ('0' <= *s && *s <= '9')
+        return;
+
+    char *equal = strstr(s, "=");
+
+    if (!equal || s == equal)
+        return;
+
+    for (; s != equal; s++)
+        if (!(isalnum(*s) || *s == '_'))
+            return;
+
+    tk->word = WORD_ASSIGNMENT;
+}
+
 struct token *get_next_token(struct major *mj)
 {
     struct custom_FILE *f = mj->file;
@@ -222,5 +242,8 @@ struct token *get_next_token(struct major *mj)
     if (is_in(get_char(f, 0), IS_OPERATOR))
         return get_token_operator_skip_newline(mj);
 
-    return get_token_word(mj);
+    struct token *word = get_token_word(mj);
+    set_if_assignment(word);
+
+    return word;
 }

@@ -19,7 +19,7 @@
             "WORD_REDIR_L", "WORD_REDIR_R", "WORD_COMMAND", "WORD_EOF",        \
             "WORD_SUPERAND", "WORD_SEMIC", "WORD_NEWLINE",                     \
             "WORD_LPARENTHESIS", "WORD_RPARENTHESIS", "WORD_DPARENTHESIS",     \
-            "WORD_WORD"                                                        \
+            "WORD_WORD", "WORD_ASSIGNMENT"                                     \
     }
 
 struct token *token_init(struct major *mj, enum words word)
@@ -34,8 +34,8 @@ struct token *token_init(struct major *mj, enum words word)
 struct token *token_cpy(struct major *mj, struct token *src)
 {
     if (src->word == WORD_COMMAND)
-        my_err(1, mj, // C'est de la grosse merde
-               "token_cpy: stop right there! this was node made for that");
+        my_err(1, mj,
+               "token_cpy: stop right there! this was not made for that");
 
     struct token *new = token_init(mj, src->word);
 
