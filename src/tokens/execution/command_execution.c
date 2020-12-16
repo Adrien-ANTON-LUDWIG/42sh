@@ -6,11 +6,8 @@
 #include "ast.h"
 #include "break.h"
 #include "cd.h"
-<<<<<<< src/tokens/execution/command_execution.c
-#include "continue.h"
-=======
 #include "char_array_op.h"
->>>>>>> src/tokens/execution/command_execution.c
+#include "continue.h"
 #include "echo.h"
 #include "exec_ast.h"
 #include "execution.h"
