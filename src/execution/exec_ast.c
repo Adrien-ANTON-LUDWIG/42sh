@@ -83,7 +83,7 @@ static int conditional_execution(struct major *mj, struct ast *ast,
 
 int exec_ast(struct major *mj, struct ast *ast)
 {
-    if (!ast || mj->break_counter != 0)
+    if (!ast || mj->break_counter != 0 || mj->continue_counter != 0)
         return 0;
     int err = 0;
     struct token *tk = ast->data;
