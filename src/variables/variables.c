@@ -42,7 +42,7 @@ char *get_variable_value(struct major *mj, char *name)
             return current->value;
         current = current->next;
     }
-    return NULL;
+    return "";
 }
 
 char **replace_variables(struct major *mj, char **command)
