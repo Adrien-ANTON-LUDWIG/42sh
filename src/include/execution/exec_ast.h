@@ -2,6 +2,7 @@
 #define EXEC_AST_H
 
 #include "ast.h"
+#include "major.h"
 
 /**
  * @brief Exectutes an AST.

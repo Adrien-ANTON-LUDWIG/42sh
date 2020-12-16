@@ -43,7 +43,12 @@ char *update_path(char *path, char *section)
 
 static char *get_path_destination(int argc, char **argv)
 {
-    char *path = strdup(getenv("PWD"));
+    char *pwd = getenv("PWD");
+
+    if (!pwd)
+        pwd = getenv("HOME");
+
+    char *path = strdup(pwd);
 
     if (!argc || argv[0][0] == '~')
         path = update_path(path, "~");
@@ -51,9 +56,7 @@ static char *get_path_destination(int argc, char **argv)
     {
         argc = 0;
         if (strlen(argv[0]) == 1)
-
             path = update_path(path, "-");
-
         else
         {
             warnx("No such file or directory");
@@ -61,7 +64,6 @@ static char *get_path_destination(int argc, char **argv)
             path = strdup(getenv("PWD"));
         }
     }
-
     else if (argv[0][0] == '/')
         path = update_path(path, "/");
 
@@ -95,7 +97,7 @@ int b_cd(char **argv)
     if (r_value != 0)
     {
         warnx("No such file or directory");
-        return r_value;
+        return 1;
     }
     return 0;
 }
