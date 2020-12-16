@@ -126,8 +126,8 @@ int exec_for(struct major *mj, struct ast *ast)
 
     while (list)
     {
-        char *var_name = strdup(ast->left->data->data->head->data);
-        char *var_value = strdup(list->data);
+        char *var_name = ast->left->data->data->head->data;
+        char *var_value = list->data;
         variable_declare(mj, var_name, var_value);
         rvalue = exec_ast(mj, ast->right);
 
@@ -135,7 +135,6 @@ int exec_for(struct major *mj, struct ast *ast)
         {
             mj->break_counter--;
             mj->loop_counter--;
-            // free(var_name);
             return mj->rvalue;
         }
 
@@ -147,6 +146,5 @@ int exec_for(struct major *mj, struct ast *ast)
 
     mj->rvalue = 0;
     mj->loop_counter--;
-    // free(var_name);
     return rvalue;
 }
