@@ -28,6 +28,7 @@ static int redir_execution(struct major *mj, struct ast *ast, struct token *tk)
         return -1;
 }
 
+// TODO Too many lines
 static int conditional_execution(struct major *mj, struct ast *ast,
                                  struct token *tk, int err)
 {
@@ -42,12 +43,35 @@ static int conditional_execution(struct major *mj, struct ast *ast,
     }
     else if (tk->word == WORD_WHILE || tk->word == WORD_UNTIL)
     {
+        mj->loop_counter++;
+
         while ((tk->word == WORD_UNTIL) ^ (!err))
         {
             exec_ast(mj, ast->right);
+
+            if (mj->break_counter)
+            {
+                mj->break_counter--;
+                mj->loop_counter--;
+                return mj->rvalue;
+            }
+
+            mj->continue_counter--;
+
             err = exec_ast(mj, ast->left);
+
+            if (mj->break_counter)
+            {
+                mj->break_counter--;
+                mj->loop_counter--;
+                return mj->rvalue;
+            }
+
+            mj->continue_counter--;
         }
         mj->rvalue = 0;
+        mj->loop_counter--;
+
         return 0;
     }
     else
@@ -56,7 +80,7 @@ static int conditional_execution(struct major *mj, struct ast *ast,
 
 int exec_ast(struct major *mj, struct ast *ast)
 {
-    if (!ast)
+    if (!ast || mj->break_counter != 0)
         return 0;
     int err = 0;
     struct token *tk = ast->data;
@@ -85,6 +109,7 @@ int exec_ast(struct major *mj, struct ast *ast)
     return err;
 }
 
+// TODO Test this
 int exec_for(struct major *mj, struct ast *ast)
 {
     int rvalue = 0;
@@ -94,6 +119,15 @@ int exec_for(struct major *mj, struct ast *ast)
     for (size_t i = 0; i < start->data->size; i++)
     {
         rvalue = exec_ast(mj, ast->right);
+
+        if (mj->break_counter)
+        {
+            mj->break_counter--;
+            mj->loop_counter--;
+            return mj->rvalue;
+        }
+
+        mj->continue_counter--;
     }
     mj->rvalue = 0;
     return rvalue;
