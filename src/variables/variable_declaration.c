@@ -22,9 +22,10 @@ void variable_declare(struct major *mj, char *name, char *value)
     else
     {
         struct varlist *current = mj->variables;
-        while (current->next)
+        int declared = 0;
+        while ((declared = !strcmp(name, current->name)) || current->next)
         {
-            if (!strcmp(current->name, name))
+            if (declared)
             {
                 free(current->value);
                 free(name);

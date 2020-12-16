@@ -112,3 +112,8 @@ add_custom_target(script_test
     COMMAND cp -r ${CMAKE_SOURCE_DIR}/tests/scripts ./
     COMMAND bash ./scripts/tests_script.sh
     BYPRODUCTS ./scripts/ actual expected)
+
+add_executable(ast_printer EXCLUDE_FROM_ALL tests/ast_printer.c ${HEADERS})
+target_link_libraries(ast_printer 42)
+add_custom_target(ap
+    DEPENDS ast_printer)

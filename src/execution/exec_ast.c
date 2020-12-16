@@ -1,12 +1,17 @@
+#define _POSIX_C_SOURCE 200809L
+
 #include "exec_ast.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "command_execution.h"
 #include "list.h"
 #include "pipe.h"
 #include "redir.h"
 #include "variable_assignment_exec.h"
+#include "variable_declaration.h"
 
 static int redir_execution(struct major *mj, struct ast *ast, struct token *tk)
 {
@@ -40,7 +45,8 @@ static int exec_while(struct major *mj, struct ast *ast, struct token *tk,
             return mj->rvalue;
         }
 
-        mj->continue_counter--;
+        if (mj->continue_counter)
+            mj->continue_counter--;
 
         err = exec_ast(mj, ast->left);
 
@@ -51,7 +57,8 @@ static int exec_while(struct major *mj, struct ast *ast, struct token *tk,
             return mj->rvalue;
         }
 
-        mj->continue_counter--;
+        if (mj->continue_counter)
+            mj->continue_counter--;
     }
     mj->rvalue = 0;
     mj->loop_counter--;
@@ -113,22 +120,33 @@ int exec_for(struct major *mj, struct ast *ast)
     int rvalue = 0;
     if (!ast->middle)
         return 0;
+
     struct token *start = ast->middle->data;
-    for (size_t i = 0; i < start->data->size; i++)
+    struct list_item *list = start->data->head;
+
+    while (list)
     {
+        char *var_name = strdup(ast->left->data->data->head->data);
+        char *var_value = strdup(list->data);
+        variable_declare(mj, var_name, var_value);
         rvalue = exec_ast(mj, ast->right);
 
         if (mj->break_counter)
         {
             mj->break_counter--;
             mj->loop_counter--;
+            // free(var_name);
             return mj->rvalue;
         }
 
-        mj->continue_counter--;
+        if (mj->continue_counter)
+            mj->continue_counter--;
+
+        list = list->next;
     }
 
     mj->rvalue = 0;
     mj->loop_counter--;
+    // free(var_name);
     return rvalue;
 }

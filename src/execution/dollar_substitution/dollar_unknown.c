@@ -38,6 +38,7 @@ char *dollar_unknown(struct major *mj, char *str, int index)
     char *pre_variable = strndup(str, index);
     sprintf(new_str, "%s%s%s", pre_variable, var_value, str_after_var);
     free(pre_variable);
+    free(str);
 
     return new_str;
 }
