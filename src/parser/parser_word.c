@@ -76,7 +76,7 @@ struct ast *build_command(struct major *mj, struct token **tk,
 
     struct token *newtoken = init_token_with_data(mj, list);
     ast = take_action(mj, ast, &newtoken);
-    // ^^ To transform the WORD_COMMAND into an AST
+    // ^^^ To transform the WORD_COMMAND into an AST
     ast = handle_redirs(mj, redir_stack, ast);
 
     return ast;
