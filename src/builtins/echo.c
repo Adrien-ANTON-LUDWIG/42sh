@@ -103,7 +103,6 @@ static void echo_display(char *argv, int e, int *n)
 {
     char str_escape[] = STRING_ESCAPE;
     size_t len = strlen(argv);
-    int index = 0;
     size_t i = 0;
     int escape = 0;
 
@@ -117,6 +116,8 @@ static void echo_display(char *argv, int e, int *n)
             i++;
         else if (c == '\\' && (c = argv[++i]) && e && c == '\\' && i++)
         {
+            if (i + 1 < len)
+                c = argv[i];
             escape = get_escape_index(c);
             if (escape == -1 && (*n = 1))
                 return;
@@ -125,9 +126,9 @@ static void echo_display(char *argv, int e, int *n)
             else if (escape == -4)
                 printf("%c", ESCAPE_CHAR);
             else if (escape == -5)
-                printf("/%c", c);
+                printf("\\%c", c);
             else
-                printf("%c", str_escape[index]);
+                printf("%c", str_escape[escape]);
             i++;
         }
         else
