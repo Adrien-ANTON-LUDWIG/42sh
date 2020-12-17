@@ -46,6 +46,8 @@ struct ast *take_action(struct major *mj, struct ast *ast, struct token **tk)
         ast = parser_if(mj, ast, tk);
     else if ((*tk)->word == WORD_WORD)
         ast = parser_word(mj, ast, tk);
+    else if ((*tk)->word == WORD_CASE)
+        ast = parser_case(mj, ast, tk);
     else if ((*tk)->word == WORD_COMMAND)
         ast = add_single_command(mj, ast, tk);
     else if ((*tk)->word == WORD_WHILE || (*tk)->word == WORD_UNTIL)

@@ -68,6 +68,9 @@ int exec_if_known(struct major *mj, char **command)
     {
         struct major *newmajor = major_copy(mj);
         newmajor->arguments = command + 1;
+        newmajor->loop_counter = 0;
+        newmajor->break_counter = 0;
+        newmajor->continue_counter = 0;
         exec_ast(newmajor, func->right);
         free(newmajor);
         return 1;

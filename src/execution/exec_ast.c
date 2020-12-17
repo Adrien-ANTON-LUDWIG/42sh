@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "command_execution.h"
+#include "exec_case.h"
 #include "list.h"
 #include "pipe.h"
 #include "redir.h"
@@ -111,6 +112,8 @@ int exec_ast(struct major *mj, struct ast *ast)
         return add_to_funclist(mj, ast);
     else if (tk->word == WORD_ASSIGNMENT)
         return assign_variable(mj, ast);
+    else if (tk->word == WORD_CASE)
+        return exec_case(mj, ast);
     return err;
 }
 

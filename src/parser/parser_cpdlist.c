@@ -23,7 +23,7 @@ void parser_cpdlist(struct major *mj, struct token **expr, struct ast *newast,
                 *expr = get_next_token(mj);
             }
             else
-                my_err(2, mj, "parser_cpdlist: enexpected operator");
+                my_err(2, mj, "parser_cpdlist: unexpected operator");
         }
     } while (should_loop((*expr)->word));
 }
