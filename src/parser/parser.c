@@ -90,6 +90,10 @@ void parser(struct major *mj)
     while (tk->word != WORD_EOF)
     {
         ast = get_ast(mj, ast, &tk);
+
+        if (!tk->data && tk->word != WORD_EOF)
+            my_err(2, mj, "parser: unexpected operator");
+
         exec_ast(mj, ast);
         ast_free(ast);
         ast = NULL;
