@@ -125,11 +125,21 @@ static struct token *get_token_operator_skip_newline(struct major *mj)
     if (at_end(mj->file))
         custom_getline(mj);
 
-    while (get_char(mj->file, 0) == '\n')
+    struct custom_FILE *f = mj->file;
+    while (!at_end(f)
+           && (!(is_in(get_char(f, 0), IS_OPERATOR)
+                 || is_not_in(get_char(f, 0), IS_NOT_WORD))
+               || get_char(f, 0) == '#' || get_char(mj->file, 0) == '\n'))
     {
-        mj->file->lexer_index++;
+        skip(f, is_in, MY_IS_SPACE);
 
-        if (at_end(mj->file))
+        if (!at_end(f) && get_char(f, 0) == '#')
+            skip(f, is_not_in, IS_NEWLINE);
+
+        if (get_char(f, 0) == '\n')
+            f->lexer_index++;
+
+        if (at_end(f))
             custom_getline(mj);
     }
 
