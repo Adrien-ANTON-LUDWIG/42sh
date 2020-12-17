@@ -73,8 +73,7 @@ struct ast *get_ast(struct major *mj, struct ast *ast, struct token **tk)
         ast = parser_operator(mj, ast, tk);
 
     if (!(*tk)->data
-        && ((*tk)->word == WORD_SEMIC || (*tk)->word == WORD_NEWLINE
-            || (*tk)->word == WORD_EOF))
+        && ((*tk)->word == WORD_SEMIC || (*tk)->word == WORD_NEWLINE))
     {
         token_free(*tk);
         *tk = get_next_token(mj);
