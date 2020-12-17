@@ -17,6 +17,7 @@ struct token *token_init(struct major *mj, enum words word)
     return new;
 }
 
+// TODO Make this a deep copy
 struct token *token_cpy(struct major *mj, struct token *src)
 {
     if (src->word == WORD_COMMAND)

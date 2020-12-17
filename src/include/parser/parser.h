@@ -95,4 +95,16 @@ int is_operator(struct token *tk);
 struct ast *build_command(struct major *mj, struct token **tk,
                           struct token *tk2, struct ast *ast);
 
+/**
+ * @brief Create rule_case ast
+ *
+ * Link it to the existing ast if there is one.
+ *
+ * @param mj
+ * @param ast
+ * @param tk
+ * @return struct ast*
+ */
+struct ast *parser_case(struct major *mj, struct ast *ast, struct token **tk);
+
 #endif /* PARSER_H */
