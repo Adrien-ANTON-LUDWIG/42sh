@@ -20,11 +20,16 @@ struct token *token_init(struct major *mj, enum words word)
 // TODO Make this a deep copy
 struct token *token_cpy(struct major *mj, struct token *src)
 {
-    if (src->word == WORD_COMMAND)
-        my_err(1, mj,
-               "token_cpy: stop right there! this was not made for that");
-
     struct token *new = token_init(mj, src->word);
+
+    if (!src->data)
+        return new;
+
+    for (struct list_item *l = src->data->head; l; l = l->next)
+    {
+        char *str = strdup(l->data);
+        new->data = list_append(mj, new->data, str);
+    }
 
     return new;
 }

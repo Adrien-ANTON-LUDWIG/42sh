@@ -28,6 +28,7 @@ set (SRC
     src/builtins/continue.c
     src/core/custom_descriptor.c
     src/core/argument_handler.c
+    src/execution/command_execution.c
     src/execution/execution.c
     src/execution/exec_ast.c
     src/execution/pipe.c
@@ -44,6 +45,7 @@ set (SRC
     src/execution/dollar_substitution/dollar_dollar.c
     src/execution/dollar_substitution/dollar_unknown.c
     src/execution/variable_assignment.c
+    src/execution/exec_case.c
     src/lexer/lexer.c
     src/lexer/string_manipulation.c
     src/lexer/lexer_utils.c
@@ -56,7 +58,7 @@ set (SRC
     src/parser/parser_operator.c
     src/parser/parser_function.c
     src/parser/parser_word.c
-    src/tokens/execution/command_execution.c
+    src/parser/parser_case.c
     src/tokens/tokens.c
     src/utils/list.c
     src/utils/major.c
@@ -113,7 +115,7 @@ add_custom_target(script_test
     COMMAND bash ./scripts/tests_script.sh
     BYPRODUCTS ./scripts/ actual expected)
 
-add_executable(ast_printer EXCLUDE_FROM_ALL tests/ast_printer.c ${HEADERS})
-target_link_libraries(ast_printer 42)
-add_custom_target(ap
-    DEPENDS ast_printer)
+#add_executable(ast_printer EXCLUDE_FROM_ALL tests/ast_printer.c ${HEADERS})
+#target_link_libraries(ast_printer 42)
+#add_custom_target(ap
+#    DEPENDS ast_printer)
