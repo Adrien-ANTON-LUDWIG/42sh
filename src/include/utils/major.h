@@ -1,6 +1,11 @@
 #ifndef MAJOR_H
 #define MAJOR_H
 
+#include <stddef.h>
+
+#define MIN(A, B) A < B ? A : B
+#define BREAK_AST -42
+
 /**
  * @brief Stores the function declared inside this shell
  * for later use
@@ -43,6 +48,9 @@ struct major
 {
     int rvalue;
     int options;
+    int loop_counter;
+    int break_counter;
+    size_t continue_counter;
     struct custom_FILE *file;
     struct varlist *variables;
     struct funclist *flist;

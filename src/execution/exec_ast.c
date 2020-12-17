@@ -1,12 +1,17 @@
+#define _POSIX_C_SOURCE 200809L
+
 #include "exec_ast.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "command_execution.h"
 #include "list.h"
 #include "pipe.h"
 #include "redir.h"
 #include "variable_assignment_exec.h"
+#include "variable_declaration.h"
 
 static int redir_execution(struct major *mj, struct ast *ast, struct token *tk)
 {
@@ -24,6 +29,43 @@ static int redir_execution(struct major *mj, struct ast *ast, struct token *tk)
         return -1;
 }
 
+static int exec_while(struct major *mj, struct ast *ast, struct token *tk,
+                      int err)
+{
+    mj->loop_counter++;
+
+    while ((tk->word == WORD_UNTIL) ^ (!err))
+    {
+        exec_ast(mj, ast->right);
+
+        if (mj->break_counter)
+        {
+            mj->break_counter--;
+            mj->loop_counter--;
+            return mj->rvalue;
+        }
+
+        if (mj->continue_counter)
+            mj->continue_counter--;
+
+        err = exec_ast(mj, ast->left);
+
+        if (mj->break_counter)
+        {
+            mj->break_counter--;
+            mj->loop_counter--;
+            return mj->rvalue;
+        }
+
+        if (mj->continue_counter)
+            mj->continue_counter--;
+    }
+    mj->rvalue = 0;
+    mj->loop_counter--;
+
+    return 0;
+}
+
 static int conditional_execution(struct major *mj, struct ast *ast,
                                  struct token *tk, int err)
 {
@@ -37,22 +79,14 @@ static int conditional_execution(struct major *mj, struct ast *ast,
         return 0;
     }
     else if (tk->word == WORD_WHILE || tk->word == WORD_UNTIL)
-    {
-        while ((tk->word == WORD_UNTIL) ^ (!err))
-        {
-            exec_ast(mj, ast->right);
-            err = exec_ast(mj, ast->left);
-        }
-        mj->rvalue = 0;
-        return 0;
-    }
+        return exec_while(mj, ast, tk, err);
     else
         return 1;
 }
 
 int exec_ast(struct major *mj, struct ast *ast)
 {
-    if (!ast)
+    if (!ast || mj->break_counter != 0 || mj->continue_counter != 0)
         return 0;
     int err = 0;
     struct token *tk = ast->data;
@@ -82,14 +116,35 @@ int exec_ast(struct major *mj, struct ast *ast)
 
 int exec_for(struct major *mj, struct ast *ast)
 {
+    mj->loop_counter++;
     int rvalue = 0;
     if (!ast->middle)
         return 0;
+
     struct token *start = ast->middle->data;
-    for (size_t i = 0; i < start->data->size; i++)
+    struct list_item *list = start->data->head;
+
+    while (list)
     {
+        char *var_name = ast->left->data->data->head->data;
+        char *var_value = list->data;
+        variable_declare(mj, var_name, var_value);
         rvalue = exec_ast(mj, ast->right);
+
+        if (mj->break_counter)
+        {
+            mj->break_counter--;
+            mj->loop_counter--;
+            return mj->rvalue;
+        }
+
+        if (mj->continue_counter)
+            mj->continue_counter--;
+
+        list = list->next;
     }
+
     mj->rvalue = 0;
+    mj->loop_counter--;
     return rvalue;
 }

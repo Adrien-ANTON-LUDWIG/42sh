@@ -4,8 +4,10 @@
 #include <string.h>
 
 #include "ast.h"
+#include "break.h"
 #include "cd.h"
 #include "char_array_op.h"
+#include "continue.h"
 #include "echo.h"
 #include "exec_ast.h"
 #include "execution.h"
@@ -25,6 +27,37 @@ struct ast *search_funclist(struct major *mj, char *name)
         current = current->next;
     }
     return NULL;
+}
+
+static int exec_if_known_the_retour(struct major *mj, char **command)
+{
+    if (!strcmp(*command, "exit"))
+    {
+        mj->rvalue = b_exit(mj, command);
+        return 1;
+    }
+    else if (!strcmp(*command, "export"))
+    {
+        mj->rvalue = b_export(command);
+        return 1;
+    }
+    else if (!strcmp(*command, "shopt"))
+    {
+        mj->rvalue = b_shopt_options(mj, command);
+        return 1;
+    }
+    else if (!strcmp(*command, "continue"))
+    {
+        mj->rvalue = b_continue(mj, command);
+        return 1;
+    }
+    else if (!strcmp(*command, "break"))
+    {
+        mj->rvalue = b_break(mj, command);
+        return 1;
+    }
+
+    return 0;
 }
 
 int exec_if_known(struct major *mj, char **command)
@@ -49,23 +82,7 @@ int exec_if_known(struct major *mj, char **command)
         mj->rvalue = b_cd(command);
         return 1;
     }
-    else if (!strcmp(*command, "exit"))
-    {
-        mj->rvalue = b_exit(mj, command);
-        return 1;
-    }
-    else if (!strcmp(*command, "export"))
-    {
-        mj->rvalue = b_export(command);
-        return 1;
-    }
-    else if (!strcmp(*command, "shopt"))
-    {
-        mj->rvalue = b_shopt_options(mj, command);
-        return 1;
-    }
-
-    return 0;
+    return exec_if_known_the_retour(mj, command);
 }
 
 int execution_command(struct major *mj, struct token *tk)

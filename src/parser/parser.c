@@ -93,6 +93,7 @@ void parser(struct major *mj)
         exec_ast(mj, ast);
         ast_free(ast);
         ast = NULL;
+        mj->break_counter = 0;
     }
     token_free(tk);
 }

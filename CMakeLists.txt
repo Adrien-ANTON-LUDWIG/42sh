@@ -24,6 +24,8 @@ set (SRC
     src/builtins/b_utils.c
     src/builtins/shopt.c
     src/builtins/shopt_list.c
+    src/builtins/break.c
+    src/builtins/continue.c
     src/core/custom_descriptor.c
     src/core/argument_handler.c
     src/execution/execution.c
@@ -110,3 +112,8 @@ add_custom_target(script_test
     COMMAND cp -r ${CMAKE_SOURCE_DIR}/tests/scripts ./
     COMMAND bash ./scripts/tests_script.sh
     BYPRODUCTS ./scripts/ actual expected)
+
+#add_executable(ast_printer EXCLUDE_FROM_ALL tests/ast_printer.c ${HEADERS})
+#target_link_libraries(ast_printer 42)
+#add_custom_target(ap
+#   DEPENDS ast_printer)

@@ -10,8 +10,8 @@
 static struct varlist *varlist_init(struct major *mj, char *name, char *value)
 {
     struct varlist *new = my_xcalloc(mj, 1, sizeof(struct varlist));
-    new->name = name;
-    new->value = value;
+    new->name = strdup(name);
+    new->value = strdup(value);
     return new;
 }
 
@@ -22,38 +22,17 @@ void variable_declare(struct major *mj, char *name, char *value)
     else
     {
         struct varlist *current = mj->variables;
-        while (current->next)
+        int declared = 0;
+        while ((declared = !strcmp(name, current->name)) || current->next)
         {
-            if (!strcmp(current->name, name))
+            if (declared)
             {
                 free(current->value);
-                free(name);
-                current->value = value;
+                current->value = strdup(value);
                 return;
             }
             current = current->next;
         }
         current->next = varlist_init(mj, name, value);
     }
-}
-
-char **get_assignment_data(struct major *mj, struct token *tk)
-{
-    char *str = tk->data->head->data;
-    int i = 0;
-
-    while (str[i] && str[i] != '=')
-        i++;
-
-    if (str[i] != '=')
-        my_err(2, mj, "get_assignment_data: Bad declaration, expected '='");
-
-    char *name = strndup(str, i);
-    char *value = strndup(str + i + 1, strlen(str) - i - 1);
-    char **result = my_xmalloc(mj, 2 * sizeof(char *));
-
-    result[0] = name;
-    result[1] = value;
-
-    return result;
 }
