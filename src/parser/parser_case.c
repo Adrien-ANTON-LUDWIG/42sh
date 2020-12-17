@@ -74,6 +74,9 @@ struct ast *parser_case(struct major *mj, struct ast *ast, struct token **tk)
 
     parser_case_clause(mj, newast, tk);
 
+    if ((*tk)->word != WORD_ESAC)
+        my_err(2, mj, "Lol noob, you forgot the 'Esac', what a loser");
+
     *tk = token_renew(mj, *tk, 1);
 
     if (ast)

@@ -17,6 +17,11 @@ int exec_case(struct major *mj, struct ast *ast)
 
     while (ast)
     {
+        if (!ast->left)
+        {
+            char_array_free(arr);
+            return 0;
+        }
         struct list *list = ast->left->data->data;
         char **pattern = variables_substitution(mj, list);
         int len = list->size;
