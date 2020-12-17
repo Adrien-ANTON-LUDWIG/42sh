@@ -26,6 +26,8 @@ set (SRC
     src/builtins/shopt_list.c
     src/builtins/break.c
     src/builtins/continue.c
+    src/builtins/alias.c
+    src/builtins/unalias.c
     src/core/custom_descriptor.c
     src/core/argument_handler.c
     src/execution/execution.c

@@ -1,6 +1,7 @@
 #include "list.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "my_err.h"
 #include "my_xmalloc.h"
@@ -11,6 +12,13 @@ static struct list_item *list_item_init(struct major *mj, char *str)
     l->data = str;
 
     return l;
+}
+
+static void list_free_one_item(struct list_item *item)
+{
+    free(item->name);
+    free(item->data);
+    free(item);
 }
 
 struct list *list_init(struct major *mj)
@@ -31,6 +39,7 @@ void list_free(struct list *l)
         struct list_item *temp = item;
         item = item->next;
         free(temp->data);
+        free(temp->name);
         free(temp);
     }
     free(l);
@@ -60,13 +69,13 @@ struct list *list_append(struct major *mj, struct list *list, char *str)
     return list;
 }
 
-struct list *list_append_variable(struct major *mj, struct list *list,
-                                  char *name, char *str)
+struct list *list_append_aliases(struct major *mj, struct list *list,
+                                 char *name, char *value)
 {
-    if (!str || !name)
-        my_err(1, mj, "list_append_variable: str should not be empty");
+    if (!value || !name)
+        my_err(1, mj, "list_append_aliases: value & name should not be empty");
 
-    struct list_item *item = list_item_init(mj, str);
+    struct list_item *item = list_item_init(mj, value);
     item->name = name;
 
     if (!list)
@@ -78,10 +87,68 @@ struct list *list_append_variable(struct major *mj, struct list *list,
 
         return list;
     }
+    struct list_item *iter = list->head;
 
-    list->tail->next = item;
-    list->tail = item;
+    if (iter && item < iter)
+    {
+        item->next = iter;
+        list->head = item;
+    }
+    else
+    {
+        while (iter->next && item < iter->next)
+            iter = iter->next;
+
+        if (!iter)
+        {
+            list->tail->next = item;
+            list->tail = item;
+        }
+        else
+        {
+            item->next = iter->next;
+            iter->next = item;
+        }
+    }
     list->size++;
+    return list;
+}
 
+struct list *list_remove(struct list *list, char *name)
+{
+    if (!list || !name)
+        return NULL;
+
+    struct list_item *item = list->head;
+    struct list_item *prev = list->head;
+
+    while (item && strcmp(item->name, name) != 0)
+    {
+        prev = item;
+        item = item->next;
+    }
+
+    if (!item)
+        return list;
+
+    if (item == prev)
+    {
+        item = item->next;
+        list_free_one_item(prev);
+        list->head = item;
+    }
+    else if (!item->next)
+    {
+        list_free_one_item(item);
+        list->tail = prev;
+        prev->next = NULL;
+    }
+    else
+    {
+        prev->next = item->next;
+        list_free_one_item(item);
+    }
+
+    list->size--;
     return list;
 }
