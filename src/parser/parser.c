@@ -73,8 +73,7 @@ struct ast *get_ast(struct major *mj, struct ast *ast, struct token **tk)
         ast = parser_operator(mj, ast, tk);
 
     if (!(*tk)->data
-        && ((*tk)->word == WORD_SEMIC || (*tk)->word == WORD_NEWLINE
-            || (*tk)->word == WORD_EOF))
+        && ((*tk)->word == WORD_SEMIC || (*tk)->word == WORD_NEWLINE))
     {
         token_free(*tk);
         *tk = get_next_token(mj);
@@ -90,6 +89,10 @@ void parser(struct major *mj)
     while (tk->word != WORD_EOF)
     {
         ast = get_ast(mj, ast, &tk);
+
+        if (!tk->data && tk->word != WORD_EOF)
+            my_err(2, mj, "parser: unexpected operator");
+
         exec_ast(mj, ast);
         ast_free(ast);
         ast = NULL;

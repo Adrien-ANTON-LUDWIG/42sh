@@ -10,13 +10,20 @@ void parser_cpdlist(struct major *mj, struct token **expr, struct ast *newast,
     do
     {
         if ((*expr)->word == WORD_EOF)
-            my_err(2, mj, "parser cpd: unexpected EOF");
+            my_err(2, mj, "parser_cpdlist: unexpected EOF");
         if ((*expr)->data)
             newast->right = get_ast(mj, newast->right, expr);
         else
         {
-            token_free(*expr);
-            *expr = get_next_token(mj);
+            if (!(*expr)->data
+                && ((*expr)->word == WORD_SEMIC
+                    || (*expr)->word == WORD_NEWLINE))
+            {
+                token_free(*expr);
+                *expr = get_next_token(mj);
+            }
+            else
+                my_err(2, mj, "parser_cpdlist: enexpected operator");
         }
     } while (should_loop((*expr)->word));
 }

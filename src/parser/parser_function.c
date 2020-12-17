@@ -54,11 +54,18 @@ struct ast *parser_function(struct major *mj, struct ast *ast,
 
     if (!((*tk)->word == WORD_FUNCTION))
     {
-        (*tk)->word = WORD_FUNCTION;
-        *tk = tk2;
+        if ((*tk)->word < WORD_LBRACKET || (*tk)->word == WORD_WORD)
+        {
+            (*tk)->word = WORD_FUNCTION;
+            *tk = tk2;
+        }
+        else
+            my_err(2, mj, "parser_function: Bad function declaration");
     }
     else
     {
+        if (!(tk2->word < WORD_LBRACKET || tk2->word == WORD_WORD))
+            my_err(2, mj, "parser_function: Bad function declaration");
         list_free(func_token->data);
         func_token->data = tk2->data;
         tk2->data = NULL;
@@ -68,7 +75,6 @@ struct ast *parser_function(struct major *mj, struct ast *ast,
         if ((*tk)->word != WORD_DPARENTHESIS)
             my_err(2, mj, "parser_function : need '()' after 'function'");
     }
-
     *tk = token_renew(mj, *tk, 1);
     struct ast *newast = create_ast(mj, func_token);
     make_function_ast(mj, tk, newast);
