@@ -19,7 +19,7 @@
             "WORD_REDIR_L", "WORD_REDIR_R", "WORD_COMMAND", "WORD_EOF",        \
             "WORD_SUPERAND", "WORD_SEMIC", "WORD_NEWLINE",                     \
             "WORD_LPARENTHESIS", "WORD_RPARENTHESIS", "WORD_DPARENTHESIS",     \
-            "WORD_WORD", "WORD_ASSIGNMENT"                                     \
+            "WORD_WORD", "WORD_ASSIGNMENT", "WORD_DSEMIC"                      \
     }
 
 struct token *token_init(struct major *mj, enum words word)

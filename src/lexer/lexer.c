@@ -97,7 +97,14 @@ static struct token *get_token_operator(struct major *mj)
     char c = f->str[f->lexer_index++];
 
     if (c == ';')
+    {
+        if (get_char(f, 0) == ';')
+        {
+            f->lexer_index++;
+            return token_init(mj, WORD_DSEMIC);
+        }
         return token_init(mj, WORD_SEMIC);
+    }
     if (c == '\n')
         return token_init(mj, WORD_NEWLINE);
     if (c == '&')
