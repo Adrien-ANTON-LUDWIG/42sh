@@ -49,7 +49,11 @@ static int exec_while(struct major *mj, struct ast *ast, struct token *tk,
         }
 
         if (mj->continue_counter)
+        {
             mj->continue_counter--;
+            if (mj->continue_counter)
+                break;
+        }
 
         err = exec_ast(mj, ast->left);
 
@@ -61,7 +65,11 @@ static int exec_while(struct major *mj, struct ast *ast, struct token *tk,
         }
 
         if (mj->continue_counter)
+        {
             mj->continue_counter--;
+            if (mj->continue_counter)
+                break;
+        }
     }
     mj->rvalue = 0;
     mj->loop_counter--;
