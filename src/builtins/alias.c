@@ -60,9 +60,6 @@ static int aliases_print_all(struct major *mj, char *p)
 
 static int set_alias(struct major *mj, char **argv)
 {
-    // if (len < 3)
-    //    my_soft_err(mj, 1, "alias not found");
-
     if (!*argv)
         return 0;
 
