@@ -26,7 +26,7 @@ static int unalias_name(struct major *mj, char *name)
     if (!name)
         return 1;
 
-    if (!unalias_get(mj->alias, name))
+    if (!alias_get(mj->alias, name))
         return my_soft_err(mj, 1, "unalias_name: name not found");
 
     mj->alias = list_remove(mj->alias, name);
