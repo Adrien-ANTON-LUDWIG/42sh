@@ -7,11 +7,16 @@ void parser_cpdlist(struct major *mj, struct token **expr, struct ast *newast,
 {
     if ((*expr)->word == WORD_NEWLINE)
         *expr = token_renew(mj, *expr, 0);
+
+    if (!should_loop((*expr)->word))
+        return;
+
     do
     {
         if ((*expr)->word == WORD_EOF)
             my_err(2, mj, "parser_cpdlist: unexpected EOF");
-        if ((*expr)->data)
+        if ((*expr)->data || (*expr)->word == WORD_LPARENTHESIS
+            || (*expr)->word == WORD_LBRACKET)
             newast->right = get_ast(mj, newast->right, expr);
         else
         {

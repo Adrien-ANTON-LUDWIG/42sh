@@ -58,11 +58,12 @@ struct ast *take_action(struct major *mj, struct ast *ast, struct token **tk)
         ast = parser_function(mj, ast, tk, get_next_token(mj));
     else if ((*tk)->word == WORD_ASSIGNMENT)
         ast = add_single_command(mj, ast, tk);
+    else if ((*tk)->word == WORD_LPARENTHESIS)
+        ast = parser_parenthesis(mj, ast, tk);
+    else if ((*tk)->word == WORD_LBRACKET)
+        ast = parser_bracket(mj, ast, tk);
     else if ((*tk)->word == WORD_NEWLINE)
-    {
-        token_free(*tk);
-        *tk = get_next_token(mj);
-    }
+        token_renew(mj, *tk, 0);
     else
         my_err(2, mj, "parser: take_action: syntax error");
     return ast;
