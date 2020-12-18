@@ -1,0 +1,2 @@
+alias toto=easy
+alias

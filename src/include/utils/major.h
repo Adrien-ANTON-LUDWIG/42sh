@@ -55,6 +55,7 @@ struct major
     struct varlist *variables;
     struct funclist *flist;
     struct shopt_opt_list *shopt_opt;
+    struct list *alias;
     char **arguments;
 };
 
