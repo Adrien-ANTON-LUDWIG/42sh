@@ -139,6 +139,7 @@ int exec_for(struct major *mj, struct ast *ast)
         {
             mj->break_counter--;
             mj->loop_counter--;
+            char_array_free(list);
             return mj->rvalue;
         }
 

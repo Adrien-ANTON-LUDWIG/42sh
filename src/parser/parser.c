@@ -63,7 +63,7 @@ struct ast *take_action(struct major *mj, struct ast *ast, struct token **tk)
     else if ((*tk)->word == WORD_LBRACKET)
         ast = parser_bracket(mj, ast, tk);
     else if ((*tk)->word == WORD_NEWLINE)
-        token_renew(mj, *tk, 0);
+        *tk = token_renew(mj, *tk, 0);
     else
         my_err(2, mj, "parser: take_action: syntax error");
     return ast;
