@@ -8,10 +8,26 @@
 #include "list.h"
 #include "my_err.h"
 
+static struct list_item *unalias_get(struct list *aliases, char *name)
+{
+    struct list_item *tmp = aliases->head;
+
+    while (tmp)
+    {
+        if (!strcmp(tmp->name, name))
+            return tmp;
+        tmp = tmp->next;
+    }
+    return NULL;
+}
+
 static int unalias_name(struct major *mj, char *name)
 {
     if (!name)
         return 1;
+
+    if (!unalias_get(mj->alias, name))
+        return my_soft_err(mj, 1, "unalias_name: name not found");
 
     mj->alias = list_remove(mj->alias, name);
     return 0;
@@ -36,7 +52,7 @@ int b_unalias(struct major *mj, char **argv)
 
     int len = argv_len(argv);
     if (!mj->alias || len == 1)
-        return my_soft_err(mj, 1, "unalias: alias name not found");
+        return my_soft_err(mj, 2, "unalias: alias name not found");
 
     if (!strcmp(*(argv + 1), "-a"))
         return unalias_all(mj);

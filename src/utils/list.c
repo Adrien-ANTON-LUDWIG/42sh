@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "list.h"
 #include "my_err.h"
 #include "my_xmalloc.h"
 
@@ -38,9 +39,7 @@ void list_free(struct list *l)
     {
         struct list_item *temp = item;
         item = item->next;
-        free(temp->data);
-        free(temp->name);
-        free(temp);
+        list_free_one_item(temp);
     }
     free(l);
 }
@@ -77,38 +76,35 @@ struct list *list_append_aliases(struct major *mj, struct list *list,
 
     struct list_item *item = list_item_init(mj, value);
     item->name = name;
+    item->data = value;
 
-    if (!list)
+    if (!list && (list->head = item) && list->size++)
     {
-        list = list_init(mj);
         list->head = item;
         list->tail = item;
-        list->size++;
-
         return list;
     }
+
     struct list_item *iter = list->head;
 
-    if (iter && item < iter)
+    if (!iter)
+    {
+        list->head = item;
+        list->tail = item;
+    }
+    else if (iter && strcmp(item->name, iter->name) < 0)
     {
         item->next = iter;
         list->head = item;
     }
     else
     {
-        while (iter->next && item < iter->next)
+        while (iter->next && strcmp(item->name, iter->next->name) > 0)
             iter = iter->next;
 
-        if (!iter)
-        {
-            list->tail->next = item;
-            list->tail = item;
-        }
-        else
-        {
-            item->next = iter->next;
-            iter->next = item;
-        }
+        list->tail = (!iter->next) ? item : list->tail;
+        item->next = iter->next;
+        iter->next = item;
     }
     list->size++;
     return list;
