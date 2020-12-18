@@ -8,7 +8,7 @@
 #include "list.h"
 #include "my_err.h"
 
-static struct list_item *unalias_get(struct list *aliases, char *name)
+static struct list_item *alias_get(struct list *aliases, char *name)
 {
     struct list_item *tmp = aliases->head;
 
