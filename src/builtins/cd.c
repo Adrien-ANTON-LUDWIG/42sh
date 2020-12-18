@@ -145,7 +145,7 @@ static char *get_path_destination(int argc, char **argv)
     free(pwd);
 
     return path;
-}
+}     
 
 int b_cd(char **argv)
 {
