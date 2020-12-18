@@ -23,7 +23,7 @@ int b_continue(struct major *mj, char **argv)
 
     if (len == 1)
     {
-        mj->break_counter = 1;
+        mj->continue_counter = 1;
         return 0;
     }
 

@@ -135,6 +135,13 @@ int exec_for(struct major *mj, struct ast *ast)
         variable_declare(mj, var_name, var_value);
         rvalue = exec_ast(mj, ast->right);
 
+        if (mj->continue_counter)
+        {
+            mj->continue_counter--;
+            if (mj->continue_counter)
+                break;
+        }
+
         if (mj->break_counter)
         {
             mj->break_counter--;
@@ -142,9 +149,6 @@ int exec_for(struct major *mj, struct ast *ast)
             char_array_free(list);
             return mj->rvalue;
         }
-
-        if (mj->continue_counter)
-            mj->continue_counter--;
     }
     char_array_free(list);
     mj->rvalue = 0;
