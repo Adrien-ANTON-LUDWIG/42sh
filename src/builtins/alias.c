@@ -69,7 +69,7 @@ static int set_alias(struct major *mj, char **argv)
         char *name_end = strstr(*argv, "=");
 
         if (!name_end)
-            return alias_print(mj, NULL, name_start, 0);
+            return alias_print(mj, NULL, name_start, "");
 
         size_t name_len = name_end - name_start;
         char *name = strndup(name_start, name_len);
