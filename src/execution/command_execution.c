@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "alias.h"
 #include "ast.h"
 #include "break.h"
 #include "cd.h"
@@ -15,6 +16,7 @@
 #include "export.h"
 #include "my_err.h"
 #include "shopt.h"
+#include "unalias.h"
 #include "variables_substitution.h"
 
 struct ast *search_funclist(struct major *mj, char *name)
@@ -34,6 +36,21 @@ static int exec_if_known_the_retour(struct major *mj, char **command)
     if (!strcmp(*command, "exit"))
     {
         mj->rvalue = b_exit(mj, command);
+        return 1;
+    }
+    else if (!strcmp(*command, "alias"))
+    {
+        mj->rvalue = b_alias(mj, command);
+        return 1;
+    }
+    else if (!strcmp(*command, "unalias"))
+    {
+        mj->rvalue = b_unalias(mj, command);
+        return 1;
+    }
+    else if (!strcmp(*command, "unalias"))
+    {
+        mj->rvalue = b_unalias(mj, command);
         return 1;
     }
     else if (!strcmp(*command, "export"))
@@ -68,6 +85,9 @@ int exec_if_known(struct major *mj, char **command)
     {
         struct major *newmajor = major_copy(mj);
         newmajor->arguments = command + 1;
+        newmajor->loop_counter = 0;
+        newmajor->break_counter = 0;
+        newmajor->continue_counter = 0;
         exec_ast(newmajor, func->right);
         free(newmajor);
         return 1;

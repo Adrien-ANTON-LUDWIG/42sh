@@ -20,6 +20,9 @@ void major_free(struct major *mj)
     if (mj->shopt_opt)
         shopt_free_list(mj);
 
+    if (mj->alias)
+        list_free(mj->alias);
+
     struct funclist *fl = mj->flist;
 
     while (fl)
