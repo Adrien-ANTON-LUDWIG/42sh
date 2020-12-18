@@ -9,6 +9,72 @@
 
 #include "b_utils.h"
 
+char *update_path(char *path, char *section);
+
+static char *get_home(void)
+{
+    char *home = getenv("HOME");
+    if (!home)
+    {
+        char *usr = getenv("USER");
+
+        if (!usr)
+            return strdup("/home/");
+
+        home = malloc(strlen("/home/") + strlen(usr) + 1);
+        home = strcpy(home, "/home/");
+        home = strcat(home, usr);
+    }
+    else
+        home = strdup(home);
+    return home;
+}
+
+static char *get_pwd(void)
+{
+    char *pwd = getenv("PWD");
+    char *p = NULL;
+    if (!pwd)
+    {
+        pwd = get_home();
+        setenv("PWD", pwd, 1);
+    }
+    else
+        pwd = strdup(pwd);
+    p = strdup(pwd);
+    free(pwd);
+    return p;
+}
+
+static char *get_oldpwd(void)
+{
+    char *oldpwd = getenv("OLDPWD");
+    if (!oldpwd)
+    {
+        warnx("cd: OLDPWD not set");
+        return NULL;
+    }
+    return oldpwd;
+}
+
+static char *handle_minus(int *argc, char **argv, char *pwd, char *path)
+{
+    *argc = 0;
+    if (strlen(argv[0]) == 1)
+    {
+        path = update_path(path, "-");
+        if (!path)
+            return NULL;
+    }
+    else
+    {
+        warnx("No such file or directory");
+        free(path);
+        path = strdup(pwd);
+    }
+    return path;
+}
+
 char *update_path(char *path, char *section)
 {
     char *new = NULL;
@@ -20,13 +86,19 @@ char *update_path(char *path, char *section)
         new = strdup(path);
     }
     else if (!strcmp(section, "~"))
-        new = strdup(getenv("HOME"));
+        new = get_home();
     else if (!strcmp(section, "/"))
         new = strdup("/");
     else if (!strcmp(section, "-"))
     {
-        printf("%s\n", getenv("OLDPWD"));
-        new = strdup(getenv("OLDPWD"));
+        char *oldpwd = get_oldpwd();
+        if (!oldpwd || !*oldpwd)
+        {
+            free(path);
+            return NULL;
+        }
+        printf("%s\n", oldpwd);
+        new = strdup(oldpwd);
     }
     else
     {
@@ -43,10 +115,10 @@ char *update_path(char *path, char *section)
 
 static char *get_path_destination(int argc, char **argv)
 {
-    char *pwd = getenv("PWD");
+    char *pwd = get_pwd();
 
     if (!pwd)
-        pwd = getenv("HOME");
+        pwd = strdup(get_pwd());
 
     char *path = strdup(pwd);
 
@@ -54,15 +126,7 @@ static char *get_path_destination(int argc, char **argv)
         path = update_path(path, "~");
     else if (strstr(argv[0], "-"))
     {
-        argc = 0;
-        if (strlen(argv[0]) == 1)
-            path = update_path(path, "-");
-        else
-        {
-            warnx("No such file or directory");
-            free(path);
-            path = strdup(getenv("PWD"));
-        }
+        path = handle_minus(&argc, argv, pwd, path);
     }
     else if (argv[0][0] == '/')
         path = update_path(path, "/");
@@ -76,8 +140,9 @@ static char *get_path_destination(int argc, char **argv)
         path_to_iter = NULL;
     }
 
-    setenv("OLDPWD", getenv("PWD"), 1);
+    setenv("OLDPWD", pwd, 1);
     setenv("PWD", path, 1);
+    free(pwd);
 
     return path;
 }
@@ -90,6 +155,9 @@ int b_cd(char **argv)
         errx(1, "cd: too many arguments");
 
     char *path = get_path_destination(i - 1, argv + 1);
+
+    if (!path)
+        return 1;
 
     int r_value = chdir(path);
     free(path);
