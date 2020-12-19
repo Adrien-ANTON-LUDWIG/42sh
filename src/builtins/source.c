@@ -8,18 +8,21 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 #include "b_utils.h"
+#include "custom_descriptor.h"
+#include "major.h"
+#include "parser.h"
 
 static char *iter_dir(char *base_path, char *dest_path);
 
 static char *get_rec_path(char *base_path, char *dir_name, char *dest_path)
 {
-    char *rec_path = strdup(base_path);
-    rec_path = realloc(
-        rec_path, sizeof(char) * (strlen(rec_path) + strlen(dir_name) + 2));
+    char *rec_path = realloc(
+        base_path, sizeof(char) * (strlen(base_path) + strlen(dir_name) + 2));
 
-    strcpy(rec_path, base_path);
     strcat(rec_path, "/");
     strcat(rec_path, dir_name);
 
@@ -47,6 +50,7 @@ static char *iter_dir(char *base_path, char *dest_path)
                     closedir(dir);
                     return rec_path;
                 }
+                free(rec_path);
             }
 
             else if (!strcmp(dp->d_name, dest_path))
@@ -72,10 +76,6 @@ static char *get_path(char *str)
     char *PATH = getenv("PATH");
     char *index = PATH;
 
-    char *found = iter_dir(".", str);
-    if (found)
-        return found;
-
     while (index)
     {
         char *next_path = strstr(index, ":");
@@ -100,17 +100,52 @@ static char *get_path(char *str)
     return NULL;
 }
 
-char **b_source(char *argv[])
+static int source_child(char *path)
+{
+    struct major *mj = major_init();
+    struct custom_FILE *file;
+    file = custom_fopen(mj, path);
+    mj->file = file;
+    parser(mj);
+    int rvalue = mj->rvalue;
+    major_free(mj);
+    return rvalue;
+}
+
+int b_source(char *argv[])
 {
     int argc = argv_len(argv);
 
     if (argc < 2)
     {
         warnx("filename required");
-        return NULL;
+        return 1;
     }
 
     char *path = get_path(argv[1]);
+
+    if (!path)
+        warnx("source: file not found");
+
+    free(argv[1]);
     argv[1] = path;
-    return argv + 1;
+
+    pid_t cpid;
+    pid_t w;
+    int wstatus;
+
+    cpid = fork();
+    if (cpid == -1)
+        errx(1, "fork");
+    if (cpid == 0)
+        return source_child(path);
+    else
+    {
+        w = waitpid(cpid, &wstatus, 0);
+        if (w == -1)
+            errx(1, "waitpid");
+
+        return WEXITSTATUS(wstatus);
+    }
+    return 1;
 }

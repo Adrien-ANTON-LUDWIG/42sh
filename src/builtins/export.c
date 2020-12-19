@@ -2,6 +2,7 @@
 
 #include "export.h"
 
+#include <err.h>
 #include <errno.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -38,8 +39,11 @@ static void export_display(void)
 {
     int len = 0;
     char c = ' ';
-    for (int i = 0; environ[i]; i++)
+    int environ_len = argv_len(environ);
+    for (int i = 0; i < environ_len; i++)
     {
+        if (!environ[i])
+            continue;
         printf("export ");
         int found_equal = 0;
         len = strlen(environ[i]);
@@ -75,15 +79,27 @@ static void export_remove(int len, int nb_opt, char *argv[])
     }
 }
 
-static void export_putenv(int len, int nb_opt, char *argv[])
+static int export_putenv(int len, int nb_opt, char *argv[])
 {
     for (int i = nb_opt + 1; i < len; i++)
     {
         if (strstr(argv[i], "=") == NULL)
             setenv(argv[i], "", 0);
         else
-            putenv(argv[i]);
+        {
+            char *value = strstr(argv[i], "=");
+
+            if (value == argv[i])
+            {
+                warnx("export: %s: not a valid identifier", value);
+                return 1;
+            }
+            char *name = strndup(argv[i], value - argv[i]);
+            setenv(name, value + 1, 0);
+            free(name);
+        }
     }
+    return 0;
 }
 
 int b_export(char *argv[])
@@ -99,11 +115,11 @@ int b_export(char *argv[])
 
     int nb_opt = set_options(argv, &p, &n, &f);
 
-    if ((p && !f && nb_opt == len - 1) || !len)
+    if ((p && !f && nb_opt == len - 1) || len == 1)
         export_display();
     else if (n && !p && !f)
         export_remove(len, nb_opt, argv);
     else
-        export_putenv(len, nb_opt, argv);
+        return export_putenv(len, nb_opt, argv);
     return 0;
 }
