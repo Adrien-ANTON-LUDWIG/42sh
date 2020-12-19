@@ -32,16 +32,28 @@
 
 int is_quiet = 0;
 
-static void print_shopt_opt(struct major *mj, int is_minus, int value,
-                            char *name)
+static int print_shopt_opt(struct major *mj, int is_minus, int value,
+                           char *name)
 {
     struct shopt_opt_list *temp = mj->shopt_opt;
 
     while (temp)
     {
-        char *tab = "\t\t";
-        if (strlen(temp->name) + 8 >= 16)
-            tab = "\t";
+        int len = 16 - strlen(temp->name) - 1;
+        char tab[16];
+        if (len <= 0)
+        {
+            tab[0] = '\t';
+            tab[1] = 0;
+        }
+        else
+        {
+            for (int i = 0; i < len; i++)
+                tab[i] = ' ';
+            tab[len] = '\t';
+            tab[len + 1] = 0;
+        }
+
         if (!name && !is_minus)
             printf("shopt -%s %s\n", (temp->value) ? "u" : "s", temp->name);
         else if (!name && (value < 0 || temp->value == value))
@@ -50,6 +62,9 @@ static void print_shopt_opt(struct major *mj, int is_minus, int value,
             printf("%s%s%s\n", temp->name, tab, (temp->value) ? "on" : "off");
         temp = temp->next;
     }
+    if (!name)
+        return 0;
+    return shopt_opt_is_set(mj, name);
 }
 
 static int shopt_opt_print(struct major *mj, char *arg, int should_print)
@@ -140,7 +155,7 @@ static int shopt_set_qsu(char **argv, int *opt_len, int *s, int *u)
         }
     }
     *opt_len = optind;
-    optind = 1;
+    optind = 0;
     if (*s && *u)
     {
         warnx("shopt: cannot set and unset shell options simultaneously");
@@ -156,14 +171,14 @@ int shopt_opt_is_set(struct major *mj, char *opt_name)
 
     struct shopt_opt_list *temp = mj->shopt_opt;
 
-    while (temp && strcmp(temp->name, opt_name) != 0)
+    while (temp && opt_name && strcmp(temp->name, opt_name) != 0)
         temp = temp->next;
 
-    if (!temp
+    if ((!temp || !opt_name)
         && my_soft_err(mj, 1, "shopt_opt_is_set: invalid shell option name"))
         return 1;
 
-    return temp->value;
+    return temp->value == 0;
 }
 
 int shopt_options_argv(struct major *mj, char **argv)
@@ -217,7 +232,12 @@ int b_shopt_options(struct major *mj, char **argv)
     int index = shopt_get_index(argv[opt_len]);
 
     if (index >= 0)
-        print_shopt_opt(mj, IS_MINUS, -1, argv[1]);
+    {
+        int rvalue = 0;
+        for (int i = 1; i < len; i++)
+            rvalue += print_shopt_opt(mj, IS_MINUS, -1, argv[i]);
+        return rvalue != 0;
+    }
     else
     {
         my_soft_err(mj, 1, "shopt_options: invalid shell option name");

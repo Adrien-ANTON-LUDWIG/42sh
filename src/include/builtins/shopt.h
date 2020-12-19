@@ -36,6 +36,15 @@ void shopt_free_list(struct major *mj);
 int shopt_set_opt(struct major *mj, char *opt_name, int value);
 
 /**
+ * @brief Checks if the shopt 'opt_name' is set or not
+ *
+ * @param mj
+ * @param opt_name
+ * @return int
+ */
+int shopt_opt_is_set(struct major *mj, char *opt_name);
+
+/**
  * @brief Called for the builtin 'shopt'
  *
  * @param mj
