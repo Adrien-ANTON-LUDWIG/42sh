@@ -1,5 +1,6 @@
 stages:
     - Build
+    - Mandatory
     - Post-build
 build:
     stage: Build
@@ -24,10 +25,17 @@ Lines Counter:
     script:
         - find . -name '*.c' | xargs wc -l
 Clang Format:
-    stage: Post-build
+    stage: Mandatory
     tags:
         - docker
     script:
         - cp /usr/src/app/clang-test.sh ./src/
         - cd src/
         - sh clang-test.sh
+Trailing Whitespaces:
+    stage: Mandatory
+    tags:
+        - docker
+    script:
+        - pre-commit install
+        - pre-commit run --all-files
