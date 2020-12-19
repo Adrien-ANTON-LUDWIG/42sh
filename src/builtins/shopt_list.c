@@ -59,7 +59,7 @@ void shopt_free_list(struct major *mj)
     free(mj->shopt_opt);
 }
 
-void shopt_set_opt(struct major *mj, char *opt_name, int value)
+int shopt_set_opt(struct major *mj, char *opt_name, int value)
 {
     if (!mj->shopt_opt)
         shopt_init_list(mj);
@@ -75,4 +75,6 @@ void shopt_set_opt(struct major *mj, char *opt_name, int value)
         }
         temp = temp->next;
     }
+
+    return !temp;
 }

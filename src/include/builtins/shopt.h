@@ -33,7 +33,7 @@ void shopt_free_list(struct major *mj);
  * @param opt_name
  * @param value
  */
-void shopt_set_opt(struct major *mj, char *opt_name, int value);
+int shopt_set_opt(struct major *mj, char *opt_name, int value);
 
 /**
  * @brief Called for the builtin 'shopt'
