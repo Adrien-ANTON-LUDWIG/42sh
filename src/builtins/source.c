@@ -100,10 +100,10 @@ static char *get_path(char *str)
     return NULL;
 }
 
-static int source_child(char *path, struct major *parent_mj)
+static int source_child(struct major *parent_mj, char *path, char **argv)
 {
     struct major *mj = major_copy(parent_mj);
-    mj->arguments = NULL;
+    mj->arguments = argv;
     mj->loop_counter = 0;
     mj->break_counter = 0;
     mj->continue_counter = 0;
@@ -112,25 +112,38 @@ static int source_child(char *path, struct major *parent_mj)
     mj->file = file;
     parser(mj);
     int rvalue = mj->rvalue;
-    major_free(mj);
+    custom_fclose(mj->file);
+
+    parent_mj->flist = mj->flist;
+    parent_mj->variables = mj->variables;
+    parent_mj->alias = mj->alias;
+    parent_mj->shopt_opt = mj->shopt_opt;
+
+    free(mj);
     return rvalue;
 }
 
-int b_source(char *argv[], struct major *mj)
+int b_source(struct major *mj, char *argv[])
 {
     int argc = argv_len(argv);
 
     if (argc < 2)
     {
         warnx("filename required");
-        return 1;
+        return 2;
     }
 
     char *path = get_path(argv[1]);
-    if (!path)
+    if (!path || access(path, F_OK))
+    {
         warnx("source: file not found");
+        return 1;
+    }
 
-    free(argv[1]);
-    argv[1] = path;
-    return source_child(path, mj);
+    if (argv[1] != path)
+    {
+        free(argv[1]);
+        argv[1] = path;
+    }
+    return source_child(mj, path, argv + 2);
 }

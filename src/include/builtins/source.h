@@ -3,6 +3,6 @@
 
 #include "major.h"
 
-int b_source(char *argv[], struct major *mj);
+int b_source(struct major *mj, char *argv[]);
 
 #endif /* _SOURCE_H_ */
