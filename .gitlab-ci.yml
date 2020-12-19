@@ -1,7 +1,6 @@
 stages:
     - Build
-    - Lines counter
-    - Tests
+    - Post-build
 build:
     stage: Build
     tags:
@@ -10,7 +9,7 @@ build:
         - mkdir build && cd build
         - cmake .. && make
 Functionnal Tests:
-    stage: Tests
+    stage: Post-build
     tags:
         - docker
     script:
@@ -18,14 +17,14 @@ Functionnal Tests:
         - cmake .. && make debug
         - cp /usr/src/app/script.sh .
         - make script_test
-lines_counter:
-    stage: Lines counter
+Lines Counter:
+    stage: Post-build
     tags:
         - docker
     script:
         - find . -name '*.c' | xargs wc -l
 Clang Format:
-    stage: Tests
+    stage: Post-build
     tags:
         - docker
     script:
