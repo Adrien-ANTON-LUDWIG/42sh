@@ -18,9 +18,10 @@ static void parser_case_clause(struct major *mj, struct ast *ast,
     if ((*tk)->word == WORD_LPARENTHESIS)
         *tk = token_renew(mj, *tk, 0);
 
-    while ((*tk)->word != WORD_RPARENTHESIS)
+    while ((*tk)->word != WORD_RPARENTHESIS || !ast->left)
     {
-        if (!((*tk)->word < WORD_LBRACKET || (*tk)->word == WORD_WORD))
+        if (!((*tk)->word <= WORD_RBRACKET || (*tk)->word == WORD_WORD
+              || (*tk)->word == WORD_ASSIGNMENT))
             my_err(2, mj, "parser_case_clause: not a valid word");
 
         if (!ast->left)
@@ -60,7 +61,8 @@ struct ast *parser_case(struct major *mj, struct ast *ast, struct token **tk)
     struct ast *newast = create_ast(mj, *tk);
     *tk = get_next_token(mj);
 
-    if (!((*tk)->word < WORD_LBRACKET || (*tk)->word == WORD_WORD))
+    if (!((*tk)->word <= WORD_RBRACKET || (*tk)->word == WORD_WORD
+          || (*tk)->word == WORD_ASSIGNMENT))
         my_err(2, mj, "parser_case: invalid word");
 
     list_append(mj, newast->data->data, (*tk)->data->head->data);

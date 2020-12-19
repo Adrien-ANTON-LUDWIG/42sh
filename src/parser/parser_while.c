@@ -23,7 +23,7 @@ struct ast *parser_while(struct major *mj, struct ast *ast, struct token **tk)
     newast->left = newast->right;
     newast->right = NULL;
 
-    if ((*tk)->word != WORD_DO)
+    if ((*tk)->word != WORD_DO || !newast->left)
         my_err(2, mj, "parser_while: expected 'do'");
 
     *tk = token_renew(mj, *tk, 1);

@@ -61,6 +61,8 @@ set (SRC
     src/parser/parser_function.c
     src/parser/parser_word.c
     src/parser/parser_case.c
+    src/parser/parser_bracket.c
+    src/parser/parser_parenthesis.c
     src/tokens/tokens.c
     src/utils/list.c
     src/utils/major.c

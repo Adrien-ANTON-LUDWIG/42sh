@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "char_array_op.h"
 #include "command_execution.h"
 #include "exec_case.h"
 #include "list.h"
@@ -13,6 +14,7 @@
 #include "redir.h"
 #include "variable_assignment_exec.h"
 #include "variable_declaration.h"
+#include "variables_substitution.h"
 
 static int redir_execution(struct major *mj, struct ast *ast, struct token *tk)
 {
@@ -47,7 +49,11 @@ static int exec_while(struct major *mj, struct ast *ast, struct token *tk,
         }
 
         if (mj->continue_counter)
+        {
             mj->continue_counter--;
+            if (mj->continue_counter)
+                break;
+        }
 
         err = exec_ast(mj, ast->left);
 
@@ -59,7 +65,11 @@ static int exec_while(struct major *mj, struct ast *ast, struct token *tk,
         }
 
         if (mj->continue_counter)
+        {
             mj->continue_counter--;
+            if (mj->continue_counter)
+                break;
+        }
     }
     mj->rvalue = 0;
     mj->loop_counter--;
@@ -124,29 +134,31 @@ int exec_for(struct major *mj, struct ast *ast)
     if (!ast->middle)
         return 0;
 
-    struct token *start = ast->middle->data;
-    struct list_item *list = start->data->head;
+    char **list = variables_substitution(mj, ast->middle->data->data);
 
-    while (list)
+    for (int i = 0; list[i]; i++)
     {
         char *var_name = ast->left->data->data->head->data;
-        char *var_value = list->data;
+        char *var_value = list[i];
         variable_declare(mj, var_name, var_value);
         rvalue = exec_ast(mj, ast->right);
+
+        if (mj->continue_counter)
+        {
+            mj->continue_counter--;
+            if (mj->continue_counter)
+                break;
+        }
 
         if (mj->break_counter)
         {
             mj->break_counter--;
             mj->loop_counter--;
+            char_array_free(list);
             return mj->rvalue;
         }
-
-        if (mj->continue_counter)
-            mj->continue_counter--;
-
-        list = list->next;
     }
-
+    char_array_free(list);
     mj->rvalue = 0;
     mj->loop_counter--;
     return rvalue;

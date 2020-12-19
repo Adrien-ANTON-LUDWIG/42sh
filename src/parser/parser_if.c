@@ -61,7 +61,7 @@ struct ast *parser_if(struct major *mj, struct ast *ast, struct token **tk)
     newast->left = newast->right;
     newast->right = NULL;
 
-    if ((*tk)->word != WORD_THEN)
+    if ((*tk)->word != WORD_THEN || !newast->left)
         my_err(2, mj, "parser_if: expected 'then'");
 
     *tk = token_renew(mj, *tk, 1);
