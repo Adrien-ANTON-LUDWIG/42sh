@@ -67,8 +67,12 @@ static int should_interpret(char c)
 { // add e and c ?
     if (is_in(c, "bfrv"))
         return -1;
-    else if (is_in(c, "atn"))
-        return (c == 'n') ? 3 : ((c == 't') ? 5 : 0);
+    else if (c == 'a')
+        return 0;
+    else if (c == 'n')
+        return 3;
+    else if (c == 't')
+        return 5;
     else
         return -2;
 }
