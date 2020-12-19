@@ -1,6 +1,7 @@
 stages:
     - Build
     - Post-build
+    - Mandatory
 build:
     stage: Build
     tags:
@@ -31,3 +32,10 @@ Clang Format:
         - cp /usr/src/app/clang-test.sh ./src/
         - cd src/
         - sh clang-test.sh
+Trailing Whitespaces:
+    stage: Mandatory
+    tags:
+        - docker
+    script:
+        - pre-commit install
+        - pre-commit run --all-files
