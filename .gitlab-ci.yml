@@ -1,6 +1,7 @@
 stages:
     - Build
     - Lines counter
+    - Clang Format
     - Functional tests
 build:
     stage: Build
@@ -24,3 +25,11 @@ lines_counter:
         - docker
     script:
         - find . -name '*.c' | xargs wc -l
+clang_format:
+    stage: Clang Format
+    tags:
+        - docker
+    script:
+        - cp /usr/src/app/clang-test.sh ./src/
+        - cd src/
+        - sh clang-test.sh
