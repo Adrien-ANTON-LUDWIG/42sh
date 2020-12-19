@@ -100,10 +100,13 @@ static char *get_path(char *str)
     return NULL;
 }
 
-// TODO: Use major_copy
-static int source_child(char *path)
+static int source_child(char *path, struct major *parent_mj)
 {
-    struct major *mj = major_init();
+    struct major *mj = major_copy(parent_mj);
+    mj->arguments = NULL;
+    mj->loop_counter = 0;
+    mj->break_counter = 0;
+    mj->continue_counter = 0;
     struct custom_FILE *file;
     file = custom_fopen(mj, path);
     mj->file = file;
@@ -113,7 +116,7 @@ static int source_child(char *path)
     return rvalue;
 }
 
-int b_source(char *argv[])
+int b_source(char *argv[], struct major *mj)
 {
     int argc = argv_len(argv);
 
@@ -124,29 +127,10 @@ int b_source(char *argv[])
     }
 
     char *path = get_path(argv[1]);
-
     if (!path)
         warnx("source: file not found");
 
     free(argv[1]);
     argv[1] = path;
-
-    pid_t cpid;
-    pid_t w;
-    int wstatus;
-
-    cpid = fork();
-    if (cpid == -1)
-        errx(1, "fork");
-    if (cpid == 0)
-        return source_child(path);
-    else
-    {
-        w = waitpid(cpid, &wstatus, 0);
-        if (w == -1)
-            errx(1, "waitpid");
-
-        return WEXITSTATUS(wstatus);
-    }
-    return 1;
+    return source_child(path, mj);
 }

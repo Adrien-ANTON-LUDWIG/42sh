@@ -1,6 +1,8 @@
 #ifndef _SOURCE_H_
 #define _SOURCE_H_
 
-int b_source(char *argv[]);
+#include "major.h"
+
+int b_source(char *argv[], struct major *mj);
 
 #endif /* _SOURCE_H_ */
