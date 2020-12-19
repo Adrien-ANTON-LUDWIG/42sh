@@ -123,9 +123,12 @@ static int shopt_opt_manage(struct major *mj, char **argv,
     if (!argv || !*argv)
     {
         if (!param[Q])
-            return (should_set_and_one_time & SET)
-                ? shopt_opt_print(mj, "-s", SHOULD_NOT_PRINT, param)
-                : shopt_opt_print(mj, "-u", SHOULD_NOT_PRINT, param);
+        {
+            if (should_set_and_one_time & SET)
+                return shopt_opt_print(mj, "-s", SHOULD_NOT_PRINT, param);
+            else
+                return shopt_opt_print(mj, "-u", SHOULD_NOT_PRINT, param);
+        }
         return 0;
     }
 
