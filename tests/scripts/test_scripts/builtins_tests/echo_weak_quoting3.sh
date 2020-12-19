@@ -1,0 +1,1 @@
+echo "\\\\\\\\ttx12xdasfsdsdfagwersdfsc?vsdfsdafsdaft\x07cghjoiresf;,.132512"
