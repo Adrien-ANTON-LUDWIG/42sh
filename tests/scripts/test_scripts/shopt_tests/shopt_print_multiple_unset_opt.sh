@@ -1,0 +1,1 @@
+shopt dotglob extglob nullglob

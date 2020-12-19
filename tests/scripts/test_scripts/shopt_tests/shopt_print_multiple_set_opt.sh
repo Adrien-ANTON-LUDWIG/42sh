@@ -1,0 +1,1 @@
+shopt xpg_echo sourcepath
