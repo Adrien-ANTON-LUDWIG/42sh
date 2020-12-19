@@ -17,11 +17,11 @@
 #define S 1
 #define U 2
 
-#define UNSET 0
-#define SET 1
+#define UNSET 1
+#define SET 2
 
-#define MULTIPLE_TIME 0
-#define ONE_TIME 1
+#define MULTIPLE_TIME 4
+#define ONE_TIME 8
 
 #define SHOULD_NOT_PRINT 0
 #define SHOULD_PRINT 1
@@ -117,13 +117,13 @@ static int shopt_get_index(char *name)
     return -1;
 }
 
-static int shopt_opt_manage(struct major *mj, char **argv, int should_set,
-                            int one_time, int *param)
+static int shopt_opt_manage(struct major *mj, char **argv,
+                            int should_set_and_one_time, int *param)
 {
     if (!argv || !*argv)
     {
         if (!param[Q])
-            return (should_set)
+            return (should_set_and_one_time & SET)
                 ? shopt_opt_print(mj, "-s", SHOULD_NOT_PRINT, param)
                 : shopt_opt_print(mj, "-u", SHOULD_NOT_PRINT, param);
         return 0;
@@ -139,9 +139,10 @@ static int shopt_opt_manage(struct major *mj, char **argv, int should_set,
         if (name_index < 0)
             my_err(1, mj, "shopt: invalid shell option name");
 
-        rvalue = shopt_set_opt(mj, shopt_names[name_index], should_set);
+        rvalue =
+            shopt_set_opt(mj, shopt_names[name_index], should_set_and_one_time);
 
-        if (one_time || rvalue != 0)
+        if ((should_set_and_one_time & ONE_TIME) || rvalue != 0)
             break;
     }
 
@@ -214,9 +215,9 @@ int shopt_options_argv(struct major *mj, char **argv)
     if (len > 1)
     {
         if (!strcmp(argv[0], "-O"))
-            return shopt_opt_manage(mj, argv + 1, SET, ONE_TIME, param);
+            return shopt_opt_manage(mj, argv + 1, SET | ONE_TIME, param);
         else
-            return shopt_opt_manage(mj, argv + 1, UNSET, ONE_TIME, param);
+            return shopt_opt_manage(mj, argv + 1, UNSET | ONE_TIME, param);
         return 2;
     }
 
@@ -231,7 +232,6 @@ int b_shopt_options(struct major *mj, char **argv)
     if (!mj->shopt_opt)
         shopt_init_list(mj);
 
-    int len = argv_len(argv);
     int *param = my_xcalloc(mj, 1, SHOPT_OPT_PARAM * sizeof(int));
     int opt_len = 0;
     int opt_err = 0;
@@ -240,21 +240,21 @@ int b_shopt_options(struct major *mj, char **argv)
     if (rvalue == -1 && (opt_err = shopt_set_param(argv, &opt_len, &param)) > 0)
         rvalue = opt_err;
 
-    if (len == 1 || (!argv[opt_len] && !param[U] && !param[S]))
+    if (argv_len(argv) == 1 || (!argv[opt_len] && !param[U] && !param[S]))
         rvalue = shopt_opt_print(mj, NULL, SHOULD_PRINT, param);
 
     if (rvalue == -1 && param[S])
         rvalue =
-            shopt_opt_manage(mj, argv + opt_len, SET, MULTIPLE_TIME, param);
+            shopt_opt_manage(mj, argv + opt_len, SET | MULTIPLE_TIME, param);
 
     if (rvalue == -1 && param[U])
         rvalue =
-            shopt_opt_manage(mj, argv + opt_len, UNSET, MULTIPLE_TIME, param);
+            shopt_opt_manage(mj, argv + opt_len, UNSET | MULTIPLE_TIME, param);
 
     int index = shopt_get_index(argv[opt_len]);
 
     if (rvalue == -1 && index >= 0)
-        rvalue = shopt_print_all(mj, argv, len, param);
+        rvalue = shopt_print_all(mj, argv, argv_len(argv), param);
     else if (rvalue == -1)
         rvalue = my_soft_err(mj, 1, "shopt_options: invalid shell option name");
 
