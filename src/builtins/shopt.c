@@ -67,6 +67,14 @@ static int print_shopt_opt(struct major *mj, int is_minus, int value,
     return shopt_opt_is_set(mj, name);
 }
 
+static int shopt_print_all(struct major *mj, char **argv, int len)
+{
+    int rvalue = 0;
+    for (int i = 1; i < len; i++)
+        rvalue += print_shopt_opt(mj, IS_MINUS, -1, argv[i]);
+    return rvalue != 0;
+}
+
 static int shopt_opt_print(struct major *mj, char *arg, int should_print)
 {
     int rvalue = 0;
@@ -232,17 +240,9 @@ int b_shopt_options(struct major *mj, char **argv)
     int index = shopt_get_index(argv[opt_len]);
 
     if (index >= 0)
-    {
-        int rvalue = 0;
-        for (int i = 1; i < len; i++)
-            rvalue += print_shopt_opt(mj, IS_MINUS, -1, argv[i]);
-        return rvalue != 0;
-    }
+        return shopt_print_all(mj, argv, len);
     else
-    {
-        my_soft_err(mj, 1, "shopt_options: invalid shell option name");
-        return 1;
-    }
+        return my_soft_err(mj, 1, "shopt_options: invalid shell option name");
 
     return 0;
 }
