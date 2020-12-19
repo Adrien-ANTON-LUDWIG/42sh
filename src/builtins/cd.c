@@ -1,5 +1,7 @@
 #define _POSIX_C_SOURCE 200809L
 
+#include "cd.h"
+
 #include <err.h>
 #include <errno.h>
 #include <stdio.h>
@@ -8,8 +10,6 @@
 #include <unistd.h>
 
 #include "b_utils.h"
-
-char *update_path(char *path, char *section);
 
 static char *get_home(void)
 {
@@ -116,10 +116,6 @@ char *update_path(char *path, char *section)
 static char *get_path_destination(int argc, char **argv)
 {
     char *pwd = get_pwd();
-
-    if (!pwd)
-        pwd = strdup(get_pwd());
-
     char *path = strdup(pwd);
 
     if (!argc || argv[0][0] == '~')
@@ -141,7 +137,8 @@ static char *get_path_destination(int argc, char **argv)
     }
 
     setenv("OLDPWD", pwd, 1);
-    setenv("PWD", path, 1);
+    if (path)
+        setenv("PWD", path, 1);
     free(pwd);
 
     return path;

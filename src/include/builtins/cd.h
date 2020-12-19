@@ -14,4 +14,13 @@
  */
 int b_cd(char **argv);
 
+/**
+ * @brief Updates the actual path
+ *
+ * @param path
+ * @param section
+ * @return char*
+ */
+char *update_path(char *path, char *section);
+
 #endif /* CD_H_ */
