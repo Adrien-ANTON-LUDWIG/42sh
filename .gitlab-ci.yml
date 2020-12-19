@@ -17,7 +17,7 @@ Functionnal Tests:
         - mkdir build && cd build
         - cmake .. && make debug
         - cp /usr/src/app/script.sh .
-        - env -i /usr/bin/make script_test
+        - make script_test
 Lines Counter:
     stage: Post-build
     tags:
