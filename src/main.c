@@ -14,7 +14,7 @@
 #include "printer.h"
 #include "shopt.h"
 
-static int run_command_line (char *argv[], int from, struct major *mj)
+static int run_command_line(char *argv[], int from, struct major *mj)
 {
     mj->file = createfrom_string(mj, *(argv + from));
     mj->rvalue = 0;
