@@ -1,35 +1,44 @@
 #include "echo_utils.h"
 
+#include <getopt.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+
+#include "b_utils.h"
 
 #define CHAR_ZERO 48
 #define TO_UPPER 32
 
 int set_options(char *argv[], int *n, int *e, int *E)
 {
-    if (!argv)
-        return 1;
+    int c = 0;
+    int len = argv_len(argv);
+    int stop = 0;
+    optind = 0;
+    opterr = 0;
 
-    int nb_options = 0;
-    int i = 1;
-    while (argv[i] && !nb_options)
+    while (!stop && (c = getopt(len, argv, ":neE")) != -1)
     {
-        if (!strcmp(argv[i], "-n"))
-            *n = 1;
-        else if (!strcmp(argv[i], "-e"))
-            *e = (*E == 0);
-        else if (!strcmp(argv[i], "-E"))
+        switch (c)
         {
+        case 'n':
+            *n = 1;
+            break;
+        case 'e':
+            *e = 1;
+            break;
+        case 'E':
             *E = 1;
-            *e = 0;
+            break;
+        default:
+            optind -= 1;
+            stop = 1;
+            break;
         }
-        else
-            nb_options = i;
-        i += (nb_options) ? 0 : 1;
     }
-
-    nb_options = i - 1;
-    return nb_options;
+    return optind - 1;
 }
 
 int nb_to_read_oct(char *s, int i)

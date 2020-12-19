@@ -65,12 +65,12 @@ static int get_ascii_conversion(char *argv, size_t *i, int index)
 
 static int should_interpret(char c)
 { // add e and c ?
-    if (is_in(c, "abfrv"))
+    if (is_in(c, "bfrv"))
         return -1;
-    else if (is_in(c, "tn"))
-        return (c == 'n') ? 3 : 5;
+    else if (is_in(c, "atn"))
+        return (c == 'n') ? 3 : ((c == 't') ? 5 : 0);
     else
-        return 0;
+        return -2;
 }
 
 static int strong_quotes(char *argv, size_t i, size_t len, int e)
@@ -88,10 +88,10 @@ static int strong_quotes(char *argv, size_t i, size_t len, int e)
         {
             c = argv[i];
             to_interpret = should_interpret(c);
-            if (!to_interpret)
-                printf("\\%c", c);
-            else if (to_interpret != -1)
+            if (to_interpret != -1 && to_interpret != -2)
                 printf("%c", str_escape[to_interpret]);
+            else if (to_interpret == -2)
+                printf("\\%c", c);
         }
         else
             printf("%c", argv[i]);
@@ -126,8 +126,10 @@ static int weak_quotes(char *argv, size_t i, size_t len, int e)
                 printf("%c", get_ascii_conversion(argv, &i, escape));
             else if (escape == -4)
                 printf("%c", ESCAPE_CHAR);
-            else if (escape == -5)
+            else if (escape == -5 && argv[i] != '\\')
                 printf("\\%c", c);
+            else if (escape == -5)
+                printf("%c", c);
             else
                 printf("%c", str_escape[escape]);
             i++;
@@ -141,12 +143,27 @@ static int weak_quotes(char *argv, size_t i, size_t len, int e)
     return i;
 }
 
-static void echo_display(char *argv, int e, int *n)
+static void handles_bkslash(char *argv, size_t i, char c, int *n)
 {
     char str_escape[] = STRING_ESCAPE;
+    int escape = get_escape_index(c);
+    if (escape == -1 && (*n = 1))
+        return;
+    else if (escape == -2 || escape == -3)
+        printf("%c", get_ascii_conversion(argv, &i, escape));
+    else if (escape == -4)
+        printf("%c", ESCAPE_CHAR);
+    else if (escape == -5)
+        printf("\\%c", c);
+    else
+        printf("%c", str_escape[escape]);
+    i++;
+}
+
+static void echo_display(char *argv, int e, int *n)
+{
     size_t len = strlen(argv);
     size_t i = 0;
-    int escape = 0;
     while (i < len)
     {
         char c = argv[i];
@@ -160,21 +177,8 @@ static void echo_display(char *argv, int e, int *n)
             if (i < len)
                 c = argv[i];
             if (c == '\\')
-            {
                 continue;
-            }
-            escape = get_escape_index(c);
-            if (escape == -1 && (*n = 1))
-                return;
-            else if (escape == -2 || escape == -3)
-                printf("%c", get_ascii_conversion(argv, &i, escape));
-            else if (escape == -4)
-                printf("%c", ESCAPE_CHAR);
-            else if (escape == -5)
-                printf("\\%c", c);
-            else
-                printf("%c", str_escape[escape]);
-            i++;
+            handles_bkslash(argv, i, c, n);
         }
         else
         {
@@ -200,6 +204,7 @@ int b_echo(char **argv)
     int n = 0;
     int e = 0;
     int E = 0;
+
     int nb_opt = set_options(argv, &n, &e, &E);
     char *str = merge_arguments(argc - nb_opt - 1, argv + nb_opt + 1);
 

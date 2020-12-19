@@ -1,1 +1,1 @@
-echo -e 'toto ta\nta t\a\t\ziti'
+echo -e 'toto ta\nta t\t\ziti'
