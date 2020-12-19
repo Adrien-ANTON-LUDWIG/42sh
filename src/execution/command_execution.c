@@ -16,6 +16,7 @@
 #include "export.h"
 #include "my_err.h"
 #include "shopt.h"
+#include "source.h"
 #include "unalias.h"
 #include "variables_substitution.h"
 
@@ -48,9 +49,9 @@ static int exec_if_known_the_retour(struct major *mj, char **command)
         mj->rvalue = b_unalias(mj, command);
         return 1;
     }
-    else if (!strcmp(*command, "unalias"))
+    else if (!strcmp(*command, "source") || !strcmp(*command, "."))
     {
-        mj->rvalue = b_unalias(mj, command);
+        mj->rvalue = b_source(mj, command);
         return 1;
     }
     else if (!strcmp(*command, "export"))

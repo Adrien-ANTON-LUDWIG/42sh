@@ -1,0 +1,1 @@
+source ./scripts/test_scripts/source_tests/param.sh 1 2

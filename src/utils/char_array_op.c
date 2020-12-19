@@ -41,6 +41,8 @@ char **char_array_dup(struct major *mj, char **argv)
 void char_array_free(char **argv)
 {
     for (int i = 0; i < argv_len(argv); i++)
+    {
         free(argv[i]);
+    }
     free(argv);
 }
