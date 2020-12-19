@@ -37,12 +37,15 @@ static void print_shopt_opt(struct major *mj, int is_minus, int value,
 
     while (temp)
     {
+        char *tab = "\t\t";
+        if (strlen(temp->name) + 8 >= 16)
+            tab = "\t";
         if (!name && !is_minus)
             printf("shopt -%s %s\n", (temp->value) ? "u" : "s", temp->name);
         else if (!name && (value < 0 || temp->value == value))
-            printf("%s %s\n", temp->name, (temp->value) ? "yes" : "no");
+            printf("%s%s%s\n", temp->name, tab, (temp->value) ? "on" : "off");
         else if (name && !strcmp(temp->name, name))
-            printf("%s %s\n", temp->name, (temp->value) ? "yes" : "no");
+            printf("%s%s%s\n", temp->name, tab, (temp->value) ? "on" : "off");
         temp = temp->next;
     }
 }
