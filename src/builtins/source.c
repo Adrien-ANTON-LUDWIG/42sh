@@ -100,6 +100,7 @@ static char *get_path(char *str)
     return NULL;
 }
 
+// TODO: Use major_copy
 static int source_child(char *path)
 {
     struct major *mj = major_init();
