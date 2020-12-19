@@ -1,0 +1,2 @@
+var='"toto"'
+echo "${var}"

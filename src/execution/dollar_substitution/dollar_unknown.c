@@ -16,7 +16,7 @@ char *dollar_unknown(struct major *mj, char *str, int index)
         len_var++;
     }
     else
-        stop = " $\t\n";
+        stop = " $\t\n\"";
 
     while (str[index + len_var] && is_not_in(str[index + len_var], stop))
         len_var++;
