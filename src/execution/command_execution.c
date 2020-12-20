@@ -49,11 +49,6 @@ static int exec_if_known_the_retour(struct major *mj, char **command)
         mj->rvalue = b_unalias(mj, command);
         return 1;
     }
-    else if (!strcmp(*command, "source") || !strcmp(*command, "."))
-    {
-        mj->rvalue = b_source(mj, command);
-        return 1;
-    }
     else if (!strcmp(*command, "export"))
     {
         mj->rvalue = b_export(command);
