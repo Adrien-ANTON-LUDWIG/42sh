@@ -76,31 +76,13 @@ set (SRC
 
 file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/include/*.h")
 
-message("DBG:" $ENV{DBG})
-if (DEFINED ENV{DBG})
-    add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99 -fsanitize=address -g)
-    add_link_options(-Wall -Wextra -pedantic -Werror -std=c99 -fsanitize=address -g)
-else()
-    add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99)
-    add_link_options(-Wall -Wextra -pedantic -Werror -std=c99)
-endif()
+add_compile_options(-Wall -Wextra -pedantic -Werror -std=c99)
+add_link_options(-Wall -Wextra -pedantic -Werror -std=c99)
 
 add_library(42 STATIC ${SRC})
 
 add_executable(42sh ${HEADERS} src/main.c)
 target_link_libraries(42sh 42)
-
-add_executable(lexer_test EXCLUDE_FROM_ALL tests/printer.c tests/lexer_tests/lexer_test.c ${HEADERS})
-target_link_libraries(lexer_test 42)
-
-add_custom_target(debug
-    COMMAND export DBG=DEBUG && cmake .. && make)
-
-add_custom_target(release
-    COMMAND unset DBG && make clean && cmake .. && make)
-
-add_custom_target(lt
-    DEPENDS lexer_test)
 
 add_custom_target(doc
     COMMAND doxygen ${CMAKE_SOURCE_DIR}/doc/doxconf ${CMAKE_SOURCE_DIR}/doc
@@ -111,8 +93,3 @@ add_custom_target(check
     COMMAND cp -r ${CMAKE_SOURCE_DIR}/tests/scripts ./
     COMMAND bash ./scripts/tests_script.sh
     BYPRODUCTS ./scripts/ actual expected)
-
-#add_executable(ast_printer EXCLUDE_FROM_ALL tests/ast_printer.c ${HEADERS})
-#target_link_libraries(ast_printer 42)
-#add_custom_target(ap
-#    DEPENDS ast_printer)

@@ -15,12 +15,15 @@
 #include "b_utils.h"
 #include "custom_descriptor.h"
 #include "major.h"
+#include "my_err.h"
 #include "parser.h"
 
 static char *iter_dir(char *base_path, char *dest_path);
 
 static char *get_rec_path(char *base_path, char *dir_name, char *dest_path)
 {
+    if (!base_path || !dir_name)
+        return strdup("");
     char *rec_path = realloc(
         base_path, sizeof(char) * (strlen(base_path) + strlen(dir_name) + 2));
 
@@ -51,7 +54,7 @@ static char *iter_dir(char *base_path, char *dest_path)
                     closedir(dir);
                     return rec_path;
                 }
-                free(rec_path);
+                // free(rec_path);
             }
 
             else if (!strcmp(dp->d_name, dest_path))
@@ -81,13 +84,12 @@ static char *get_path(char *str)
     {
         char *next_path = strstr(index, ":");
 
-        char *actual_path = strndup(index, next_path - index);
+        size_t size = next_path - index;
+
+        char *actual_path = strndup(index, size + 1);
         char *found = iter_dir(actual_path, str);
         if (found)
-        {
-            free(actual_path);
             return found;
-        }
 
         index = strstr(index, ":");
 
@@ -141,7 +143,7 @@ int b_source(struct major *mj, char *argv[])
     {
         if (argv[1] != path)
             free(path);
-        warnx("source: file not found");
+        my_soft_err(mj, 1, "source: file not found");
         return 1;
     }
 
