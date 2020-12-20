@@ -15,7 +15,7 @@ Functionnal Tests:
         - docker
     script:
         - mkdir build && cd build
-        - cmake .. && make debug
+        - cmake .. && make
         - cp /usr/src/app/script.sh .
         - make check
 Lines Counter:
