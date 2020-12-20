@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -126,6 +127,7 @@ static int source_child(struct major *parent_mj, char *path, char **argv)
 int b_source(struct major *mj, char *argv[])
 {
     int argc = argv_len(argv);
+    struct stat buf;
 
     if (argc < 2)
     {
@@ -134,8 +136,11 @@ int b_source(struct major *mj, char *argv[])
     }
 
     char *path = get_path(argv[1]);
-    if (!path || access(path, F_OK))
+    stat(path, &buf);
+    if (!path || !S_ISREG(buf.st_mode))
     {
+        if (argv[1] != path)
+            free(path);
         warnx("source: file not found");
         return 1;
     }
