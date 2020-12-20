@@ -150,11 +150,11 @@ static void skip_quote(struct major *mj, char c)
 {
     struct custom_FILE *f = mj->file;
 
-    if (f->lexer_index > 0 && f->str[f->lexer_index - 1] == '\\')
-    {
-        f->lexer_index++;
+    if (f->lexer_index > 0 && f->str[f->lexer_index - 2] == '\\')
         return;
-    }
+
+    if (at_end(f))
+        my_err(2, mj, "get_token_quote: unexpected EOF");
 
     char quote = c;
     char lastchar = c;
