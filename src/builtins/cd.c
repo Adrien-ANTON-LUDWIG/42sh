@@ -1,5 +1,7 @@
 #define _POSIX_C_SOURCE 200809L
 
+#include "cd.h"
+
 #include <err.h>
 #include <errno.h>
 #include <stdio.h>
@@ -8,8 +10,6 @@
 #include <unistd.h>
 
 #include "b_utils.h"
-
-char *update_path(char *path, char *section);
 
 static char *get_home(void)
 {
@@ -75,16 +75,23 @@ static char *handle_minus(int *argc, char **argv, char *pwd, char *path)
     return path;
 }
 
+static char *handle_pointpoint(char *path)
+{
+    char *last_slash = strrchr(path, '/');
+    if (last_slash)
+        *last_slash = '\0';
+    if (strlen(path) == 0)
+        return strdup("/");
+    else
+        return strdup(path);
+}
+
 char *update_path(char *path, char *section)
 {
     char *new = NULL;
 
     if (!strcmp(section, ".."))
-    {
-        char *last_slash = strrchr(path, '/');
-        *last_slash = '\0';
-        new = strdup(path);
-    }
+        new = handle_pointpoint(path);
     else if (!strcmp(section, "~"))
         new = get_home();
     else if (!strcmp(section, "/"))
@@ -116,21 +123,14 @@ char *update_path(char *path, char *section)
 static char *get_path_destination(int argc, char **argv)
 {
     char *pwd = get_pwd();
-
-    if (!pwd)
-        pwd = strdup(get_pwd());
-
     char *path = strdup(pwd);
 
     if (!argc || argv[0][0] == '~')
         path = update_path(path, "~");
-    else if (strstr(argv[0], "-"))
-    {
+    else if (argv[0][0] == '-')
         path = handle_minus(&argc, argv, pwd, path);
-    }
     else if (argv[0][0] == '/')
         path = update_path(path, "/");
-
     char *path_to_iter = argv[0];
     char *next_section = NULL;
 
@@ -141,7 +141,8 @@ static char *get_path_destination(int argc, char **argv)
     }
 
     setenv("OLDPWD", pwd, 1);
-    setenv("PWD", path, 1);
+    if (path)
+        setenv("PWD", path, 1);
     free(pwd);
 
     return path;
