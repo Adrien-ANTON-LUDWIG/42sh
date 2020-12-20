@@ -90,9 +90,6 @@ add_library(42 STATIC ${SRC})
 add_executable(42sh ${HEADERS} src/main.c)
 target_link_libraries(42sh 42)
 
-add_executable(testsuite EXCLUDE_FROM_ALL ${HEADERS} tests/main.c)
-target_link_libraries(testsuite PUBLIC criterion 42)
-
 add_executable(lexer_test EXCLUDE_FROM_ALL tests/printer.c tests/lexer_tests/lexer_test.c ${HEADERS})
 target_link_libraries(lexer_test 42)
 
@@ -105,15 +102,11 @@ add_custom_target(release
 add_custom_target(lt
     DEPENDS lexer_test)
 
-add_custom_target(check
-    DEPENDS testsuite
-    COMMAND ./testsuite --verbose)
-
 add_custom_target(doc
     COMMAND doxygen ${CMAKE_SOURCE_DIR}/doc/doxconf ${CMAKE_SOURCE_DIR}/doc
     BYPRODUCTS ./doc/)
 
-add_custom_target(script_test
+add_custom_target(check
     DEPENDS 42sh
     COMMAND cp -r ${CMAKE_SOURCE_DIR}/tests/scripts ./
     COMMAND bash ./scripts/tests_script.sh
