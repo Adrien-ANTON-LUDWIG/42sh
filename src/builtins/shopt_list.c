@@ -5,6 +5,10 @@
 #include "my_xmalloc.h"
 
 #define SHOPT_OPT_LEN 7
+
+#define UNSET 1
+#define SET 2
+
 #define SHOPT_OPT                                                              \
     {                                                                          \
         "dotglob", "expand_aliases", "extglob", "nocaseglob", "nullglob",      \
@@ -59,7 +63,7 @@ void shopt_free_list(struct major *mj)
     free(mj->shopt_opt);
 }
 
-void shopt_set_opt(struct major *mj, char *opt_name, int value)
+int shopt_set_opt(struct major *mj, char *opt_name, int value)
 {
     if (!mj->shopt_opt)
         shopt_init_list(mj);
@@ -70,9 +74,11 @@ void shopt_set_opt(struct major *mj, char *opt_name, int value)
     {
         if (!strcmp(opt_name, temp->name))
         {
-            temp->value = value;
+            temp->value = (value & SET) ? 1 : 0;
             break;
         }
         temp = temp->next;
     }
+
+    return !temp;
 }
