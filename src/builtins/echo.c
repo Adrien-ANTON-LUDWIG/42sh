@@ -64,7 +64,7 @@ static int get_ascii_conversion(char *argv, size_t *i, int index)
 }
 
 static int should_interpret(char c)
-{ // add e and c ?
+{
     if (is_in(c, "bfrv"))
         return -1;
     else if (c == 'a')
@@ -104,38 +104,41 @@ static int strong_quotes(char *argv, size_t i, size_t len, int e)
     return i;
 }
 
-static int weak_quotes(char *argv, size_t i, size_t len, int e)
+static void handles_bkslash_wk(size_t i, char c, char *argv, size_t len)
 {
     char str_escape[] = STRING_ESCAPE;
+    if (i < len)
+        c = argv[i];
+    int escape = get_escape_index(c);
+    if (escape == -2 || escape == -3)
+        printf("%c", get_ascii_conversion(argv, &i, escape));
+    else if (escape == -4)
+        printf("%c", ESCAPE_CHAR);
+    else if (escape == -5 && argv[i] != '\\' && argv[i] != '\"')
+        printf("\\%c", c);
+    else if (escape == -5)
+        printf("%c", c);
+    else
+        printf("%c", str_escape[escape]);
+}
+
+static int weak_quotes(char *argv, size_t i, size_t len, int e)
+{
     char c;
-    int escape = 0;
     while (i < len)
     {
         c = argv[i];
         if (c == '\"')
             return i + 1;
-        else if (!e && c == '\\' && i + 1 < len && argv[i + 1] != '\\')
+        else if (!e && c == '\\' && i + 1 < len && argv[i + 1] != '\\'
+                 && argv[i + 1] != '\"')
         {
             printf("\\%c", argv[i + 1]);
             i += 2;
         }
         else if (c == '\\' && ++i)
         {
-            if (i < len)
-                c = argv[i];
-            escape = get_escape_index(c);
-            /*if (escape == -1 && (*n = 1))
-                return;*/
-            if (escape == -2 || escape == -3)
-                printf("%c", get_ascii_conversion(argv, &i, escape));
-            else if (escape == -4)
-                printf("%c", ESCAPE_CHAR);
-            else if (escape == -5 && argv[i] != '\\')
-                printf("\\%c", c);
-            else if (escape == -5)
-                printf("%c", c);
-            else
-                printf("%c", str_escape[escape]);
+            handles_bkslash_wk(i, c, argv, len);
             i++;
         }
         else
