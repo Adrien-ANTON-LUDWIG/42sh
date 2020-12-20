@@ -104,17 +104,17 @@ static int strong_quotes(char *argv, size_t i, size_t len, int e)
     return i;
 }
 
-static void handles_bkslash_wk(size_t i, char c, char *argv, size_t len)
+static void handles_bkslash_wk(size_t *i, char c, char *argv, size_t len)
 {
     char str_escape[] = STRING_ESCAPE;
-    if (i < len)
-        c = argv[i];
+    if (*i < len)
+        c = argv[*i];
     int escape = get_escape_index(c);
     if (escape == -2 || escape == -3)
-        printf("%c", get_ascii_conversion(argv, &i, escape));
+        printf("%c", get_ascii_conversion(argv, i, escape));
     else if (escape == -4)
         printf("%c", ESCAPE_CHAR);
-    else if (escape == -5 && argv[i] != '\\' && argv[i] != '\"')
+    else if (escape == -5 && argv[*i] != '\\' && argv[*i] != '\"')
         printf("\\%c", c);
     else if (escape == -5)
         printf("%c", c);
@@ -138,7 +138,7 @@ static int weak_quotes(char *argv, size_t i, size_t len, int e)
         }
         else if (c == '\\' && ++i)
         {
-            handles_bkslash_wk(i, c, argv, len);
+            handles_bkslash_wk(&i, c, argv, len);
             i++;
         }
         else
